@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -26,11 +27,12 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        if(!PV.IsMine)
+        if (!PV.IsMine)
         {
             Destroy(GetComponentInChildren<Camera>().gameObject);
-            Destroy(rb); // Janky jumping bugfix
+            //Destroy(rb); // Janky jumping bugfix
         }
+        SetFirstPos();
     }
 
     private void Update()
@@ -67,7 +69,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void SetGroundedState (bool _grounded)
+    public void SetGroundedState(bool _grounded)
     {
         grounded = _grounded;
     }
@@ -77,5 +79,12 @@ public class PlayerController : MonoBehaviour
         if (!PV.IsMine)
             return;
         rb.MovePosition(rb.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
+    }
+
+    void SetFirstPos()
+    {
+        if (!PV.IsMine)
+            return;
+        transform.position = RoomManager.playerFirstPositions[PV.ViewID / 1000 - 1];
     }
 }

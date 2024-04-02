@@ -17,10 +17,10 @@ public class PlayerManager : MonoBehaviour
     {
         if (PV.IsMine) 
         {
-            CreateController();
+            CreateController(); // player에 따라 다른 위치에서 GameStart
         }
     }
-
+    
     void CreateController()
     {
         PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerController"), Vector3.zero, Quaternion.identity);

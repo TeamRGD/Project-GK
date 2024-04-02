@@ -8,6 +8,7 @@ using System.IO;
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     public static RoomManager Instance;
+    public static Vector3[] playerFirstPositions;
 
     void Awake()
     {
@@ -18,6 +19,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
         DontDestroyOnLoad(gameObject); // I am the only one
         Instance = this;
+
+        playerFirstPositions = new Vector3[2]
+        {
+            new Vector3(15f, 0f, 20f),    // 첫 번째 플레이어의 위치 (pos1)
+            new Vector3(-15f, 0f, 20f)     // 두 번째 플레이어의 위치 (pos2)
+        };
     }
 
     public override void OnEnable()
