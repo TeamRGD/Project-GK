@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
             Destroy(GetComponentInChildren<Camera>().gameObject);
             //Destroy(rb); // Janky jumping bugfix
         }
-        SetFirstPos();
+        // SetFirstPos();
     }
 
     private void Update()
