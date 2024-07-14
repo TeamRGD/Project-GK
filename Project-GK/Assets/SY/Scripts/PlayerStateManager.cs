@@ -12,7 +12,7 @@ public class PlayerStateManager : MonoBehaviour
     public int maxUltimatePower = 100;
     public int currentHealth; // (test) should be private.
     public int currentPower; // (test) should be private.
-    public int currentUltimatePower;
+    public int currentUltimatePower; // (test) should be private.
     private int attackCount = 0;
     private float lastAttackTime;
     public float attackCool = 1.0f;
@@ -129,10 +129,26 @@ public class PlayerStateManager : MonoBehaviour
             Projectile projScript = projectile.GetComponent<Projectile>();
             if (projScript != null)
             {
-                if (count<2)
-                    projScript.attackPower = 20;
-                else
-                    projScript.attackPower = 30;
+                projScript.attackPower = (count < 2) ? 20 : 30;
+                projScript.SetOwner(PV.ViewID);
+            }
+        }
+    }
+
+    public void IncreaseUltimatePower(int amount)
+    {
+        PV.RPC("IncreaseUltimatePowerRPC", RpcTarget.AllBuffered, amount);
+    }
+
+    [PunRPC]
+    void IncreaseUltimatePowerRPC(int amount)
+    {
+        if (PV.IsMine)
+        {
+            currentUltimatePower += amount;
+            if (currentUltimatePower > maxUltimatePower)
+            {
+                currentUltimatePower = maxUltimatePower;
             }
         }
     }
