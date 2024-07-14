@@ -6,9 +6,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] GameObject cameraHolder;
+    [SerializeField] GameObject cameraHolder; // should be edit
 
     [SerializeField] float mouseSensitivity, sprintSpeed, walkSpeed, jumpForce, smoothTime;
+    [SerializeField] Transform playerBody;
+    [SerializeField] float distanceFromPlayer;
+    [SerializeField] LayerMask collisionMask;
+    [SerializeField] PlayerStateManager playerStateManager;
 
     float verticalLookRotation;
     bool grounded;
@@ -21,8 +25,9 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        PV = GetComponent<PhotonView>();
+        TryGetComponent<Rigidbody>(out rb);
+        TryGetComponent<PhotonView>(out PV);
+        TryGetComponent<PlayerStateManager>(out playerStateManager);
     }
 
     private void Start()
@@ -30,8 +35,10 @@ public class PlayerController : MonoBehaviour
         if (!PV.IsMine)
         {
             Destroy(GetComponentInChildren<Camera>().gameObject);
-            //Destroy(rb); // Janky jumping bugfix
+            rb.isKinematic = true;
         }
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         // SetFirstPos();
     }
 
@@ -42,16 +49,35 @@ public class PlayerController : MonoBehaviour
         Look();
         Move();
         Jump();
+        if (Input.GetMouseButtonDown(0))
+        {
+            Attack();
+        }
     }
 
     void Look()
     {
-        transform.Rotate(Vector3.up * Input.GetAxisRaw("Mouse X") * mouseSensitivity);
+        float horizontalRotation = Input.GetAxisRaw("Mouse X") * mouseSensitivity;
+        float verticalRotation = Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
 
-        verticalLookRotation += Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
+        playerBody.Rotate(Vector3.up * horizontalRotation);
+
+        verticalLookRotation -= verticalRotation;
         verticalLookRotation = Mathf.Clamp(verticalLookRotation, -90f, 90f);
 
-        cameraHolder.transform.localEulerAngles = Vector3.left * verticalLookRotation;
+        cameraHolder.transform.localEulerAngles = Vector3.right * verticalLookRotation;
+
+        Vector3 cameraPosition = playerBody.position - cameraHolder.transform.forward * distanceFromPlayer;
+
+        RaycastHit hit;
+        if (Physics.Linecast(playerBody.position, cameraPosition, out hit, collisionMask))
+        {
+            cameraHolder.transform.position = hit.point;
+        }
+        else
+        {
+            cameraHolder.transform.position = cameraPosition;
+        }
     }
 
     void Move()
@@ -72,6 +98,14 @@ public class PlayerController : MonoBehaviour
     public void SetGroundedState(bool _grounded)
     {
         grounded = _grounded;
+    }
+
+    void Attack()
+    {
+        if (playerStateManager.CanAttack())
+        {
+            playerStateManager.Attack();
+        }
     }
 
     void FixedUpdate()

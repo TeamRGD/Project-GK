@@ -17,7 +17,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (PV.IsMine) 
         {
-            CreateController(); // player¿¡ µû¶ó ´Ù¸¥ À§Ä¡¿¡¼­ GameStart
+            CreateController(); // playerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ GameStart
         }
     }
     
