@@ -10,7 +10,7 @@ public class Boss1 : MonoBehaviour
     private int decodeCount = 0;
     private bool isAggroSelected = false;
     private bool isCorrectCode = false;
-    private bool isExecutingPattern3 = false; // 패턴3이 실행 중인지 확인하는 플래그
+    private bool isExecutingPattern3 = false;
 
     void Start()
     {
@@ -21,7 +21,6 @@ public class Boss1 : MonoBehaviour
 
     void Update()
     {
-        // 예제: 스페이스 키를 누르면 보스의 체력이 감소함
         if (Input.GetKeyDown(KeyCode.Space))
         {
             TakeDamage(10);
@@ -70,7 +69,6 @@ public class Boss1 : MonoBehaviour
         );
     }
 
-    // 체력 감소 메서드
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
