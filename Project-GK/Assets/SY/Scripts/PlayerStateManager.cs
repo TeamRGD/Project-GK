@@ -113,10 +113,10 @@ public class PlayerStateManager : MonoBehaviour
         }
 
         lastAttackTime = Time.time;
-        FireProjectile();
+        FireProjectile(count);
     }
 
-    void FireProjectile()
+    void FireProjectile(int count)
     {
         if (projectilePrefab != null && projectileSpawnPoint != null)
         {
@@ -125,6 +125,14 @@ public class PlayerStateManager : MonoBehaviour
             if (rb != null)
             {
                 rb.velocity = projectileSpawnPoint.forward * projectileSpeed;
+            }
+            Projectile projScript = projectile.GetComponent<Projectile>();
+            if (projScript != null)
+            {
+                if (count<2)
+                    projScript.attackPower = 20;
+                else
+                    projScript.attackPower = 30;
             }
         }
     }
