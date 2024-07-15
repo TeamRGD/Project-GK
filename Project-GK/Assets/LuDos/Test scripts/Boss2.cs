@@ -1,25 +1,38 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Boss2 : MonoBehaviour
 {
     public int maxHealth = 100;
     private int currentHealth;
-    private Animator animator;
+
+    private int magicCircleCount = 0;
+
+    private int attackCount = 0;
+
+    private int successCount = 0;
+
+    private bool isGroggy = false;
+
+    private bool isExecutingPattern = false;
     private bool isExecutingAttack = false;
+    private bool hasExecutedInitialActions = false;
+
+    private NavMeshAgent navMeshAgent;
+
+    private Animator animator;
 
     private BTNode pattern1Tree;
     private BTNode pattern2Tree;
     private BTNode pattern3Tree;
 
-    private int n = 0;
-    private bool isGroggy = false;
-    private bool isExecutingPattern = false;
 
     void Start()
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
@@ -44,6 +57,15 @@ public class Boss2 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
+                    if (!hasExecutedInitialActions)
+                    {
+                        ReduceDamage();
+                        SpinAndExtinguishTorches();
+                        LightMagicCircle();
+                        LightBossEyesAndMouth();
+                        hasExecutedInitialActions = true;
+                    }
+
                     StartCoroutine(ExecutePattern(pattern1Tree));
                 }
             }
@@ -68,15 +90,17 @@ public class Boss2 : MonoBehaviour
     BTNode CreatePattern1Tree()
     {
         return new Sequence(
-            new ActionNode(ReduceDamage),
-            new ActionNode(SpinAndExtinguishTorches),
-            new ActionNode(LightMagicCircle),
-            new ActionNode(LightBossEyesAndMouth),
-            new ActionNode(LightBlueFlamesOnLimbs),
-            new WhileNode(() => n < 8,
-                new ActionNode(ReactToPlayerAttack)
-            ),
-            new ActionNode(SetGroggy)
+            new ActionNode(ControlSpeed),
+            new Selector(
+                new Sequence(
+                    new ConditionNode(() => magicCircleCount < 8),
+                    new ActionNode(RandomBasicAttack)
+                ),
+                new Sequence(
+                    new ConditionNode(() => magicCircleCount >= 8),
+                    new ActionNode(SetGroggy)
+                )
+            )
         );
     }
 
@@ -84,10 +108,10 @@ public class Boss2 : MonoBehaviour
     {
         return new Sequence(
             new ActionNode(LightFourTorches),
-            new WhileNode(() => n <= 8,
+            new WhileNode(() => attackCount <= 8,
                 new Sequence(
                     new ActionNode(MoveToSpecificArea),
-                    new ActionNode(RandomAttack),
+                    new ActionNode(RandomBasicAttack),
                     new ActionNode(StoreAttackType)
                 )
             ),
@@ -105,11 +129,11 @@ public class Boss2 : MonoBehaviour
     {
         return new Sequence(
             new ActionNode(Roar),
-            new WhileNode(() => n < 3,
+            new WhileNode(() => successCount < 3,
                 new Sequence(
                     new ActionNode(DisplayAttackOrder),
                     new Selector(
-                        new ActionNode(CheckAttackOrder),
+                        // new ActionNode(CheckAttackOrder),
                         new ActionNode(DealMapWideDamage)
                     )
                 )
@@ -127,7 +151,7 @@ public class Boss2 : MonoBehaviour
         }
     }
 
-    bool DefaultAttack()
+    bool RandomBasicAttack()
     {
         if (!isExecutingPattern && !isExecutingAttack)
         {
@@ -138,7 +162,7 @@ public class Boss2 : MonoBehaviour
                     StartCoroutine(DashAndSlash());
                     break;
                 case 2:
-                    StartCoroutine(Charge());
+                    StartCoroutine(Dash());
                     break;
                 case 3:
                     StartCoroutine(Bite());
@@ -154,7 +178,7 @@ public class Boss2 : MonoBehaviour
     IEnumerator ExecutePattern(BTNode patternTree)
     {
         isExecutingPattern = true;
-        n = 0;
+        // n = 0;
         isGroggy = false;
 
         while (!isGroggy)
@@ -170,47 +194,97 @@ public class Boss2 : MonoBehaviour
     IEnumerator DashAndSlash()
     {
         isExecutingAttack = true;
-        Debug.Log("Dashing and slashing with front paws (Critical Hit)");
-        animator.SetTrigger("Dash");
+
         // 대쉬
-        yield return new WaitForSeconds(1.0f);
-        animator.SetTrigger("Slash");
+        animator.SetTrigger("Dash");
+
+        float dashTime = 1.0f;
+        float dashSpeed = 10.0f;
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < dashTime)
+        {
+            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
         // 앞발 휘두르기
+        animator.SetTrigger("Slash");
         yield return new WaitForSeconds(1.0f);
+
         isExecutingAttack = false;
     }
 
-    IEnumerator Charge()
+    IEnumerator Dash()
     {
         isExecutingAttack = true;
-        Debug.Log("Charging (Damage-inflicting dash)");
-        animator.SetTrigger("Charge");
-        // 돌진
-        yield return new WaitForSeconds(1.0f);
-        isExecutingAttack = false;
-    }
 
-    IEnumerator Bite()
-    {
-        isExecutingAttack = true;
-        Debug.Log("Biting");
-        animator.SetTrigger("Bite");
-        // 깨물기
-        yield return new WaitForSeconds(1.0f);
+        animator.SetTrigger("Dash");
+
+        float dashTime = 1.0f;
+        float dashSpeed = 10.0f;
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < dashTime)
+        {
+            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
         isExecutingAttack = false;
     }
 
     IEnumerator Slash()
     {
         isExecutingAttack = true;
-        Debug.Log("Slashing with front paw");
+
         animator.SetTrigger("Slash");
-        // 앞발 휘두르기
+
         yield return new WaitForSeconds(1.0f);
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator Bite()
+    {
+        isExecutingAttack = true;
+ 
+        animator.SetTrigger("Bite");
+
+        yield return new WaitForSeconds(1.0f);
+
         isExecutingAttack = false;
     }
 
     // 패턴 1
+    bool ControlSpeed()
+    {
+        if (magicCircleCount >= 5 && magicCircleCount < 6)
+        {
+            navMeshAgent.speed *= 0.5f; // 속도 50%
+        }
+        else if (magicCircleCount >= 6 && magicCircleCount < 7)
+        {
+            navMeshAgent.speed *= 0.4f; // 속도 40%
+        }
+        else if (magicCircleCount >= 7 && magicCircleCount < 8)
+        {
+            navMeshAgent.speed *= 0.3f; // 속도 30%
+        }
+        return true;
+    }
+
+
+    bool SetGroggy()
+    {
+        isGroggy = true;
+        animator.SetTrigger("Groggy");
+        navMeshAgent.isStopped = true;
+        return true;
+    }
+
     bool ReduceDamage()
     {
         Debug.Log("Damage taken reduced by 90%");
@@ -241,25 +315,25 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    bool ReactToPlayerAttack()
-    {
-        Debug.Log("Boss is reacting to player attacks by lighting specific torches");
-        n++;
-        if (n == 5) Debug.Log("Speed reduced by 50%");
-        if (n == 6) Debug.Log("Speed reduced by 40%");
-        if (n == 7) Debug.Log("Speed reduced by 30%");
-        return true;
-    }
+    //bool ReactToPlayerAttack()
+    //{
+    //    Debug.Log("Boss is reacting to player attacks by lighting specific torches");
+    //    n++;
+    //    if (n == 5) Debug.Log("Speed reduced by 50%");
+    //    if (n == 6) Debug.Log("Speed reduced by 40%");
+    //    if (n == 7) Debug.Log("Speed reduced by 30%");
+    //    return true;
+    //}
 
-    bool SetGroggy()
-    {
-        if (n >= 8)
-        {
-            Debug.Log("Boss is now groggy");
-            isGroggy = true;
-        }
-        return true;
-    }
+    //bool SetGroggy()
+    //{
+    //    if (n >= 8)
+    //    {
+    //        Debug.Log("Boss is now groggy");
+    //        isGroggy = true;
+    //    }
+    //    return true;
+    //}
 
     // 패턴 2
     bool LightFourTorches()
@@ -274,16 +348,10 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    bool RandomAttack()
-    {
-        Debug.Log("Performing random attack");
-        return DefaultAttack();
-    }
-
     bool StoreAttackType()
     {
         Debug.Log("Storing attack type based on area");
-        n++;
+        attackCount++;
         return true;
     }
 
@@ -302,7 +370,7 @@ public class Boss2 : MonoBehaviour
     bool PerformDesignatedAttack()
     {
         Debug.Log("Performing designated attack");
-        return DefaultAttack();
+        return RandomBasicAttack();
     }
 
     // 패턴 3
@@ -318,16 +386,16 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    bool CheckAttackOrder()
-    {
-        bool attackOrderOk = UnityEngine.Random.value > 0.5f;
-        if (attackOrderOk)
-        {
-            Debug.Log("Player attacked in correct order");
-            n++;
-        }
-        return attackOrderOk;
-    }
+    //bool CheckAttackOrder()
+    //{
+    //    bool attackOrderOk = UnityEngine.Random.value > 0.5f;
+    //    if (attackOrderOk)
+    //    {
+    //        Debug.Log("Player attacked in correct order");
+    //        n++;
+    //    }
+    //    return attackOrderOk;
+    //}
 
     bool DealMapWideDamage()
     {
