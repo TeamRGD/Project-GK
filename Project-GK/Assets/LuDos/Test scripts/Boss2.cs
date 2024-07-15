@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,9 +16,14 @@ public class Boss2 : MonoBehaviour
 
     private bool isGroggy = false;
 
+    private int pattern2Count = 0;
+
     private bool isExecutingPattern = false;
     private bool isExecutingAttack = false;
     private bool hasExecutedInitialActions = false;
+
+    private List<Vector3> storedPositions = new List<Vector3>();
+    private List<System.Action> storedAttacks = new List<System.Action>();
 
     private NavMeshAgent navMeshAgent;
 
@@ -73,6 +79,12 @@ public class Boss2 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
+                    if (!hasExecutedInitialActions)
+                    {
+                        StartCoroutine(ExecutePattern2InitialActions());
+                        hasExecutedInitialActions = true;
+                    }
+
                     StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
@@ -107,21 +119,9 @@ public class Boss2 : MonoBehaviour
     BTNode CreatePattern2Tree()
     {
         return new Sequence(
-            new ActionNode(LightFourTorches),
-            new WhileNode(() => attackCount <= 8,
-                new Sequence(
-                    new ActionNode(MoveToSpecificArea),
-                    new ActionNode(RandomBasicAttack),
-                    new ActionNode(StoreAttackType)
-                )
-            ),
-            new ActionNode(ExtinguishAllTorches),
-            new WhileNode(() => !isGroggy,
-                new Sequence(
-                    new ActionNode(MoveToDesignatedArea),
-                    new ActionNode(PerformDesignatedAttack)
-                )
-            )
+            new ActionNode(MoveToStoredPosition),
+            new ActionNode(PerformStoredAttack),
+            new ActionNode(ResetPattern2Count)
         );
     }
 
@@ -309,68 +309,101 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    bool LightBlueFlamesOnLimbs()
+    // 패턴 2
+    IEnumerator ExecutePattern2InitialActions()
     {
-        Debug.Log("Lighting blue flames on arms or legs during basic attack");
+        LightFourTorches();
+
+        for (int n = 0; n < 8; n++)
+        {
+            Vector3 targetPosition = GetRandomPosition();
+            System.Action randomAttack = GetRandomAttack();
+
+            storedPositions.Add(targetPosition);
+            storedAttacks.Add(randomAttack);
+
+            yield return MoveToPosition(targetPosition);
+            randomAttack.Invoke();
+            yield return new WaitForSeconds(3.0f);
+        }
+
+        ExtinguishAllTorches();
+    }
+
+    Vector3 GetRandomPosition()
+    {
+        return new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)); // 범위 조정 필요
+    }
+
+    System.Action GetRandomAttack()
+    {
+        int attackType = UnityEngine.Random.Range(1, 5);
+        switch (attackType)
+        {
+            case 1:
+                return () => StartCoroutine(DashAndSlash());
+            case 2:
+                return () => StartCoroutine(Dash());
+            case 3:
+                return () => StartCoroutine(Bite());
+            case 4:
+                return () => StartCoroutine(Slash());
+            default:
+                return () => StartCoroutine(Slash());
+        }
+    }
+
+    bool ResetPattern2Count()
+    {
+        if (pattern2Count >= storedPositions.Count)
+        {
+            pattern2Count = 0;
+        }
         return true;
     }
 
-    //bool ReactToPlayerAttack()
-    //{
-    //    Debug.Log("Boss is reacting to player attacks by lighting specific torches");
-    //    n++;
-    //    if (n == 5) Debug.Log("Speed reduced by 50%");
-    //    if (n == 6) Debug.Log("Speed reduced by 40%");
-    //    if (n == 7) Debug.Log("Speed reduced by 30%");
-    //    return true;
-    //}
+    IEnumerator MoveToPosition(Vector3 targetPosition)
+    {
+        navMeshAgent.SetDestination(targetPosition);
+        while (Vector3.Distance(transform.position, targetPosition) > 0.1f)
+        {
+            yield return null;
+        }
+    }
 
-    //bool SetGroggy()
-    //{
-    //    if (n >= 8)
-    //    {
-    //        Debug.Log("Boss is now groggy");
-    //        isGroggy = true;
-    //    }
-    //    return true;
-    //}
+    bool MoveToStoredPosition()
+    {
+        if (pattern2Count < storedPositions.Count)
+        {
+            Vector3 targetPosition = storedPositions[pattern2Count];
+            StartCoroutine(MoveToPosition(targetPosition));
+            return true;
+        }
+        return false;
+    }
 
-    // 패턴 2
+    bool PerformStoredAttack()
+    {
+        if (pattern2Count < storedAttacks.Count)
+        {
+            System.Action storedAttack = storedAttacks[pattern2Count];
+            storedAttack.Invoke();
+            pattern2Count++;
+            return true;
+        }
+        return false;
+    }
+
     bool LightFourTorches()
     {
-        Debug.Log("Lighting 4 torches");
-        return true;
-    }
-
-    bool MoveToSpecificArea()
-    {
-        Debug.Log("Moving to specific area");
-        return true;
-    }
-
-    bool StoreAttackType()
-    {
-        Debug.Log("Storing attack type based on area");
-        attackCount++;
+        // Debug.Log("Lighting 4 torches");
         return true;
     }
 
     bool ExtinguishAllTorches()
     {
-        Debug.Log("Extinguishing all torches");
+        // Debug.Log("Extinguishing all torches");
         return true;
-    }
-
-    bool MoveToDesignatedArea()
-    {
-        Debug.Log("Moving to designated area");
-        return true;
-    }
-
-    bool PerformDesignatedAttack()
-    {
-        Debug.Log("Performing designated attack");
-        return RandomBasicAttack();
     }
 
     // 패턴 3
