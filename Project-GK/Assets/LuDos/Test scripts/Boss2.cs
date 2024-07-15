@@ -287,25 +287,25 @@ public class Boss2 : MonoBehaviour
 
     bool ReduceDamage()
     {
-        Debug.Log("Damage taken reduced by 90%");
+        // Debug.Log("Damage taken reduced by 90%");
         return true;
     }
 
     bool SpinAndExtinguishTorches()
     {
-        Debug.Log("Spinning quickly to extinguish all torches");
+        // Debug.Log("Spinning quickly to extinguish all torches");
         return true;
     }
 
     bool LightMagicCircle()
     {
-        Debug.Log("Lighting the magic circle");
+        // Debug.Log("Lighting the magic circle");
         return true;
     }
 
     bool LightBossEyesAndMouth()
     {
-        Debug.Log("Lighting boss eyes and mouth");
+        // Debug.Log("Lighting boss eyes and mouth");
         return true;
     }
 
