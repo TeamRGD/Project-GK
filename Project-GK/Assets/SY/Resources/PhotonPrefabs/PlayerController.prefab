@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 4247537712408725727}
   - component: {fileID: -8240542403671359594}
   - component: {fileID: 113058256778214182}
+  - component: {fileID: 8673661029720646167}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Player
@@ -316,10 +317,22 @@ MonoBehaviour:
   currentHealth: 0
   currentPower: 0
   currentUltimatePower: 0
-  attackCool: 1
+--- !u!114 &8673661029720646167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2168532157115527428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4836e6e5dbb8674e9f1ade1380c5de6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 3597697435051772679, guid: 8146d7a3d8f587f42be190c577a431b8, type: 3}
   projectileSpawnPoint: {fileID: 4332204649014202706}
-  projectileSpeed: 20
+  attackCool: 1
+  projectileSpeed: 15
 --- !u!1 &4848725712111836449
 GameObject:
   m_ObjectHideFlags: 0

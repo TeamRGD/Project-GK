@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public int attackPower;
+    public int attackPower = 20;
     private int ownerPhotonViewId;
-    private WaitForSeconds seconds = new WaitForSeconds(3f);
+    private WaitForSeconds seconds = new WaitForSeconds(10f);
+    PlayerStateManager playerState;
 
     void Start()
     {
@@ -21,12 +22,13 @@ public class Projectile : MonoBehaviour
             PhotonView PV = PhotonView.Find(ownerPhotonViewId);
             if (PV != null && PV.IsMine)
             {
-                PV.GetComponent<PlayerStateManager>().IncreaseUltimatePower(3);
+                PV.TryGetComponent<PlayerStateManager>(out playerState);
+                playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
             }
             Destroy(gameObject);
         }
     }
-    private void DestroyProjectileAfterTime()
+    private void DestroyProjectileAfterTime() // n초 후 제거.
     {
         StartCoroutine(DestroyAfterSeconds());
     }
@@ -37,7 +39,7 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void SetOwner(int photonViewId)
+    public void SetOwner(int photonViewId) // 해당 투사체의 주인 설정.
     {
         ownerPhotonViewId = photonViewId;
     }

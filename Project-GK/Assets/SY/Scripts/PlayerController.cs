@@ -32,11 +32,13 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        // 자신만 제어할 수 있도록
         if (!PV.IsMine)
         {
             Destroy(GetComponentInChildren<Camera>().gameObject);
             rb.isKinematic = true;
         }
+        // 마우스 커서 제거
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         // SetFirstPos();
@@ -44,19 +46,17 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        // 자신만 제어할 수 있도록
         if (!PV.IsMine)
             return;
         Look();
         Move();
         Jump();
-        if (Input.GetMouseButtonDown(0))
-        {
-            Attack();
-        }
     }
 
     void Look()
     {
+        // TPS (3인칭 시점)
         float horizontalRotation = Input.GetAxisRaw("Mouse X") * mouseSensitivity;
         float verticalRotation = Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
 
@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 cameraPosition = playerBody.position - cameraHolder.transform.forward * distanceFromPlayer;
 
+        // 벽 뚫기 방지
         RaycastHit hit;
         if (Physics.Linecast(playerBody.position, cameraPosition, out hit, collisionMask))
         {
@@ -100,13 +101,6 @@ public class PlayerController : MonoBehaviour
         grounded = _grounded;
     }
 
-    void Attack()
-    {
-        if (playerStateManager.CanAttack())
-        {
-            playerStateManager.Attack();
-        }
-    }
 
     void FixedUpdate()
     {

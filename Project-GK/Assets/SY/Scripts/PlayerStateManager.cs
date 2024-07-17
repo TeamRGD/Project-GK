@@ -7,34 +7,34 @@ using UnityEngine;
 public class PlayerStateManager : MonoBehaviour
 {
     PhotonView PV;
+    
+    // HP
     public int maxHealth = 100;
-    public int maxPower = 150;
-    public int maxUltimatePower = 100;
     public int currentHealth; // (test) should be private.
+
+    // 마력
+    public int maxPower = 150;
     public int currentPower; // (test) should be private.
+
+    // 궁극주문력
+    public int maxUltimatePower = 100;
     public int currentUltimatePower; // (test) should be private.
-    private int attackCount = 0;
-    private float lastAttackTime;
-    public float attackCool = 1.0f;
-    public GameObject projectilePrefab;
-    public Transform projectileSpawnPoint;
-    public float projectileSpeed = 15f;
 
     private WaitForSeconds oneSecond = new WaitForSeconds(1f);
+
     void Awake()
     {
         TryGetComponent<PhotonView>(out PV);
     }
+
     void Start()
     {
         currentHealth = maxHealth;
         currentPower = maxPower;
         currentUltimatePower = 0;
-        lastAttackTime = -attackCool;
         StartCoroutine(RecoverPower());
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (!PV.IsMine)
@@ -60,7 +60,7 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    IEnumerator RecoverPower()
+    IEnumerator RecoverPower() // 매초마다 마력 5씩 회복
     {
         while (true)
         {
@@ -76,64 +76,6 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    public bool CanAttack()
-    {
-        if (Time.time - lastAttackTime < attackCool)
-        {
-            return false;
-        }
-        if (attackCount < 2 && currentPower >= 10)
-        {
-            return true;
-        }
-        else if (attackCount >= 2 && currentPower >= 15)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public void Attack()
-    {
-        PV.RPC("AttackRPC", RpcTarget.AllBuffered, attackCount);
-    }
-
-    [PunRPC]
-    void AttackRPC(int count)
-    {
-        if (count < 2)
-        {
-            attackCount++;
-            currentPower -= 10;
-        }
-        else
-        {
-            attackCount = 0;
-            currentPower -= 15;
-        }
-
-        lastAttackTime = Time.time;
-        FireProjectile(count);
-    }
-
-    void FireProjectile(int count)
-    {
-        if (projectilePrefab != null && projectileSpawnPoint != null)
-        {
-            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.velocity = projectileSpawnPoint.forward * projectileSpeed;
-            }
-            Projectile projScript = projectile.GetComponent<Projectile>();
-            if (projScript != null)
-            {
-                projScript.attackPower = (count < 2) ? 20 : 30;
-                projScript.SetOwner(PV.ViewID);
-            }
-        }
-    }
 
     public void IncreaseUltimatePower(int amount)
     {
@@ -143,13 +85,32 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void IncreaseUltimatePowerRPC(int amount)
     {
-        if (PV.IsMine)
+        currentUltimatePower += amount;
+        if (currentUltimatePower > maxUltimatePower)
         {
-            currentUltimatePower += amount;
-            if (currentUltimatePower > maxUltimatePower)
-            {
-                currentUltimatePower = maxUltimatePower;
-            }
+            currentUltimatePower = maxUltimatePower;
         }
+    }
+
+    public void DecreasePower(int amount)
+    {
+        PV.RPC("DecreasePowerRPC", RpcTarget.AllBuffered, amount);
+    }
+
+    [PunRPC]
+    void DecreasePowerRPC(int amount)
+    {
+        currentPower -= amount;
+    }
+
+    public void ResetUltimatePower()
+    {
+        PV.RPC("ResetUltimatePowerRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void ResetUltimatePowerRPC()
+    {
+        currentUltimatePower = 0;
     }
 }
