@@ -8,6 +8,7 @@ public class PlayerAttack : MonoBehaviour
 {
     PhotonView PV;
     PlayerStateManager playerState;
+    PlayerToolManager playerTool;
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
     private int attackCount = 0;
@@ -21,6 +22,7 @@ public class PlayerAttack : MonoBehaviour
     {
         TryGetComponent<PhotonView>(out PV);
         TryGetComponent<PlayerStateManager>(out playerState);
+        TryGetComponent<PlayerToolManager>(out playerTool);
         playerCamera = GetComponentInChildren<Camera>();
     }
 
@@ -37,18 +39,22 @@ public class PlayerAttack : MonoBehaviour
 
     public bool CanAttack()
     {
-        if (Time.time - lastAttackTime < attackCool)
+        if (playerTool.GetToolNumber() == 1)
         {
-            return false;
+            if (Time.time - lastAttackTime < attackCool)
+            {
+                return false;
+            }
+            if (attackCount < 2 && playerState.currentPower >= 10)
+            {
+                return true;
+            }
+            else if (attackCount >= 2 && playerState.currentPower >= 15)
+            {
+                return true;
+            }
         }
-        if (attackCount < 2 && playerState.currentPower >= 10)
-        {
-            return true;
-        }
-        else if (attackCount >= 2 && playerState.currentPower >= 15)
-        {
-            return true;
-        }
+
         return false;
     }
 

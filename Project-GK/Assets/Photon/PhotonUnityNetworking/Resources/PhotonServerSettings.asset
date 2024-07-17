@@ -47,6 +47,8 @@ MonoBehaviour:
   - IncreaseUltimatePowerRPC
   - DecreasePowerRPC
   - ResetUltimatePowerRPC
+  - SwitchToMainWeaponRPC
+  - SwitchToTelautographRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

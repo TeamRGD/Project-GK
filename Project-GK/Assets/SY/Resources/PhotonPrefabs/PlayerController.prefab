@@ -214,7 +214,8 @@ GameObject:
   - component: {fileID: 4247537712408725727}
   - component: {fileID: -8240542403671359594}
   - component: {fileID: 113058256778214182}
-  - component: {fileID: 8673661029720646167}
+  - component: {fileID: 5282144239006080745}
+  - component: {fileID: 9008684041429820430}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Player
@@ -424,7 +425,7 @@ MonoBehaviour:
   currentPower: 0
   maxUltimatePower: 100
   currentUltimatePower: 0
---- !u!114 &8673661029720646167
+--- !u!114 &5282144239006080745
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -439,8 +440,22 @@ MonoBehaviour:
   projectilePrefab: {fileID: 3597697435051772679, guid: 8146d7a3d8f587f42be190c577a431b8, type: 3}
   projectileSpawnPoint: {fileID: 4332204649014202706}
   attackCool: 0.5
-  projectileSpeed: 20
+  projectileSpeed: 40
   maxRayDistance: 1000
+--- !u!114 &9008684041429820430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2168532157115527428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5074aeea017a88d4fbe7f3d1104f85c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainWeapon: {fileID: 5720005472292295632}
+  telautograph: {fileID: 5954879558237386090}
 --- !u!1 &4848725712111836449
 GameObject:
   m_ObjectHideFlags: 0
