@@ -5,39 +5,35 @@ using UnityEngine.AI;
 
 public class Boss2 : MonoBehaviour
 {
-    public int maxHealth = 100;
+    #region variables
+    private int maxHealth = 100;
     private int currentHealth;
 
     private int magicCircleCount = 0;
-
-    private int attackCount = 0;
-
+    private int bossAttackCount = 0;
     private int successCount = 0;
-
-    private bool isGroggy = false;
-
-    private int pattern2Count = 0;
     private int attackOrderCount = 0;
 
+    private bool isGroggy = false;
     private bool isExecutingPattern = false;
     private bool isExecutingAttack = false;
     private bool hasExecutedInitialActions = false;
     private bool canDisplay = true;
-
-    private List<int> correctOrder = new List<int>();
-    private List<int> playerOrder = new List<int>();
+    private bool canControlSpeed = false;
 
     private List<Vector3> storedPositions = new List<Vector3>();
     private List<System.Action> storedAttacks = new List<System.Action>();
 
-    private NavMeshAgent navMeshAgent;
+    private List<int> correctOrder = new List<int>();
+    private List<int> playerOrder = new List<int>();
 
+    private NavMeshAgent navMeshAgent;
     private Animator animator;
 
     private BTNode pattern1Tree;
     private BTNode pattern2Tree;
     private BTNode pattern3Tree;
-
+    #endregion
 
     void Start()
     {
@@ -86,7 +82,9 @@ public class Boss2 : MonoBehaviour
                 {
                     if (!hasExecutedInitialActions)
                     {
-                        StartCoroutine(ExecutePattern2InitialActions());
+                        LightFourTorches();
+                        StartCoroutine(MoveAndAttack());
+                        ExtinguishAllTorches();
                         hasExecutedInitialActions = true;
                     }
 
@@ -132,7 +130,7 @@ public class Boss2 : MonoBehaviour
         return new Sequence(
             new ActionNode(MoveToStoredPosition),
             new ActionNode(PerformStoredAttack),
-            new ActionNode(ResetPattern2Count)
+            new ActionNode(ResetBossAttackCount)
         );
     }
 
@@ -156,6 +154,20 @@ public class Boss2 : MonoBehaviour
         );
     }
 
+    IEnumerator ExecutePattern(BTNode patternTree)
+    {
+        isExecutingPattern = true;
+        isGroggy = false;
+
+        while (!isGroggy)
+        {
+            patternTree.Execute();
+            yield return null;
+        }
+
+        isExecutingPattern = false;
+    }
+
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
@@ -165,9 +177,18 @@ public class Boss2 : MonoBehaviour
         }
     }
 
+    bool SetGroggy()
+    {
+        isGroggy = true; // 일단 이거 켜지면 로직은 실행 안됨
+        //animator.SetTrigger("Groggy");
+        navMeshAgent.isStopped = true; // 이중 멈춤이면 없애도 됨
+        return true;
+    }
+
+    // 기본 공격 (공격시 이펙트 구현해야함)
     bool RandomBasicAttack()
     {
-        if (!isExecutingPattern && !isExecutingAttack)
+        if (!isExecutingAttack)
         {
             int attackType = UnityEngine.Random.Range(1, 5);
             switch (attackType)
@@ -189,22 +210,6 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    IEnumerator ExecutePattern(BTNode patternTree)
-    {
-        isExecutingPattern = true;
-        // n = 0;
-        isGroggy = false;
-
-        while (!isGroggy)
-        {
-            patternTree.Execute();
-            yield return null;
-        }
-
-        isExecutingPattern = false;
-    }
-
-    // 기본 공격
     IEnumerator DashAndSlash()
     {
         isExecutingAttack = true;
@@ -273,61 +278,63 @@ public class Boss2 : MonoBehaviour
     }
 
     // 패턴 1
-    bool ControlSpeed()
-    {
-        if (magicCircleCount >= 5 && magicCircleCount < 6)
-        {
-            navMeshAgent.speed *= 0.5f; // 속도 50%
-        }
-        else if (magicCircleCount >= 6 && magicCircleCount < 7)
-        {
-            navMeshAgent.speed *= 0.4f; // 속도 40%
-        }
-        else if (magicCircleCount >= 7 && magicCircleCount < 8)
-        {
-            navMeshAgent.speed *= 0.3f; // 속도 30%
-        }
-        return true;
-    }
-
-
-    bool SetGroggy()
-    {
-        isGroggy = true;
-        //animator.SetTrigger("Groggy");
-        navMeshAgent.isStopped = true;
-        return true;
-    }
-
-    bool ReduceDamage()
+    void ReduceDamage()
     {
         // Debug.Log("Damage taken reduced by 90%");
-        return true;
     }
 
-    bool SpinAndExtinguishTorches()
+    void SpinAndExtinguishTorches() // 코루틴으로 구현해야할듯
     {
         // Debug.Log("Spinning quickly to extinguish all torches");
-        return true;
     }
 
-    bool LightMagicCircle()
+    void LightMagicCircle()
     {
         // Debug.Log("Lighting the magic circle");
-        return true;
     }
 
-    bool LightBossEyesAndMouth()
+    void LightBossEyesAndMouth()
     {
         // Debug.Log("Lighting boss eyes and mouth");
+    }
+
+    bool ControlSpeed()
+    {
+        if (canControlSpeed) // 마법진에서 canControlSpeed = true; 해줘야함
+        {
+            if (magicCircleCount == 5)
+            {
+                navMeshAgent.speed *= 0.5f; // 속도 50%
+                canControlSpeed = false;
+            }
+            else if (magicCircleCount == 6)
+            {
+                navMeshAgent.speed *= 0.4f; // 속도 40%
+                canControlSpeed = false;
+            }
+            else if (magicCircleCount == 7)
+            {
+                navMeshAgent.speed *= 0.3f; // 속도 30%
+                canControlSpeed = false;
+            }
+        }
         return true;
     }
 
     // 패턴 2
-    IEnumerator ExecutePattern2InitialActions()
-    {
-        LightFourTorches();
 
+    void LightFourTorches()
+    {
+        // Debug.Log("Lighting 4 torches");
+    }
+
+    void ExtinguishAllTorches()
+    {
+        // Debug.Log("Extinguishing all torches");
+    }
+
+    IEnumerator MoveAndAttack()
+    {
         for (int n = 0; n < 8; n++)
         {
             Vector3 targetPosition = GetRandomPosition();
@@ -340,8 +347,6 @@ public class Boss2 : MonoBehaviour
             randomAttack.Invoke();
             yield return new WaitForSeconds(3.0f);
         }
-
-        ExtinguishAllTorches();
     }
 
     Vector3 GetRandomPosition()
@@ -363,17 +368,8 @@ public class Boss2 : MonoBehaviour
             case 4:
                 return () => StartCoroutine(Slash());
             default:
-                return () => StartCoroutine(Slash());
+                return () => StartCoroutine(DashAndSlash());
         }
-    }
-
-    bool ResetPattern2Count()
-    {
-        if (pattern2Count >= storedPositions.Count)
-        {
-            pattern2Count = 0;
-        }
-        return true;
     }
 
     IEnumerator MoveToPosition(Vector3 targetPosition)
@@ -387,9 +383,9 @@ public class Boss2 : MonoBehaviour
 
     bool MoveToStoredPosition()
     {
-        if (pattern2Count < storedPositions.Count)
+        if (bossAttackCount < storedPositions.Count)
         {
-            Vector3 targetPosition = storedPositions[pattern2Count];
+            Vector3 targetPosition = storedPositions[bossAttackCount];
             StartCoroutine(MoveToPosition(targetPosition));
             return true;
         }
@@ -398,34 +394,30 @@ public class Boss2 : MonoBehaviour
 
     bool PerformStoredAttack()
     {
-        if (pattern2Count < storedAttacks.Count)
+        if (bossAttackCount < storedAttacks.Count)
         {
-            System.Action storedAttack = storedAttacks[pattern2Count];
-            storedAttack.Invoke();
-            pattern2Count++;
+            System.Action storedAttack = storedAttacks[bossAttackCount];
+            storedAttack.Invoke(); // 딜레이 필요할 수 있음
+            bossAttackCount++;
             return true;
         }
         return false;
     }
 
-    bool LightFourTorches()
+    bool ResetBossAttackCount()
     {
-        // Debug.Log("Lighting 4 torches");
-        return true;
-    }
-
-    bool ExtinguishAllTorches()
-    {
-        // Debug.Log("Extinguishing all torches");
+        if (bossAttackCount >= storedPositions.Count)
+        {
+            bossAttackCount = 0;
+        }
         return true;
     }
 
     // 패턴 3
-    bool Roar()
+    void Roar()
     {
-        Debug.Log("Roaring");
-        //animator.SetTrigger("Roar"); // 포효 애니메이션 트리거 설정
-        return true;
+        // Debug.Log("Roaring");
+        //animator.SetTrigger("Roar");
     }
 
     bool DisplayAttackOrder()
@@ -460,7 +452,7 @@ public class Boss2 : MonoBehaviour
 
     void DisplayOrderOnUI(List<int> order)
     {
-        // UI에 order를 표시
+        // UI에 표시
     }
 
     bool CheckPlayerAttackOrder()
