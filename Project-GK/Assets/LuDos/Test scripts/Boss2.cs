@@ -17,10 +17,15 @@ public class Boss2 : MonoBehaviour
     private bool isGroggy = false;
 
     private int pattern2Count = 0;
+    private int attackOrderCount = 0;
 
     private bool isExecutingPattern = false;
     private bool isExecutingAttack = false;
     private bool hasExecutedInitialActions = false;
+    private bool canDisplay = true;
+
+    private List<int> correctOrder = new List<int>();
+    private List<int> playerOrder = new List<int>();
 
     private List<Vector3> storedPositions = new List<Vector3>();
     private List<System.Action> storedAttacks = new List<System.Action>();
@@ -37,7 +42,7 @@ public class Boss2 : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        animator = GetComponent<Animator>();
+        //animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
@@ -92,6 +97,12 @@ public class Boss2 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
+                    if (!hasExecutedInitialActions)
+                    {
+                        Roar();
+                        hasExecutedInitialActions = true;
+                    }
+
                     StartCoroutine(ExecutePattern(pattern3Tree));
                 }
             }
@@ -128,14 +139,17 @@ public class Boss2 : MonoBehaviour
     BTNode CreatePattern3Tree()
     {
         return new Sequence(
-            new ActionNode(Roar),
+            new ActionNode(RandomBasicAttack),
             new WhileNode(() => successCount < 3,
                 new Sequence(
                     new ActionNode(DisplayAttackOrder),
-                    new Selector(
-                        // new ActionNode(CheckAttackOrder),
-                        new ActionNode(DealMapWideDamage)
-                    )
+                    new WhileNode(() => attackOrderCount < 8,
+                        new Selector(
+                            new ConditionNode(CheckPlayerAttackOrder),
+                            new ActionNode(DamageAllMap)
+                        )
+                    ),
+                    new ActionNode(IncrementSuccessCount)
                 )
             ),
             new ActionNode(SetGroggy)
@@ -196,7 +210,7 @@ public class Boss2 : MonoBehaviour
         isExecutingAttack = true;
 
         // 대쉬
-        animator.SetTrigger("Dash");
+        //animator.SetTrigger("Dash");
 
         float dashTime = 1.0f;
         float dashSpeed = 10.0f;
@@ -210,7 +224,7 @@ public class Boss2 : MonoBehaviour
         }
 
         // 앞발 휘두르기
-        animator.SetTrigger("Slash");
+        //animator.SetTrigger("Slash");
         yield return new WaitForSeconds(1.0f);
 
         isExecutingAttack = false;
@@ -220,7 +234,7 @@ public class Boss2 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        animator.SetTrigger("Dash");
+        //animator.SetTrigger("Dash");
 
         float dashTime = 1.0f;
         float dashSpeed = 10.0f;
@@ -240,7 +254,7 @@ public class Boss2 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        animator.SetTrigger("Slash");
+        //animator.SetTrigger("Slash");
 
         yield return new WaitForSeconds(1.0f);
 
@@ -251,7 +265,7 @@ public class Boss2 : MonoBehaviour
     {
         isExecutingAttack = true;
  
-        animator.SetTrigger("Bite");
+        //animator.SetTrigger("Bite");
 
         yield return new WaitForSeconds(1.0f);
 
@@ -280,7 +294,7 @@ public class Boss2 : MonoBehaviour
     bool SetGroggy()
     {
         isGroggy = true;
-        animator.SetTrigger("Groggy");
+        //animator.SetTrigger("Groggy");
         navMeshAgent.isStopped = true;
         return true;
     }
@@ -410,30 +424,84 @@ public class Boss2 : MonoBehaviour
     bool Roar()
     {
         Debug.Log("Roaring");
+        //animator.SetTrigger("Roar"); // 포효 애니메이션 트리거 설정
         return true;
     }
 
     bool DisplayAttackOrder()
     {
-        Debug.Log("Displaying attack order on screen");
+        if (canDisplay)
+        {
+            Debug.Log("Displaying attack order on screen");
+
+            playerOrder = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
+            correctOrder = new List<int> { 1, 1, 1, 1, 2, 2, 2, 2 };
+            Shuffle(correctOrder);
+
+            DisplayOrderOnUI(correctOrder);
+
+            attackOrderCount = 0;
+
+            canDisplay = false;
+        }
         return true;
     }
 
-    //bool CheckAttackOrder()
-    //{
-    //    bool attackOrderOk = UnityEngine.Random.value > 0.5f;
-    //    if (attackOrderOk)
-    //    {
-    //        Debug.Log("Player attacked in correct order");
-    //        n++;
-    //    }
-    //    return attackOrderOk;
-    //}
-
-    bool DealMapWideDamage()
+    void Shuffle<T>(List<T> list)
     {
-        Debug.Log("Incorrect order, dealing damage to the entire map");
-        // 광역 공격
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
+    }
+
+    void DisplayOrderOnUI(List<int> order)
+    {
+        // UI에 order를 표시
+    }
+
+    bool CheckPlayerAttackOrder()
+    {
+        if (playerOrder[attackOrderCount] != 0)
+        {
+            if (playerOrder[attackOrderCount] == correctOrder[attackOrderCount])
+            {
+                attackOrderCount++;
+                return true;
+            }
+            return false;
+        }
         return false;
+    }
+
+    bool DamageAllMap()
+    {
+        if (playerOrder[attackOrderCount] != 0)
+        {
+            // 맵 전체에 데미지를 입히는 로직
+
+
+            attackOrderCount = 0;
+            canDisplay = true;
+        }
+        return false; // true여도 상관없을듯
+    }
+
+    bool IncrementSuccessCount()
+    {
+        if (attackOrderCount >= 8)
+        {
+            successCount++;
+            canDisplay = true;
+        }
+        return true;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // 어떤 플레이어가 공격했는지 구분하여 playerOrder에 추가
     }
 }
