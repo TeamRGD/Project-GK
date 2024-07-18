@@ -143,7 +143,7 @@ public class Boss2 : MonoBehaviour
                     new ActionNode(DisplayAttackOrder),
                     new WhileNode(() => attackOrderCount < 8,
                         new Selector(
-                            new ConditionNode(CheckPlayerAttackOrder),
+                            new ActionNode(CheckPlayerAttackOrder),
                             new ActionNode(DamageAllMap)
                         )
                     ),
