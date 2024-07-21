@@ -1,21 +1,36 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Boss1 : MonoBehaviour
 {
     public int maxHealth = 100;
     private int currentHealth;
 
-    private BTNode behaviorTree;
-    private int decodeCount = 0;
-    private bool isAggroSelected = false;
-    private bool isCorrectCode = false;
-    private bool isExecutingPattern3 = false;
+    private int successCount = 0;
+
+    private bool isGroggy = false;
+    private bool isExecutingPattern = false;
+    // private bool isExecutingAttack = false;
+    private bool hasExecutedInitialActions = false;
+
+    private bool canChange = true;
+
+    // private NavMeshAgent navMeshAgent;
+    // private Animator animator;
+
+    private BTNode pattern1Tree;
+    private BTNode pattern2Tree;
+    private BTNode pattern3Tree;
 
     void Start()
     {
         currentHealth = maxHealth;
-        behaviorTree = CreateBehaviorTree();
+        //animator = GetComponent<Animator>();
+        // navMeshAgent = GetComponent<NavMeshAgent>();
+        pattern1Tree = CreatePattern1Tree();
+        pattern2Tree = CreatePattern2Tree();
+        pattern3Tree = CreatePattern3Tree();
         StartCoroutine(ExecuteBehaviorTree());
     }
 
@@ -34,39 +49,92 @@ public class Boss1 : MonoBehaviour
         {
             if (currentHealth > 66)
             {
-                if (!isExecutingPattern3)
+                if (!isExecutingPattern)
                 {
-                    StartCoroutine(ExecutePattern3());
+                    if (!hasExecutedInitialActions)
+                    {
+                        MakeInvincible();
+                        LeftArmSlam();
+                        hasExecutedInitialActions = true;
+                    }
+
+                    StartCoroutine(ExecutePattern(pattern1Tree));
                 }
             }
             else if (currentHealth > 33)
             {
-                behaviorTree.Execute();
+                if (!isExecutingPattern)
+                {
+                    if (!hasExecutedInitialActions)
+                    {
+
+                        hasExecutedInitialActions = true;
+                    }
+
+                    StartCoroutine(ExecutePattern(pattern2Tree));
+                }
             }
             else
             {
-                ExecutePattern2();
+                if (!isExecutingPattern)
+                {
+                    if (!hasExecutedInitialActions)
+                    {
+
+                        hasExecutedInitialActions = true;
+                    }
+
+                    StartCoroutine(ExecutePattern(pattern3Tree));
+                }
             }
             yield return null;
         }
     }
 
-    BTNode CreateBehaviorTree()
+    BTNode CreatePattern1Tree()
     {
         return new Sequence(
-            new ActionNode(MakeInvulnerable),
-            new ActionNode(GroundSlam),
-            new ActionNode(HighlightBooks),
-            new ActionNode(ChooseAggroTarget),
-            new ActionNode(ActivateCodeInput),
-            new Selector(
+            new ActionNode(ChangeBooksToGreen),
+            new ActionNode(SelectAggroTarget),
+            new ActionNode(ChangeStaffToRed),
+            new ActionNode(ActivateCipherDevice),
+            new ActionNode(RandomBasicAttack),
+            new WhileNode(() => successCount < 3,
                 new Sequence(
-                    new ActionNode(CheckCorrectCode),
-                    new ActionNode(HandleCorrectCode)
+                    new ActionNode(IsCipherCorrect),
+                    new ActionNode(ResetBookLightsAndAggro)
+                    )
                 ),
-                new ActionNode(PerformRandomAttack)
-            )
+            new ActionNode(ReleaseInvincibilityAndGroggy)
         );
+    }
+
+    BTNode CreatePattern2Tree()
+    {
+        return new Sequence(
+            
+        );
+    }
+
+    BTNode CreatePattern3Tree()
+    {
+        return new Sequence(
+            
+        );
+    }
+
+    IEnumerator ExecutePattern(BTNode patternTree)
+    {
+        isExecutingPattern = true;
+        isGroggy = false;
+
+        while (!isGroggy)
+        {
+            patternTree.Execute();
+            yield return null;
+        }
+
+        isExecutingPattern = false;
     }
 
     public void TakeDamage(int amount)
@@ -78,95 +146,95 @@ public class Boss1 : MonoBehaviour
         }
     }
 
-    bool MakeInvulnerable()
+    bool SetGroggy()
     {
-        Debug.Log("Boss is now invulnerable");
+        isGroggy = true; // 일단 이거 켜지면 로직은 실행 안됨
+        //animator.SetTrigger("Groggy");
+        // navMeshAgent.isStopped = true; // 이중 멈춤이면 없애도 됨
         return true;
     }
 
-    bool GroundSlam()
+    bool RandomBasicAttack()
     {
-        Debug.Log("Performing ground slam");
+        // 어그로 대상에게 기본 공격 (4개 중 랜덤)
         return true;
     }
 
-    bool HighlightBooks()
+    // 패턴 1
+    void MakeInvincible()
     {
-        Debug.Log("Highlighting books");
-        return true;
+        // 무적 전환 코드
     }
 
-    bool ChooseAggroTarget()
+    void LeftArmSlam()
     {
-        isAggroSelected = UnityEngine.Random.value > 0.5f;
-        Debug.Log("Aggro target selected: " + isAggroSelected);
-        return true;
+        // 왼쪽 팔 땅 내려치는 애니메이션 재생
     }
 
-    bool ActivateCodeInput()
+    bool ChangeBooksToGreen()
     {
-        Debug.Log("Activating code input device");
-        return true;
-    }
-
-    bool CheckCorrectCode()
-    {
-        isCorrectCode = UnityEngine.Random.value > 0.5f;
-        return isCorrectCode;
-    }
-
-    bool HandleCorrectCode()
-    {
-        Debug.Log("Correct code entered");
-        decodeCount++;
-        if (decodeCount >= 3)
+        // N개의 책장에서 특정 책들을 연두색으로 변경
+        if (canChange)
         {
-            Debug.Log("Boss is now groggy");
-        }
-        else
-        {
-            Debug.Log("Resetting for next decoding");
+
+            canChange = false;
         }
         return true;
     }
 
-    bool PerformRandomAttack()
+    bool SelectAggroTarget()
     {
-        int attackType = UnityEngine.Random.Range(1, 5);
-        switch (attackType)
+        // 어그로 대상 선정 (50% 확률. 무작위)
+        if (canChange)
         {
-            case 1:
-                Debug.Log("Attacking with spin attack");
-                break;
-            case 2:
-                Debug.Log("Attacking with double arm");
-                break;
-            case 3:
-                Debug.Log("Attacking with single arm");
-                break;
-            case 4:
-                Debug.Log("Attacking with kick");
-                break;
+
+            canChange = false;
         }
         return true;
     }
 
-    // 패턴 3 구현 (체력이 66 이상일 때 수행)
-    IEnumerator ExecutePattern3()
+    bool ChangeStaffToRed()
     {
-        isExecutingPattern3 = true;
-        Debug.Log("Executing Pattern 3");
-        // 패턴 3의 동작을 여기에 구현
+        // 어그로 아닌 플레이어 지팡이 붉은색으로 변경
+        if (canChange)
+        {
 
-        yield return new WaitForSeconds(5.0f); // 5초 대기
-
-        isExecutingPattern3 = false;
+            canChange = false;
+        }
+        return true;
     }
 
-    // 패턴 2 구현 (체력이 33 이하일 때 수행)
-    void ExecutePattern2()
+    bool ActivateCipherDevice()
     {
-        Debug.Log("Executing Pattern 2");
-        // 패턴 2의 동작을 여기에 구현
+        // 중앙에 암호 입력 장치 활성화
+        if (canChange)
+        {
+
+            canChange = false;
+        }
+        return true;
+    }
+
+    bool IsCipherCorrect()
+    {
+        // 옳은 암호 입력시, true 출력. 틀릴시, false 출력.
+        return true;
+    }
+
+    bool ResetBookLightsAndAggro()
+    {
+        // 책의 빛을 끄고 보스 어그로 풀기, 카운트 + 1
+
+        canChange = true;
+        successCount++;
+
+        return true;
+    }
+
+    bool ReleaseInvincibilityAndGroggy()
+    {
+        // 무적 상태 해제 및 그로기
+
+        return SetGroggy();
     }
 }

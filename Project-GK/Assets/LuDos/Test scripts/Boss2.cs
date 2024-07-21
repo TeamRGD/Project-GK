@@ -17,7 +17,8 @@ public class Boss2 : MonoBehaviour
     private bool isGroggy = false;
     private bool isExecutingPattern = false;
     private bool isExecutingAttack = false;
-    private bool hasExecutedInitialActions = false;
+    private bool hasExecutedInitialActions = false; // 패턴마다 존재해야할듯
+
     private bool canDisplay = true;
     private bool canControlSpeed = false;
 
@@ -185,7 +186,7 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    // 기본 공격 (공격시 이펙트 구현해야함)
+    // 기본 공격 (공격시 이펙트 구현해야함 + 타겟 설정해야함)
     bool RandomBasicAttack()
     {
         if (!isExecutingAttack)
