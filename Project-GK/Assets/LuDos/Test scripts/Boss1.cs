@@ -74,7 +74,7 @@ public class Boss1 : MonoBehaviour
                     StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
-            else
+            else if (currentHealth > 0)
             {
                 if (!isExecutingPattern)
                 {
@@ -86,6 +86,11 @@ public class Boss1 : MonoBehaviour
 
                     StartCoroutine(ExecutePattern(pattern3Tree));
                 }
+            }
+            else
+            {
+                Die();
+                break;
             }
             yield return null;
         }
@@ -152,6 +157,13 @@ public class Boss1 : MonoBehaviour
         //animator.SetTrigger("Groggy");
         // navMeshAgent.isStopped = true; // ¿Ã¡ﬂ ∏ÿ√„¿Ã∏È æ¯æ÷µµ µ 
         return true;
+    }
+
+    void Die()
+    {
+        //navMeshAgent.isStopped = true;
+
+        //animator.SetTrigger("Die");
     }
 
     bool RandomBasicAttack()

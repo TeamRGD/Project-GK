@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,7 +18,9 @@ public class Boss2 : MonoBehaviour
     private bool isGroggy = false;
     private bool isExecutingPattern = false;
     private bool isExecutingAttack = false;
-    private bool hasExecutedInitialActions = false; // 패턴마다 존재해야할듯
+    private bool hasExecutedInitialActions1 = false;
+    private bool hasExecutedInitialActions2 = false;
+    private bool hasExecutedInitialActions3 = false;
 
     private bool canDisplay = true;
     private bool canControlSpeed = false;
@@ -52,8 +55,18 @@ public class Boss2 : MonoBehaviour
         // 데미지 확인용
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            TakeDamage(10);
+            TakeDamage(1);
             Debug.Log("Boss Health: " + currentHealth);
+        }
+
+        // 실험용
+        if (Input.GetMouseButtonDown(0))
+        {
+            playerOrder[attackOrderCount] = 1;
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            magicCircleCount++;
         }
     }
 
@@ -65,13 +78,14 @@ public class Boss2 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
-                    if (!hasExecutedInitialActions)
+                    if (!hasExecutedInitialActions1)
                     {
-                        ReduceDamage();
+                        MakeInvincible();
                         SpinAndExtinguishTorches();
                         LightMagicCircle();
                         LightBossEyesAndMouth();
-                        hasExecutedInitialActions = true;
+
+                        hasExecutedInitialActions1 = true;
                     }
 
                     StartCoroutine(ExecutePattern(pattern1Tree));
@@ -81,29 +95,46 @@ public class Boss2 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
-                    if (!hasExecutedInitialActions)
+                    if (!hasExecutedInitialActions2)
                     {
+                        if (isGroggy)
+                        {
+                            StopCoroutine(ExecutePattern(pattern1Tree));
+                            isGroggy = false;
+                            navMeshAgent.isStopped = false;
+                        }
+
                         LightFourTorches();
                         StartCoroutine(MoveAndAttack());
                         ExtinguishAllTorches();
-                        hasExecutedInitialActions = true;
+
+                        hasExecutedInitialActions2 = true;
                     }
 
                     StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
-            else
+            else if (currentHealth > 0)
             {
                 if (!isExecutingPattern)
                 {
-                    if (!hasExecutedInitialActions)
+                    if (!hasExecutedInitialActions3)
                     {
+                        StopCoroutine(ExecutePattern(pattern2Tree));
+
                         Roar();
-                        hasExecutedInitialActions = true;
+
+                        hasExecutedInitialActions3 = true;
                     }
 
                     StartCoroutine(ExecutePattern(pattern3Tree));
                 }
+            }
+            else
+            {
+                StopCoroutine(ExecutePattern(pattern3Tree));
+                Die();
+                break;
             }
             yield return null;
         }
@@ -158,7 +189,7 @@ public class Boss2 : MonoBehaviour
     IEnumerator ExecutePattern(BTNode patternTree)
     {
         isExecutingPattern = true;
-        isGroggy = false;
+        // isGroggy = false;
 
         while (!isGroggy)
         {
@@ -180,10 +211,19 @@ public class Boss2 : MonoBehaviour
 
     bool SetGroggy()
     {
+        Debug.Log("SetGroggy");
+
         isGroggy = true; // 일단 이거 켜지면 로직은 실행 안됨
         //animator.SetTrigger("Groggy");
         navMeshAgent.isStopped = true; // 이중 멈춤이면 없애도 됨
         return true;
+    }
+
+    void Die()
+    {
+        navMeshAgent.isStopped = true;
+
+        // animator.SetTrigger("Die");
     }
 
     // 기본 공격 (공격시 이펙트 구현해야함 + 타겟 설정해야함)
@@ -191,6 +231,8 @@ public class Boss2 : MonoBehaviour
     {
         if (!isExecutingAttack)
         {
+            Debug.Log("RandomBasicAttack");
+
             int attackType = UnityEngine.Random.Range(1, 5);
             switch (attackType)
             {
@@ -213,6 +255,8 @@ public class Boss2 : MonoBehaviour
 
     IEnumerator DashAndSlash()
     {
+        Debug.Log("DashAndSlash");
+
         isExecutingAttack = true;
 
         // 대쉬
@@ -231,13 +275,15 @@ public class Boss2 : MonoBehaviour
 
         // 앞발 휘두르기
         //animator.SetTrigger("Slash");
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(4.0f);
 
         isExecutingAttack = false;
     }
 
     IEnumerator Dash()
     {
+        Debug.Log("Dash");
+
         isExecutingAttack = true;
 
         //animator.SetTrigger("Dash");
@@ -253,56 +299,64 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
+        yield return new WaitForSeconds(4.0f);
+
         isExecutingAttack = false;
     }
 
     IEnumerator Slash()
     {
+        Debug.Log("Slash");
+
         isExecutingAttack = true;
 
         //animator.SetTrigger("Slash");
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(4.0f);
 
         isExecutingAttack = false;
     }
 
     IEnumerator Bite()
     {
+        Debug.Log("Bite");
+
         isExecutingAttack = true;
  
         //animator.SetTrigger("Bite");
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(4.0f);
 
         isExecutingAttack = false;
     }
 
     // 패턴 1
-    void ReduceDamage()
+    void MakeInvincible()
     {
-        // Debug.Log("Damage taken reduced by 90%");
+        Debug.Log("MakeInvincible");
     }
 
     void SpinAndExtinguishTorches() // 코루틴으로 구현해야할듯
     {
-        // Debug.Log("Spinning quickly to extinguish all torches");
+        Debug.Log("SpinAndExtinguishTorches");
     }
 
     void LightMagicCircle()
     {
-        // Debug.Log("Lighting the magic circle");
+        Debug.Log("LightMagicCircle");
     }
 
     void LightBossEyesAndMouth()
     {
-        // Debug.Log("Lighting boss eyes and mouth");
+        Debug.Log("LightBossEyesAndMouth");
     }
 
     bool ControlSpeed()
     {
         if (canControlSpeed) // 마법진에서 canControlSpeed = true; 해줘야함
         {
+            Debug.Log("ControlSpeed");
+
             if (magicCircleCount == 5)
             {
                 navMeshAgent.speed *= 0.5f; // 속도 50%
@@ -326,18 +380,17 @@ public class Boss2 : MonoBehaviour
 
     void LightFourTorches()
     {
-        // Debug.Log("Lighting 4 torches");
-    }
-
-    void ExtinguishAllTorches()
-    {
-        // Debug.Log("Extinguishing all torches");
+        Debug.Log("LightFourTorches");
     }
 
     IEnumerator MoveAndAttack()
     {
+        Debug.Log("MoveAndAttack");
+
         for (int n = 0; n < 8; n++)
         {
+            Debug.Log("MoveAndAttack " + n);
+
             Vector3 targetPosition = GetRandomPosition();
             System.Action randomAttack = GetRandomAttack();
 
@@ -348,6 +401,11 @@ public class Boss2 : MonoBehaviour
             randomAttack.Invoke();
             yield return new WaitForSeconds(3.0f);
         }
+    }
+
+    void ExtinguishAllTorches()
+    {
+        Debug.Log("ExtinguishAllTorches");
     }
 
     Vector3 GetRandomPosition()
@@ -380,10 +438,14 @@ public class Boss2 : MonoBehaviour
         {
             yield return null;
         }
+
+        yield return new WaitForSeconds(1.0f);
     }
 
     bool MoveToStoredPosition()
     {
+        Debug.Log("MoveToStoredPosition");
+
         if (bossAttackCount < storedPositions.Count)
         {
             Vector3 targetPosition = storedPositions[bossAttackCount];
@@ -395,10 +457,15 @@ public class Boss2 : MonoBehaviour
 
     bool PerformStoredAttack()
     {
+        Debug.Log("PerformStoredAttack");
+
         if (bossAttackCount < storedAttacks.Count)
         {
             System.Action storedAttack = storedAttacks[bossAttackCount];
             storedAttack.Invoke(); // 딜레이 필요할 수 있음
+
+            Debug.Log("bossAttackCount: " + bossAttackCount);
+
             bossAttackCount++;
             return true;
         }
@@ -409,6 +476,8 @@ public class Boss2 : MonoBehaviour
     {
         if (bossAttackCount >= storedPositions.Count)
         {
+            Debug.Log("ResetBossAttackCount");
+
             bossAttackCount = 0;
         }
         return true;
@@ -417,7 +486,7 @@ public class Boss2 : MonoBehaviour
     // 패턴 3
     void Roar()
     {
-        // Debug.Log("Roaring");
+        Debug.Log("Roar");
         //animator.SetTrigger("Roar");
     }
 
@@ -425,10 +494,11 @@ public class Boss2 : MonoBehaviour
     {
         if (canDisplay)
         {
-            Debug.Log("Displaying attack order on screen");
+            Debug.Log("DisplayAttackOrder");
 
             playerOrder = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-            correctOrder = new List<int> { 1, 1, 1, 1, 2, 2, 2, 2 };
+            // correctOrder = new List<int> { 1, 1, 1, 1, 2, 2, 2, 2 };
+            correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 실험용
             Shuffle(correctOrder);
 
             DisplayOrderOnUI(correctOrder);
@@ -462,6 +532,9 @@ public class Boss2 : MonoBehaviour
         {
             if (playerOrder[attackOrderCount] == correctOrder[attackOrderCount])
             {
+                Debug.Log("AttackOrder Correct");
+                Debug.Log("AttackOrder: " + attackOrderCount);
+
                 attackOrderCount++;
                 return true;
             }
@@ -475,7 +548,7 @@ public class Boss2 : MonoBehaviour
         if (playerOrder[attackOrderCount] != 0)
         {
             // 맵 전체에 데미지를 입히는 로직
-
+            Debug.Log("DamageAllMap");
 
             attackOrderCount = 0;
             canDisplay = true;
@@ -487,6 +560,9 @@ public class Boss2 : MonoBehaviour
     {
         if (attackOrderCount >= 8)
         {
+            Debug.Log("IncrementSuccessCount");
+            Debug.Log("SuccessCount: " + successCount);
+
             successCount++;
             canDisplay = true;
         }
