@@ -69,6 +69,7 @@ public class PlayerAttack : MonoBehaviour
     [PunRPC]
     void AttackRPC(int count) // 1타, 2타 -> 마력 10 소모, 3타 -> 마력 15 소모.
     {
+        if (!PV.IsMine) return;
         if (count < 2)
         {
             attackCount++;
@@ -105,21 +106,33 @@ public class PlayerAttack : MonoBehaviour
 
             // 투사체 생성
             GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));
-            Rigidbody rb;
-            projectile.TryGetComponent<Rigidbody>(out rb);
-            if (rb != null)
-            {
-                rb.velocity = direction  * projectileSpeed;
-            }
-            
-            // 투사체의 공격력, 오너 설정
-            Projectile projScript;
-            projectile.TryGetComponent<Projectile>(out projScript);
-            if (projScript != null)
-            {
-                projScript.attackPower = (count < 2) ? 20 : 30;
-                projScript.SetOwner(PV.ViewID);
-            }
+
+            PV.RPC("ProjectileSetting", RpcTarget.AllBuffered, projectile.GetComponent<PhotonView>().ViewID, direction, count);
+        }
+    }
+
+    [PunRPC]
+    void ProjectileSetting(int projectileViewID, Vector3 direction, int count)
+    {
+        // 투사체 찾기
+        PhotonView projectileView = PhotonView.Find(projectileViewID);
+        GameObject projectile = projectileView.gameObject;
+
+        // 투사체의 공격력, 오너 설정
+        Projectile projScript;
+        projectile.TryGetComponent<Projectile>(out projScript);
+        if (projScript != null)
+        {
+            projScript.attackPower = (count < 2) ? 20 : 30;
+            projScript.SetOwner(PV.ViewID);
+        }
+
+        // 투사체의 속도 설정
+        Rigidbody rb;
+        projectile.TryGetComponent<Rigidbody>(out rb);
+        if (rb != null)
+        {
+            rb.velocity = direction  * projectileSpeed;
         }
     }
 }

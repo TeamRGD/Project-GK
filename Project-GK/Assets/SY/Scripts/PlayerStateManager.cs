@@ -47,6 +47,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (!PV.IsMine)
+            return;
         PV.RPC("TakeDamageRPC", RpcTarget.AllBuffered, damage);
     }
     
@@ -79,6 +81,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public void IncreaseUltimatePower(int amount)
     {
+        if (!PV.IsMine)
+            return;
         PV.RPC("IncreaseUltimatePowerRPC", RpcTarget.AllBuffered, amount);
     }
 
@@ -94,6 +98,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public void DecreasePower(int amount)
     {
+        if (!PV.IsMine)
+            return;
         PV.RPC("DecreasePowerRPC", RpcTarget.AllBuffered, amount);
     }
 
@@ -105,6 +111,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public void ResetUltimatePower()
     {
+        if (!PV.IsMine)
+            return;
         PV.RPC("ResetUltimatePowerRPC", RpcTarget.AllBuffered);
     }
 

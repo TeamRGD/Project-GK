@@ -9,6 +9,12 @@ public class Projectile : MonoBehaviour
     private int ownerPhotonViewId;
     private WaitForSeconds seconds = new WaitForSeconds(10f);
     PlayerStateManager playerState;
+    PhotonView myPV;
+
+    void Awake()
+    {
+        TryGetComponent<PhotonView>(out myPV);
+    }
 
     void Start()
     {
@@ -39,8 +45,24 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void SetOwner(int photonViewId) // 해당 투사체의 주인 설정.
+    public void SetOwner(int photonViewId) // 해당 투사체의 주인 설정. 이 또한 동기화 해야 함.
     {
+        if (!myPV.IsMine)
+            return;
         ownerPhotonViewId = photonViewId;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            myPV.RPC("SetTag", RpcTarget.AllBuffered, "Projectile_Wi");
+        }
+        else
+        {
+            myPV.RPC("SetTag", RpcTarget.AllBuffered, "Projectile_Zard");
+        }
+    }
+
+    [PunRPC]
+    void SetTag(string tag)
+    {
+        gameObject.tag = tag;
     }
 }

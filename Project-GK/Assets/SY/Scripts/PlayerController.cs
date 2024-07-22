@@ -41,7 +41,6 @@ public class PlayerController : MonoBehaviour
         // 마우스 커서 제거
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        // SetFirstPos();
     }
 
     private void Update()
@@ -107,12 +106,5 @@ public class PlayerController : MonoBehaviour
         if (!PV.IsMine)
             return;
         rb.MovePosition(rb.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
-    }
-
-    void SetFirstPos()
-    {
-        if (!PV.IsMine)
-            return;
-        transform.position = RoomManager.playerFirstPositions[PV.ViewID / 1000 - 1];
     }
 }
