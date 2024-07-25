@@ -21,10 +21,16 @@ public class PlayerStateManager : MonoBehaviour
     public int currentUltimatePower; // (test) should be private.
 
     private WaitForSeconds oneSecond = new WaitForSeconds(1f);
+    PlayerController playerController;
+    PlayerAttack playerAttack;
+    PlayerToolManager playerToolManager;
 
     void Awake()
     {
         TryGetComponent<PhotonView>(out PV);
+        TryGetComponent<PlayerController>(out playerController);
+        TryGetComponent<PlayerAttack>(out playerAttack);
+        TryGetComponent<PlayerToolManager>(out playerToolManager);
     }
 
     void Start()
@@ -39,7 +45,10 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
-        // TakeDamage(10);
+        if (Input.GetKeyDown(KeyCode.K)) // 기절 테스트
+        {
+            TakeDamage(100);
+        }
     }
 
     public void TakeDamage(int damage)
@@ -53,10 +62,19 @@ public class PlayerStateManager : MonoBehaviour
     void TakeDamageRPC(int damage)
     {
         currentHealth -= damage;
-        if (currentHealth < 0)
+        if (currentHealth <= 0)
         {
             currentHealth = 0;
+            OnDeath();
         }
+    }
+
+    void OnDeath()
+    {
+        transform.rotation = Quaternion.Euler(0, 0, 90);
+        playerController.SetIsAlive(false);
+        playerAttack.SetCanAttack(false);
+        playerToolManager.SetCanChange(false);
     }
 
     IEnumerator RecoverPower() // 매초마다 마력 5씩 회복

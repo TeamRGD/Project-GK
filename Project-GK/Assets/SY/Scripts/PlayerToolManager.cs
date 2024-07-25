@@ -8,7 +8,8 @@ public class PlayerToolManager : MonoBehaviour
     PhotonView PV;
     public GameObject mainWeapon; // 주무기
     public GameObject telautograph; // 전송기
-    private int currentToolNumber = 1;
+    private int toolNumber = 1;
+    private bool canChange = true;
 
     void Awake()
     {
@@ -17,7 +18,7 @@ public class PlayerToolManager : MonoBehaviour
 
     void Update()
     {
-        if (!PV.IsMine)
+        if (!PV.IsMine || !canChange)
             return;
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -44,7 +45,7 @@ public class PlayerToolManager : MonoBehaviour
     {
         mainWeapon.SetActive(true);
         telautograph.SetActive(false);
-        currentToolNumber = 1;
+        toolNumber = 1;
     }
 
     [PunRPC]
@@ -52,11 +53,22 @@ public class PlayerToolManager : MonoBehaviour
     {
         mainWeapon.SetActive(false);
         telautograph.SetActive(true);
-        currentToolNumber = 2;
+        toolNumber = 2;
     }
 
     public int GetToolNumber()
     {
-        return currentToolNumber;
+        return toolNumber;
+    }
+
+    public void SetCanChange(bool value)
+    {
+        PV.RPC("SetCanChangeRPC", RpcTarget.AllBuffered, value);
+    }
+
+    [PunRPC]
+    void SetCanChangeRPC(bool value)
+    {
+        canChange = value;
     }
 }

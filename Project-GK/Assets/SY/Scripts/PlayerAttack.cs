@@ -12,6 +12,7 @@ public class PlayerAttack : MonoBehaviour
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
     private int attackCount = 0;
+    public bool canAttack = true; // 외부에서 설정해주는 값 (Rescue activity) <- 아마도 통합시켜야 할 듯.
     private float lastAttackTime;
     public float attackCool = 0.5f;
     public float projectileSpeed = 20f;
@@ -30,15 +31,14 @@ public class PlayerAttack : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Attack();
-        }
+        Attack();
     }
 
     public bool CanAttack()
     {
+        if (!canAttack)
+            return false;
+
         if (playerTool.GetToolNumber() == 1)
         {
             if (Time.time - lastAttackTime < attackCool)
@@ -54,13 +54,12 @@ public class PlayerAttack : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 
     public void Attack()
     {
-        if (CanAttack())
+        if (Input.GetMouseButtonDown(0)&&CanAttack())
         {
             PV.RPC("AttackRPC", RpcTarget.AllBuffered, attackCount);
         }
@@ -134,5 +133,16 @@ public class PlayerAttack : MonoBehaviour
         {
             rb.velocity = direction  * projectileSpeed;
         }
+    }
+
+    public void SetCanAttack(bool value)
+    {
+        PV.RPC("SetCanAttackRPC", RpcTarget.AllBuffered, value);
+    }
+
+    [PunRPC]
+    void SetCanAttackRPC(bool value)
+    {
+        canAttack = value;
     }
 }
