@@ -9,7 +9,7 @@ using UnityEngine.AI;
 public class Boss2 : MonoBehaviour
 {
     #region variables
-    private int maxHealth = 100;
+    private int maxHealth = 10;
     private int currentHealth;
 
     private int magicCircleCount = 0;
@@ -23,6 +23,7 @@ public class Boss2 : MonoBehaviour
     private bool hasExecutedInitialActions1 = false;
     private bool hasExecutedInitialActions2 = false;
     private bool hasExecutedInitialActions3 = false;
+    private bool hasHealthDroppedBelowThreshold = false;
 
     private bool canDisplay = true;
     private bool canControlSpeed = false;
@@ -63,18 +64,22 @@ public class Boss2 : MonoBehaviour
     void Update()
     {
         // 데미지 확인용
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             TakeDamage(1);
             Debug.Log("Boss Health: " + currentHealth);
         }
 
         // 실험용
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             playerOrder[attackOrderCount] = 1;
         }
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            playerOrder[attackOrderCount] = 2;  
+        }
+        if (Input.GetKeyDown(KeyCode.O))
         {
             magicCircleCount++;
         }
@@ -191,7 +196,7 @@ public class Boss2 : MonoBehaviour
     BTNode CreatePattern3Tree()
     {
         return new Sequence(
-            new ActionNode(RandomBasicAttack),
+            new ActionNode(DashAttack),
             new WhileNode(() => successCount < 3,
                 new Sequence(
                     new ActionNode(DisplayAttackOrder),
@@ -216,6 +221,13 @@ public class Boss2 : MonoBehaviour
         while (!isGroggy)
         {
             patternTree.Execute();
+
+            if (currentHealth <= 33 && !hasHealthDroppedBelowThreshold)
+            {
+                hasHealthDroppedBelowThreshold = true;
+                break;
+            }
+
             yield return null;
         }
 
@@ -243,6 +255,8 @@ public class Boss2 : MonoBehaviour
 
     void Die()
     {
+        Debug.Log("Die");
+
         navMeshAgent.isStopped = true;
 
         // animator.SetTrigger("Die");
@@ -285,7 +299,7 @@ public class Boss2 : MonoBehaviour
         //animator.SetTrigger("Dash");
 
         float dashTime = 1.0f;
-        float dashSpeed = 10.0f;
+        float dashSpeed = 10.0f * navMeshAgent.speed;
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
@@ -318,7 +332,7 @@ public class Boss2 : MonoBehaviour
         transform.rotation = lookRotation;
 
         float dashTime = 1.0f;
-        float dashSpeed = 10.0f;
+        float dashSpeed = 10.0f * navMeshAgent.speed;
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
@@ -339,7 +353,7 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
-        //animator.SetTrigger("Slash");
+        //animator.SetTrigger("Slash"); // 애니메이션 재생 속도 조절
 
         yield return new WaitForSeconds(4.0f);
 
@@ -351,8 +365,8 @@ public class Boss2 : MonoBehaviour
         Debug.Log("Bite");
 
         isExecutingAttack = true;
- 
-        //animator.SetTrigger("Bite");
+
+        //animator.SetTrigger("Bite"); // 애니메이션 재생 속도 조절
 
         yield return new WaitForSeconds(4.0f);
 
@@ -433,7 +447,7 @@ public class Boss2 : MonoBehaviour
 
             yield return JumpToPosition(targetPosition);
             randomAttack.Invoke();
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(3.0f);
         }
 
         isExecutingPattern = false;
@@ -528,7 +542,7 @@ public class Boss2 : MonoBehaviour
             Debug.Log("bossAttackCount: " + bossAttackCount);
 
             bossAttackCount++;
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(4.0f);
         }
         yield break;
     }
@@ -549,6 +563,17 @@ public class Boss2 : MonoBehaviour
     {
         Debug.Log("Roar");
         //animator.SetTrigger("Roar");
+    }
+
+    bool DashAttack()
+    {
+        if (!isExecutingAttack)
+        {
+            Debug.Log("DashAttack");
+
+            StartCoroutine(Dash());
+        }
+        return true;
     }
 
     bool DisplayAttackOrder()
