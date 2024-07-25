@@ -39,10 +39,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
-        if (Input.GetKeyDown(KeyCode.K)) // HP test code. should be removed.
-        {
-            TakeDamage(10);
-        }
+        // TakeDamage(10);
     }
 
     public void TakeDamage(int damage)

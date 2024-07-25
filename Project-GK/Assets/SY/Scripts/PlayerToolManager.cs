@@ -8,7 +8,7 @@ public class PlayerToolManager : MonoBehaviour
     PhotonView PV;
     public GameObject mainWeapon; // 주무기
     public GameObject telautograph; // 전송기
-    private int toolNumber = 1;
+    private int currentToolNumber = 1;
 
     void Awake()
     {
@@ -44,7 +44,7 @@ public class PlayerToolManager : MonoBehaviour
     {
         mainWeapon.SetActive(true);
         telautograph.SetActive(false);
-        toolNumber = 1;
+        currentToolNumber = 1;
     }
 
     [PunRPC]
@@ -52,11 +52,11 @@ public class PlayerToolManager : MonoBehaviour
     {
         mainWeapon.SetActive(false);
         telautograph.SetActive(true);
-        toolNumber = 2;
+        currentToolNumber = 2;
     }
 
     public int GetToolNumber()
     {
-        return toolNumber;
+        return currentToolNumber;
     }
 }

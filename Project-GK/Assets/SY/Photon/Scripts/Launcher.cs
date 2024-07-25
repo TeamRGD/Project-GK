@@ -9,10 +9,10 @@ using System.Linq;
 public class Launcher : MonoBehaviourPunCallbacks
 {
 
-    public static Launcher Instance;
+    public static Launcher instance;
     void Awake()
     {
-        Instance = this;
+        instance = this;
     }
 
     [SerializeField] TMP_InputField roomNameInputField;
