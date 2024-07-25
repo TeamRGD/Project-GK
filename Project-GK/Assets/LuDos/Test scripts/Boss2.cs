@@ -1,6 +1,8 @@
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -31,6 +33,9 @@ public class Boss2 : MonoBehaviour
     private List<int> correctOrder = new List<int>();
     private List<int> playerOrder = new List<int>();
 
+    private GameObject player;
+    public GameObject targetIndicator;
+
     private NavMeshAgent navMeshAgent;
     private Animator animator;
 
@@ -41,6 +46,11 @@ public class Boss2 : MonoBehaviour
 
     void Start()
     {
+        //if (targetIndicator != null)
+        //{
+        //    targetIndicator.SetActive(false);
+        //}
+
         currentHealth = maxHealth;
         //animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -105,13 +115,17 @@ public class Boss2 : MonoBehaviour
                         }
 
                         LightFourTorches();
-                        StartCoroutine(MoveAndAttack());
+                        yield return StartCoroutine(MoveAndAttack());
                         ExtinguishAllTorches();
 
                         hasExecutedInitialActions2 = true;
                     }
+                    if (!isExecutingPattern)
+                    {
+                        StartCoroutine(ExecutePattern(pattern2Tree));
+                    }
 
-                    StartCoroutine(ExecutePattern(pattern2Tree));
+                    // StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
             else if (currentHealth > 0)
@@ -159,10 +173,18 @@ public class Boss2 : MonoBehaviour
 
     BTNode CreatePattern2Tree()
     {
+        var jumpNode = new ActionCoroutineNode(JumpToStoredPosition, this);
+        var attackNode = new ActionCoroutineNode(PerformStoredAttack, this);
+
         return new Sequence(
-            new ActionNode(MoveToStoredPosition),
-            new ActionNode(PerformStoredAttack),
-            new ActionNode(ResetBossAttackCount)
+            jumpNode,
+            attackNode,
+            new ActionNode(() => {
+                ResetBossAttackCount();
+                jumpNode.Reset();
+                attackNode.Reset();
+                return true;
+            })
         );
     }
 
@@ -288,6 +310,13 @@ public class Boss2 : MonoBehaviour
 
         //animator.SetTrigger("Dash");
 
+        player = GameObject.FindWithTag("Player"); // player 랜덤으로 선택하는 로직 필요함
+        Debug.Log(player);
+
+        Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+        transform.rotation = lookRotation;
+
         float dashTime = 1.0f;
         float dashSpeed = 10.0f;
         float elapsedTime = 0.0f;
@@ -387,31 +416,41 @@ public class Boss2 : MonoBehaviour
     {
         Debug.Log("MoveAndAttack");
 
+        isExecutingPattern = true;
+
+        Vector3 center = new Vector3(0, 0, 0); // 중앙
+        float radius = 45.0f; // 반지름
+
         for (int n = 0; n < 8; n++)
         {
-            Debug.Log("MoveAndAttack " + n);
-
-            Vector3 targetPosition = GetRandomPosition();
+            Vector3 targetPosition = GetRandomPosition(center, radius);
             System.Action randomAttack = GetRandomAttack();
 
             storedPositions.Add(targetPosition);
             storedAttacks.Add(randomAttack);
 
-            yield return MoveToPosition(targetPosition);
+            GameObject indicator = Instantiate(targetIndicator, targetPosition, Quaternion.identity);
+
+            yield return JumpToPosition(targetPosition);
             randomAttack.Invoke();
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(1.0f);
         }
+
+        isExecutingPattern = false;
     }
+
 
     void ExtinguishAllTorches()
     {
         Debug.Log("ExtinguishAllTorches");
     }
 
-    Vector3 GetRandomPosition()
+    Vector3 GetRandomPosition(Vector3 center, float radius)
     {
-        return new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)); // 범위 조정 필요
+        Vector2 randomPoint = Random.insideUnitCircle * radius;
+        return new Vector3(center.x + randomPoint.x, center.y, center.z + randomPoint.y);
     }
+
 
     System.Action GetRandomAttack()
     {
@@ -431,45 +470,67 @@ public class Boss2 : MonoBehaviour
         }
     }
 
-    IEnumerator MoveToPosition(Vector3 targetPosition)
+    IEnumerator JumpToPosition(Vector3 targetPosition)
     {
-        navMeshAgent.SetDestination(targetPosition);
-        while (Vector3.Distance(transform.position, targetPosition) > 0.1f)
+        //if (targetIndicator != null)
+        //{
+        //    targetIndicator.transform.position = targetPosition;
+        //    targetIndicator.SetActive(true);
+        //}
+
+        Vector3 startPosition = transform.position;
+        float jumpHeight = 10.0f; // 점프 높이
+        float jumpDuration = 2.0f; // 점프 시간
+
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < jumpDuration)
         {
+            float progress = elapsedTime / jumpDuration;
+            float height = Mathf.Sin(Mathf.PI * progress) * jumpHeight; // 포물선 계산
+            navMeshAgent.Warp(Vector3.Lerp(startPosition, targetPosition, progress) + Vector3.up * height);
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        yield return new WaitForSeconds(1.0f);
+        navMeshAgent.Warp(targetPosition); // 최종 위치로 이동
+
+        yield return new WaitForSeconds(1.0f); // 점프 후 대기 시간
+
+        //if (targetIndicator != null)  
+        //{
+        //    targetIndicator.SetActive(false);
+        //}
     }
 
-    bool MoveToStoredPosition()
+    IEnumerator JumpToStoredPosition()
     {
-        Debug.Log("MoveToStoredPosition");
+        Debug.Log("JumpToStoredPosition");
 
         if (bossAttackCount < storedPositions.Count)
         {
             Vector3 targetPosition = storedPositions[bossAttackCount];
-            StartCoroutine(MoveToPosition(targetPosition));
-            return true;
+            yield return StartCoroutine(JumpToPosition(targetPosition));
+            yield return new WaitForSeconds(1.0f);
         }
-        return false;
+        yield break;
     }
 
-    bool PerformStoredAttack()
+    IEnumerator PerformStoredAttack()
     {
         Debug.Log("PerformStoredAttack");
 
         if (bossAttackCount < storedAttacks.Count)
         {
             System.Action storedAttack = storedAttacks[bossAttackCount];
-            storedAttack.Invoke(); // 딜레이 필요할 수 있음
+            storedAttack.Invoke();
 
             Debug.Log("bossAttackCount: " + bossAttackCount);
 
             bossAttackCount++;
-            return true;
+            yield return new WaitForSeconds(3.0f);
         }
-        return false;
+        yield break;
     }
 
     bool ResetBossAttackCount()
