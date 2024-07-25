@@ -13,8 +13,8 @@ public class PlayerAttack : MonoBehaviour
     public Transform projectileSpawnPoint;
     private int attackCount = 0;
     private float lastAttackTime;
-    public float attackCool = 1.0f;
-    public float projectileSpeed = 15f;
+    public float attackCool = 0.5f;
+    public float projectileSpeed = 20f;
     public float maxRayDistance = 1000f;
     Camera playerCamera;
 
