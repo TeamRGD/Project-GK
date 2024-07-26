@@ -11,6 +11,7 @@ public class PlayerStateManager : MonoBehaviour
     // HP
     public int maxHealth = 100;
     public int currentHealth; // (test) should be private.
+    private bool isAlive;
 
     // 마력
     public int maxPower = 150;
@@ -35,6 +36,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void Start()
     {
+        isAlive = true;
         currentHealth = maxHealth;
         currentPower = maxPower;
         currentUltimatePower = 0;
@@ -71,10 +73,11 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnDeath()
     {
-        transform.rotation = Quaternion.Euler(0, 0, 90);
-        playerController.SetIsAlive(false);
+        transform.rotation = Quaternion.Euler(0, 0, 90); // 임시로 기절 표현
+        playerController.SetCanMove(false);
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
+        isAlive = false;
     }
 
     IEnumerator RecoverPower() // 매초마다 마력 5씩 회복
@@ -135,5 +138,10 @@ public class PlayerStateManager : MonoBehaviour
     void ResetUltimatePowerRPC()
     {
         currentUltimatePower = 0;
+    }
+
+    public bool GetIsAlive()
+    {
+        return isAlive;
     }
 }

@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
 
     float verticalLookRotation;
     bool grounded;
-    bool isAlive;
+    bool canMove;
     Vector3 smoothMoveVelocity;
     Vector3 moveAmount;
 
@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        isAlive = true;
+        canMove = true;
         // 자신만 제어할 수 있도록
         if (!PV.IsMine)
         {
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
-        if (!PV.IsMine || !isAlive)
+        if (!PV.IsMine || !canMove)
             return;
         Look();
         Move();
@@ -110,16 +110,16 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(rb.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
     }
 
-    public void SetIsAlive(bool value)
+    public void SetCanMove(bool value)
     {
         if (!PV.IsMine)
             return;
-        PV.RPC("SetIsAliveRPC", RpcTarget.AllBuffered, value);
+        PV.RPC("SetCanMoveRPC", RpcTarget.AllBuffered, value);
     }
 
     [PunRPC]
-    void SetIsAliveRPC(bool value)
+    void SetCanMoveRPC(bool value)
     {
-        isAlive = value;
+        canMove = value;
     }
 }
