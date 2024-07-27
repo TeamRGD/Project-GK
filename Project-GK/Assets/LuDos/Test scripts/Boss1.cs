@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,11 +13,15 @@ public class Boss1 : MonoBehaviour
 
     private bool isGroggy = false;
     private bool isExecutingPattern = false;
-    // private bool isExecutingAttack = false;
+    private bool isExecutingAttack = false;
+    private bool isExecutingAreaAttack = false;
     private bool hasExecutedInitialActions = false;
 
-    private bool canChange = true;
+    private bool canChange1 = true;
+    private bool canChange2 = true;
     private bool IsCorrect = false;
+
+    private List<int> attackedAreas = new List<int>();
 
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
@@ -73,7 +78,8 @@ public class Boss1 : MonoBehaviour
                 {
                     if (!hasExecutedInitialActions)
                     {
-
+                        MakeInvincible();
+                        JumpToCenter();
                         hasExecutedInitialActions = true;
                     }
 
@@ -108,7 +114,7 @@ public class Boss1 : MonoBehaviour
             new ActionNode(ChangeBooksToGreen),
             new ActionNode(SelectAggroTarget),
             new ActionNode(ChangeStaffToRed),
-            new ActionNode(ActivateCipherDevice),
+            new ActionNode(ActivateCipherDevice1),
             new ActionNode(RandomBasicAttack),
             new WhileNode(() => successCount < 3,
                 new Sequence(
@@ -126,7 +132,7 @@ public class Boss1 : MonoBehaviour
             new WhileNode(() => attackCount < 6,
                 new ActionNode(AttackAreas)
                 ),
-            new ActionNode(ActivateCipherDevice),
+            new ActionNode(ActivateCipherDevice2),
             new ActionNode(ChargeAttack),
             new Sequence(
                 new ActionNode(IsCipherCorrect),
@@ -183,6 +189,33 @@ public class Boss1 : MonoBehaviour
     bool RandomBasicAttack()
     {
         // 어그로 대상에게 기본 공격 (6개 중 랜덤)
+        if (!isExecutingAttack)
+        {
+            Debug.Log("RandomBasicAttack");
+
+            int attackType = UnityEngine.Random.Range(1, 7);
+            //switch (attackType)
+            //{
+            //    case 1:
+            //        StartCoroutine();
+            //        break;
+            //    case 2:
+            //        StartCoroutine();
+            //        break;
+            //    case 3:
+            //        StartCoroutine();
+            //        break;
+            //    case 4:
+            //        StartCoroutine();
+            //        break;
+            //    case 5:
+            //        StartCoroutine();
+            //        break;
+            //    case 6:
+            //        StartCoroutine();
+            //        break;
+            //}
+        }
         return true;
     }
 
@@ -201,10 +234,10 @@ public class Boss1 : MonoBehaviour
     bool ChangeBooksToGreen()
     {
         // N개의 책장에서 특정 책들을 연두색으로 변경
-        if (canChange)
+        if (canChange1)
         {
 
-            canChange = false;
+            canChange1 = false;
         }
         return true;
     }
@@ -212,10 +245,10 @@ public class Boss1 : MonoBehaviour
     bool SelectAggroTarget()
     {
         // 어그로 대상 선정 (50% 확률. 무작위)
-        if (canChange)
+        if (canChange1)
         {
 
-            canChange = false;
+            canChange1 = false;
         }
         return true;
     }
@@ -223,28 +256,29 @@ public class Boss1 : MonoBehaviour
     bool ChangeStaffToRed()
     {
         // 어그로 아닌 플레이어 지팡이 붉은색으로 변경
-        if (canChange)
+        if (canChange1)
         {
 
-            canChange = false;
+            canChange1 = false;
         }
         return true;
     }
 
-    bool ActivateCipherDevice()
+    bool ActivateCipherDevice1()
     {
         // 중앙에 암호 입력 장치 활성화
-        if (canChange)
+        if (canChange1)
         {
+            // 암호 입력 장치로 암호 전달
 
-            canChange = false;
+            canChange1 = false;
         }
         return true;
     }
 
     bool IsCipherCorrect()
     {
-        // 옳은 암호 입력시, true 출력. 틀릴시, false 출력.
+        // 옳은 암호 입력시, true 출력. 틀릴 시, false 출력.
         if (IsCorrect) // IsCorrect는 암호 입력 장치에 올바른 암호가 입력되었을 때 true로 바뀜.
         {
             return true;
@@ -259,7 +293,7 @@ public class Boss1 : MonoBehaviour
     {
         // 책의 빛을 끄고 보스 어그로 풀기, 카운트 + 1
 
-        canChange = true;
+        canChange1 = true;
         IsCorrect = false;
         successCount++;
 
@@ -274,55 +308,70 @@ public class Boss1 : MonoBehaviour
     }
 
     // 패턴 2
+    void JumpToCenter()
+    {
+        Debug.Log("JumpToCenter");
+    }
     bool AttackAreas()
     {
+        if (isExecutingAreaAttack) return false;
         StartCoroutine(AttackAreasCoroutine());
         return true;
     }
 
     IEnumerator AttackAreasCoroutine()
     {
+        isExecutingAreaAttack = true;
+
         // animator.SetTrigger("RaiseArms");
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.0f); // 애니메이션 대기 시간
 
-        // 8개의 구역 중 타격하지 않은 1개의 구역 선택 + 리스트에 저장하기
-        int untouchedArea = Random.Range(0, 8);
+        int untouchedArea = Random.Range(1, 9);
+
+        attackedAreas.Add(untouchedArea); // ActivateCipherDevice 에서 암호 입력 장치로 전달
         // Debug.Log("Untouched Area: " + untouchedArea);
 
-        // 타격
-        // animator.SetTrigger("AttackArea);
+        // animator.SetTrigger("AttackAreas");
 
         // yield return new WaitForSeconds(0.5f); // 타격 애니메이션 대기 시간
 
-        // 타격한 구역 데미지
-        // Debug.Log("Deal Damage to Area " + untouchedArea);
-
         attackCount++;
+
+        isExecutingAreaAttack = false;
     }
+    bool ActivateCipherDevice2()
+    {
+        // 중앙에 암호 입력 장치 활성화
+        if (canChange2)
+        {
+            // 암호 입력 장치로 암호 전달
+
+            canChange2 = false;
+        }
+        return true;
+    }
+
 
     bool ChargeAttack()
     {
-        StartCoroutine(ChargeAttackCoroutine());
+        if (canChange2)
+        {
+            StartCoroutine(ChargeAttackCoroutine());
+        }
         return true;
     }
 
     IEnumerator ChargeAttackCoroutine()
     {
         // 10초간 기 모으기
-        Debug.Log("Charging for 10 seconds");
         // animator.SetTrigger("Charge");
 
         yield return new WaitForSeconds(10.0f);
 
-        // 기 모으기 완료 후 공격
-        Debug.Log("Release Charged Attack");
+        // 기 발사
         // animator.SetTrigger("ReleaseCharge");
 
-        // 공격 처리 로직
-        Debug.Log("Deal Damage with Charged Attack");
-
-        // 암호 초기화
-        IsCorrect = false;
+        attackedAreas.Clear();
     }
 }

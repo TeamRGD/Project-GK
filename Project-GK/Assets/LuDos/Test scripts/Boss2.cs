@@ -9,7 +9,7 @@ using UnityEngine.AI;
 public class Boss2 : MonoBehaviour
 {
     #region variables
-    private int maxHealth = 10;
+    private int maxHealth = 100;
     private int currentHealth;
 
     private int magicCircleCount = 0;
