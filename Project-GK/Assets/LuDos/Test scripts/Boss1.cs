@@ -8,6 +8,7 @@ public class Boss1 : MonoBehaviour
     private int currentHealth;
 
     private int successCount = 0;
+    private int attackCount = 0;
 
     private bool isGroggy = false;
     private bool isExecutingPattern = false;
@@ -15,6 +16,7 @@ public class Boss1 : MonoBehaviour
     private bool hasExecutedInitialActions = false;
 
     private bool canChange = true;
+    private bool IsCorrect = false;
 
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
@@ -36,10 +38,14 @@ public class Boss1 : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             TakeDamage(10);
             Debug.Log("Boss Health: " + currentHealth);
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            IsCorrect = true;
         }
     }
 
@@ -117,7 +123,15 @@ public class Boss1 : MonoBehaviour
     BTNode CreatePattern2Tree()
     {
         return new Sequence(
-            
+            new WhileNode(() => attackCount < 6,
+                new ActionNode(AttackAreas)
+                ),
+            new ActionNode(ActivateCipherDevice),
+            new ActionNode(ChargeAttack),
+            new Sequence(
+                new ActionNode(IsCipherCorrect),
+                    new ActionNode(ReleaseInvincibilityAndGroggy)
+                    )
         );
     }
 
@@ -168,19 +182,20 @@ public class Boss1 : MonoBehaviour
 
     bool RandomBasicAttack()
     {
-        // 어그로 대상에게 기본 공격 (4개 중 랜덤)
+        // 어그로 대상에게 기본 공격 (6개 중 랜덤)
         return true;
     }
 
     // 패턴 1
     void MakeInvincible()
     {
-        // 무적 전환 코드
+        Debug.Log("MakeInvincible");
     }
 
     void LeftArmSlam()
     {
         // 왼쪽 팔 땅 내려치는 애니메이션 재생
+        Debug.Log("LeftArmSlam");
     }
 
     bool ChangeBooksToGreen()
@@ -230,7 +245,14 @@ public class Boss1 : MonoBehaviour
     bool IsCipherCorrect()
     {
         // 옳은 암호 입력시, true 출력. 틀릴시, false 출력.
-        return true;
+        if (IsCorrect) // IsCorrect는 암호 입력 장치에 올바른 암호가 입력되었을 때 true로 바뀜.
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     bool ResetBookLightsAndAggro()
@@ -238,6 +260,7 @@ public class Boss1 : MonoBehaviour
         // 책의 빛을 끄고 보스 어그로 풀기, 카운트 + 1
 
         canChange = true;
+        IsCorrect = false;
         successCount++;
 
         return true;
@@ -248,5 +271,58 @@ public class Boss1 : MonoBehaviour
         // 무적 상태 해제 및 그로기
 
         return SetGroggy();
+    }
+
+    // 패턴 2
+    bool AttackAreas()
+    {
+        StartCoroutine(AttackAreasCoroutine());
+        return true;
+    }
+
+    IEnumerator AttackAreasCoroutine()
+    {
+        // animator.SetTrigger("RaiseArms");
+
+        yield return new WaitForSeconds(1.0f);
+
+        // 8개의 구역 중 타격하지 않은 1개의 구역 선택 + 리스트에 저장하기
+        int untouchedArea = Random.Range(0, 8);
+        // Debug.Log("Untouched Area: " + untouchedArea);
+
+        // 타격
+        // animator.SetTrigger("AttackArea);
+
+        // yield return new WaitForSeconds(0.5f); // 타격 애니메이션 대기 시간
+
+        // 타격한 구역 데미지
+        // Debug.Log("Deal Damage to Area " + untouchedArea);
+
+        attackCount++;
+    }
+
+    bool ChargeAttack()
+    {
+        StartCoroutine(ChargeAttackCoroutine());
+        return true;
+    }
+
+    IEnumerator ChargeAttackCoroutine()
+    {
+        // 10초간 기 모으기
+        Debug.Log("Charging for 10 seconds");
+        // animator.SetTrigger("Charge");
+
+        yield return new WaitForSeconds(10.0f);
+
+        // 기 모으기 완료 후 공격
+        Debug.Log("Release Charged Attack");
+        // animator.SetTrigger("ReleaseCharge");
+
+        // 공격 처리 로직
+        Debug.Log("Deal Damage with Charged Attack");
+
+        // 암호 초기화
+        IsCorrect = false;
     }
 }
