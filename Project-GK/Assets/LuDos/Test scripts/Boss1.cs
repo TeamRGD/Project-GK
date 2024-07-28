@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Boss1 : MonoBehaviour
 {
@@ -10,21 +11,35 @@ public class Boss1 : MonoBehaviour
 
     private int successCount = 0;
     private int attackCount = 0;
+    private int playerAttackCount = 0;
+
+    private int selectedBookCaseIndex = 0;
+    private bool hasCollidedWithBookCase = false;
+    private int collidedBookCaseIndex = -1;
 
     private bool isGroggy = false;
     private bool isExecutingPattern = false;
     private bool isExecutingAttack = false;
     private bool isExecutingAreaAttack = false;
-    private bool hasExecutedInitialActions = false;
+    private bool isExecutingBookAttack = false;
+    private bool hasExecutedInitialActions1 = false;
+    private bool hasExecutedInitialActions2 = false;
+    private bool hasExecutedInitialActions3 = false;
+    private bool attackBookCaseResult = false;
 
     private bool canChange1 = true;
     private bool canChange2 = true;
     private bool IsCorrect = false;
+    private bool canDisplay = true;
+
+    private Vector3 targetBookCasePosition;
 
     private List<int> attackedAreas = new List<int>();
+    public List<GameObject> BookCases; // 8개의 책장의 위치를 담아둔 리스트
 
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
+    private GameObject player;
 
     private BTNode pattern1Tree;
     private BTNode pattern2Tree;
@@ -62,11 +77,11 @@ public class Boss1 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
-                    if (!hasExecutedInitialActions)
+                    if (!hasExecutedInitialActions1)
                     {
                         MakeInvincible();
                         LeftArmSlam();
-                        hasExecutedInitialActions = true;
+                        hasExecutedInitialActions1 = true;
                     }
 
                     StartCoroutine(ExecutePattern(pattern1Tree));
@@ -76,11 +91,11 @@ public class Boss1 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
-                    if (!hasExecutedInitialActions)
+                    if (!hasExecutedInitialActions2)
                     {
                         MakeInvincible();
                         JumpToCenter();
-                        hasExecutedInitialActions = true;
+                        hasExecutedInitialActions2 = true;
                     }
 
                     StartCoroutine(ExecutePattern(pattern2Tree));
@@ -90,10 +105,11 @@ public class Boss1 : MonoBehaviour
             {
                 if (!isExecutingPattern)
                 {
-                    if (!hasExecutedInitialActions)
+                    if (!hasExecutedInitialActions3)
                     {
-
-                        hasExecutedInitialActions = true;
+                        MakeInvincible();
+                        Scream();
+                        hasExecutedInitialActions3 = true;
                     }
 
                     StartCoroutine(ExecutePattern(pattern3Tree));
@@ -136,15 +152,25 @@ public class Boss1 : MonoBehaviour
             new ActionNode(ChargeAttack),
             new Sequence(
                 new ActionNode(IsCipherCorrect),
-                    new ActionNode(ReleaseInvincibilityAndGroggy)
-                    )
+                new ActionNode(ReleaseInvincibilityAndGroggy)
+                )
         );
     }
 
     BTNode CreatePattern3Tree()
     {
         return new Sequence(
-            
+            new ActionNode(DisplayBookCaseOrder),
+            new WhileNode(() => playerAttackCount < 8,
+                new Selector(
+                    new Sequence(
+                        new ActionNode(LightBookCase),
+                        new ActionNode(AttackBookCase)
+                        ),
+                    new ActionNode(DamageAllMap)
+                    )
+                ),
+            new ActionNode(ReleaseInvincibilityAndGroggy)
         );
     }
 
@@ -373,5 +399,114 @@ public class Boss1 : MonoBehaviour
         // animator.SetTrigger("ReleaseCharge");
 
         attackedAreas.Clear();
+    }
+
+    // 패턴 3
+    void Scream()
+    {
+        // animator.SetTrigger("Scream");
+    }
+    bool DisplayBookCaseOrder()
+    {
+        if (canDisplay)
+        {
+            // UI에 책장의 개수만큼 원 띄우기
+
+            canDisplay= false;
+        }
+        return true;
+    }
+    bool LightBookCase()
+    {
+        if (isExecutingBookAttack) return false;
+        StartCoroutine(LightBookCaseCoroutine());
+        return true;
+    }
+
+    IEnumerator LightBookCaseCoroutine()
+    {
+        isExecutingBookAttack = true;
+
+        selectedBookCaseIndex = Random.Range(0, 8);
+        
+        // BookCase의 Light ON
+
+        yield return new WaitForSeconds(1.0f);
+
+        isExecutingBookAttack = false;
+    }
+
+    bool AttackBookCase()
+    {
+        if (isExecutingBookAttack) return false;
+        StartCoroutine(AttackBookCaseCoroutine());
+        return attackBookCaseResult;
+    }
+
+    IEnumerator AttackBookCaseCoroutine()
+    {
+        isExecutingBookAttack = true;
+
+        // Player 방향으로 돌진
+
+        // animator.SetTrigger("AttackBookCase");
+
+        Vector3 startPosition = transform.position;
+        player = GameObject.FindWithTag("Player"); // 두 플레이어 번갈아가며 선택하는 로직 필요함
+
+        hasCollidedWithBookCase = false;
+        collidedBookCaseIndex = -1;
+
+        while (!hasCollidedWithBookCase)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, Time.deltaTime * (Vector3.Distance(startPosition, player.transform.position) / 1.0f));
+            yield return null;
+        }
+
+        // 돌진 후 타겟 위치와 선택된 책장 인덱스 비교
+        if (collidedBookCaseIndex == selectedBookCaseIndex)
+        {
+            attackBookCaseResult = true;
+        }
+        else
+        {
+            attackBookCaseResult = false;
+        }
+
+        yield return new WaitForSeconds(1.0f);
+
+        isExecutingBookAttack = false;
+
+        playerAttackCount++;
+    }
+    bool DamageAllMap()
+    {
+        // 맵 전역 데미지
+
+        canDisplay = true;
+        playerAttackCount= 0;
+
+        return true;
+    }
+
+    // 그 외
+    int GetCollidedBookCaseIndex(GameObject collisionObject)
+    {
+        for (int i = 0; i < BookCases.Count; i++)
+        {
+            if (BookCases[i] == collisionObject)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("BookCase"))
+        {
+            hasCollidedWithBookCase = true;
+            collidedBookCaseIndex = GetCollidedBookCaseIndex(collision.gameObject);
+        }
     }
 }
