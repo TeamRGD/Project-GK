@@ -214,35 +214,137 @@ public class Boss1 : MonoBehaviour
 
     bool RandomBasicAttack()
     {
-        // 어그로 대상에게 기본 공격 (6개 중 랜덤)
+        // 어그로 대상 지정 필요
         if (!isExecutingAttack)
         {
             Debug.Log("RandomBasicAttack");
 
             int attackType = UnityEngine.Random.Range(1, 7);
-            //switch (attackType)
-            //{
-            //    case 1:
-            //        StartCoroutine();
-            //        break;
-            //    case 2:
-            //        StartCoroutine();
-            //        break;
-            //    case 3:
-            //        StartCoroutine();
-            //        break;
-            //    case 4:
-            //        StartCoroutine();
-            //        break;
-            //    case 5:
-            //        StartCoroutine();
-            //        break;
-            //    case 6:
-            //        StartCoroutine();
-            //        break;
-            //}
+            switch (attackType)
+            {
+                case 1:
+                    StartCoroutine(SpinningArmAttackCoroutine());
+                    break;
+                case 2:
+                    StartCoroutine(ShockwaveAttackCoroutine());
+                    break;
+                case 3:
+                    StartCoroutine(AlternatingArmSlamCoroutine());
+                    break;
+                case 4:
+                    StartCoroutine(LegStompShockwaveCoroutine());
+                    break;
+                case 5:
+                    StartCoroutine(PalmStrikeCoroutine());
+                    break;
+                case 6:
+                    StartCoroutine(HalfMapSweepCoroutine());
+                    break;
+            }
         }
         return true;
+    }
+
+    IEnumerator SpinningArmAttackCoroutine()
+    {
+        isExecutingAttack = true;
+
+        // 팔을 돌리며 원형범위로 맵 전범위 타격
+        for (int i = 0; i < 4; i++)
+        {
+            // 시계방향
+            // animator.SetTrigger("SpinArmsClockwise");
+            yield return new WaitForSeconds(1.0f);
+
+            // 반시계방향
+            if (i == 1)
+            {
+                // animator.SetTrigger("SpinArmsCounterclockwise");
+                yield return new WaitForSeconds(1.0f);
+            }
+        }
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator ShockwaveAttackCoroutine()
+    {
+        isExecutingAttack = true;
+
+        // 두 팔로 타격과 동시에 3단계 충격파
+        for (int i = 0; i < 3; i++)
+        {
+            // animator.SetTrigger("Shockwave");
+
+            // 충격파 생성
+
+
+            yield return new WaitForSeconds(2.0f);
+        }
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator AlternatingArmSlamCoroutine()
+    {
+        isExecutingAttack = true;
+        Debug.Log("Alternating Arm Slam Attack");
+
+        // 각 팔을 번갈아 들어 내리치며 타격 (총 5번)
+        for (int i = 0; i < 5; i++)
+        {
+            if (i == 4)
+            {
+                // animator.SetTrigger("StrongArmSlam");
+            }
+            else
+            {
+                // animator.SetTrigger("ArmSlam" + (i % 2));
+            }
+
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator LegStompShockwaveCoroutine()
+    {
+        isExecutingAttack = true;
+
+        // 범위 타격 + 충격파
+        // animator.SetTrigger("LegStomp");
+
+        yield return new WaitForSeconds(1.0f);
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator PalmStrikeCoroutine()
+    {
+        isExecutingAttack = true;
+
+        // 손바닥으로 내려치기
+        // animator.SetTrigger("PalmStrike");
+
+        // 피격 플레이어 2초 기절
+
+
+        yield return new WaitForSeconds(2.0f);
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator HalfMapSweepCoroutine()
+    {
+        isExecutingAttack = true;
+
+        // 한 팔로 맵의 반 쓸기 (반원형태의 범위)
+        // animator.SetTrigger("HalfMapSweep");
+
+        yield return new WaitForSeconds(1.0f);
+
+        isExecutingAttack = false;
     }
 
     // 패턴 1
@@ -463,7 +565,6 @@ public class Boss1 : MonoBehaviour
             yield return null;
         }
 
-        // 돌진 후 타겟 위치와 선택된 책장 인덱스 비교
         if (collidedBookCaseIndex == selectedBookCaseIndex)
         {
             attackBookCaseResult = true;
