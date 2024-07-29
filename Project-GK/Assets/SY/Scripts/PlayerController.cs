@@ -53,6 +53,7 @@ public class PlayerController : MonoBehaviour
         Look();
         Move();
         Jump();
+        SavePlayer();
     }
 
     void Look()
@@ -121,5 +122,35 @@ public class PlayerController : MonoBehaviour
     void SetCanMoveRPC(bool value)
     {
         canMove = value;
+    }
+
+    void SavePlayer() // 수정 매우 필요. 기능 구현에만 집중해버림.
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 2.0f는 반경
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.CompareTag("Player"))
+                {
+                    PhotonView targetPV = hitCollider.GetComponent<PhotonView>();
+                    if (targetPV != null && !targetPV.IsMine)
+                    {
+                        PlayerStateManager targetPlayerState = hitCollider.GetComponent<PlayerStateManager>();
+                        if (targetPlayerState != null && !targetPlayerState.GetIsAlive())
+                        {
+                            Save(targetPlayerState);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    [PunRPC]
+    void Save(PlayerStateManager targetPlayerState)
+    {
+        targetPlayerState.Revive();
     }
 }

@@ -73,11 +73,33 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnDeath()
     {
+        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void OnDeathRPC()
+    {
+        isAlive = false;
         transform.rotation = Quaternion.Euler(0, 0, 90); // 임시로 기절 표현
         playerController.SetCanMove(false);
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
-        isAlive = false;
+    }
+
+    public void Revive()
+    {
+        PV.RPC("ReviveRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void ReviveRPC()
+    {
+        isAlive = true;
+        playerController.SetCanMove(true);
+        playerAttack.SetCanAttack(true);
+        playerToolManager.SetCanChange(true);
+        currentHealth = maxHealth;
+        transform.rotation = Quaternion.Euler(0, 0, 0); // 임시로 부활 표현
     }
 
     IEnumerator RecoverPower() // 매초마다 마력 5씩 회복
