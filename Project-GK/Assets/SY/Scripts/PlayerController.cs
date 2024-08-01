@@ -124,19 +124,21 @@ public class PlayerController : MonoBehaviour
         canMove = value;
     }
 
-    void SavePlayer() // 수정 매우 필요. 기능 구현에만 집중해버림.
+    void SavePlayer()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 2.0f는 반경
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 반경 2.0f 플레이어 주위에 있는 콜라이더 검색
             foreach (var hitCollider in hitColliders)
             {
                 if (hitCollider.CompareTag("Player"))
                 {
-                    PhotonView targetPV = hitCollider.GetComponent<PhotonView>();
+                    PhotonView targetPV;
+                    hitCollider.TryGetComponent<PhotonView>(out targetPV);
                     if (targetPV != null && !targetPV.IsMine)
                     {
-                        PlayerStateManager targetPlayerState = hitCollider.GetComponent<PlayerStateManager>();
+                        PlayerStateManager targetPlayerState;
+                        hitCollider.TryGetComponent<PlayerStateManager>(out targetPlayerState);
                         if (targetPlayerState != null && !targetPlayerState.GetIsAlive())
                         {
                             Save(targetPlayerState);
