@@ -15,7 +15,7 @@ public class Boss2 : MonoBehaviour
     private int magicCircleCount = 0;
     private int bossAttackCount = 0;
     private int successCount = 0;
-    private int attackOrderCount = 0;
+    public int attackOrderCount = 0;
 
     private bool isGroggy = false;
     private bool isExecutingPattern = false;
@@ -31,7 +31,7 @@ public class Boss2 : MonoBehaviour
     private List<Vector3> storedPositions = new List<Vector3>();
     private List<System.Action> storedAttacks = new List<System.Action>();
 
-    private List<int> correctOrder = new List<int>();
+    public List<int> correctOrder = new List<int>();
     private List<int> playerOrder = new List<int>();
 
     private GameObject player;

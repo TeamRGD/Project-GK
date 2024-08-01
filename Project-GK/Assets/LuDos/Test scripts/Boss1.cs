@@ -11,7 +11,7 @@ public class Boss1 : MonoBehaviour
 
     private int successCount = 0;
     private int attackCount = 0;
-    private int playerAttackCount = 0;
+    public int playerAttackCount = 0;
 
     private int selectedBookCaseIndex = 0;
     private bool hasCollidedWithBookCase = false;
@@ -31,6 +31,8 @@ public class Boss1 : MonoBehaviour
     private bool canChange2 = true;
     private bool IsCorrect = false;
     private bool canDisplay = true;
+
+    public int Code;
 
     private Vector3 targetBookCasePosition;
 
@@ -361,7 +363,8 @@ public class Boss1 : MonoBehaviour
 
     bool ChangeBooksToGreen()
     {
-        // N개의 책장에서 특정 책들을 연두색으로 변경
+        // 8개의 책장에서 4개의 책장 선택, 배열에 저장해둠
+        // 선택된 4개의 책장 내에서 각각 랜덤 개수만큼 책에 초록불 켜기, 각각의 개수 배열에 저장해둠
         if (canChange1)
         {
 
@@ -397,7 +400,7 @@ public class Boss1 : MonoBehaviour
         // 중앙에 암호 입력 장치 활성화
         if (canChange1)
         {
-            // 암호 입력 장치로 암호 전달
+            Code = 1111; // 임시 설정 코드, 원래 계산하는 로직임
 
             canChange1 = false;
         }
@@ -473,7 +476,7 @@ public class Boss1 : MonoBehaviour
         // 중앙에 암호 입력 장치 활성화
         if (canChange2)
         {
-            // 암호 입력 장치로 암호 전달
+            Code = 2222; // 임시, 원래 attackedAreas를 통해 전달
 
             canChange2 = false;
         }
@@ -565,20 +568,19 @@ public class Boss1 : MonoBehaviour
             yield return null;
         }
 
+        yield return new WaitForSeconds(1.0f);
+
         if (collidedBookCaseIndex == selectedBookCaseIndex)
         {
             attackBookCaseResult = true;
+            playerAttackCount++;
         }
         else
         {
             attackBookCaseResult = false;
         }
 
-        yield return new WaitForSeconds(1.0f);
-
         isExecutingBookAttack = false;
-
-        playerAttackCount++;
     }
     bool DamageAllMap()
     {
