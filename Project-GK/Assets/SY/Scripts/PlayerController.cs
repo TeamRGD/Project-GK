@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] GameObject cameraHolder; // should be edit
 
-    [SerializeField] float mouseSensitivity, sprintSpeed, walkSpeed, jumpForce, smoothTime;
+    [SerializeField] float mouseSensitivity, aimSpeed, sprintSpeed, walkSpeed, jumpForce, smoothTime;
     [SerializeField] Transform playerBody;
     [SerializeField] float distanceFromPlayer;
     [SerializeField] LayerMask collisionMask;
-    [SerializeField] PlayerStateManager playerStateManager;
+    [SerializeField] Transform aim;
 
     float verticalLookRotation;
     bool grounded;
@@ -28,7 +29,6 @@ public class PlayerController : MonoBehaviour
     {
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<PhotonView>(out PV);
-        TryGetComponent<PlayerStateManager>(out playerStateManager);
     }
 
     private void Start()
@@ -43,6 +43,8 @@ public class PlayerController : MonoBehaviour
         // 마우스 커서 제거
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        // 에임 오브젝트 초기 위치
+        //aim.localPosition = Vector3.zero;
     }
 
     private void Update()
@@ -62,6 +64,7 @@ public class PlayerController : MonoBehaviour
         float horizontalRotation = Input.GetAxisRaw("Mouse X") * mouseSensitivity;
         float verticalRotation = Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
 
+        // 카메라 회전
         playerBody.Rotate(Vector3.up * horizontalRotation);
 
         verticalLookRotation -= verticalRotation;
@@ -81,6 +84,15 @@ public class PlayerController : MonoBehaviour
         {
             cameraHolder.transform.position = cameraPosition;
         }
+
+        // 화면의 중앙에 해당하는 Ray를 쏩니다.
+        Ray ray = cameraHolder.GetComponentInChildren<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+        
+        // Ray의 방향으로 distanceFromPlayer 거리만큼 떨어진 지점을 계산합니다.
+        Vector3 desiredPosition = ray.origin + ray.direction * 10.0f;
+        
+        // 타겟 오브젝트의 위치를 부드럽게 업데이트합니다.
+        aim.position = Vector3.Lerp(aim.position, desiredPosition, aimSpeed);
     }
 
     void Move()
