@@ -118,7 +118,6 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-
     public void IncreaseUltimatePower(int amount)
     {
         if (!PV.IsMine)

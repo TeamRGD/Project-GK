@@ -12,7 +12,7 @@ public class PlayerAttack : MonoBehaviour
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
     private int attackCount = 0;
-    public bool canAttack = true; // 외부에서 설정해주는 값 (Rescue activity) <- 아마도 통합시켜야 할 듯.
+    public bool canAttack = true; // 외부에서 설정해주는 값 (Rescue activity)
     private float lastAttackTime;
     public float attackCool = 0.5f;
     public float projectileSpeed = 20f;
@@ -81,10 +81,10 @@ public class PlayerAttack : MonoBehaviour
         }
 
         lastAttackTime = Time.time;
-        FireProjectile(count);
+        ShotProjectile(count);
     }
 
-    void FireProjectile(int count) // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
+    void ShotProjectile(int count) // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
     {
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
@@ -106,12 +106,12 @@ public class PlayerAttack : MonoBehaviour
             // 투사체 생성
             GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));
 
-            PV.RPC("ProjectileSetting", RpcTarget.AllBuffered, projectile.GetComponent<PhotonView>().ViewID, direction, count);
+            PV.RPC("SetProjectileRPC", RpcTarget.AllBuffered, projectile.GetComponent<PhotonView>().ViewID, direction, count);
         }
     }
 
     [PunRPC]
-    void ProjectileSetting(int projectileViewID, Vector3 direction, int count)
+    void SetProjectileRPC(int projectileViewID, Vector3 direction, int count)
     {
         // 투사체 찾기
         PhotonView projectileView = PhotonView.Find(projectileViewID);

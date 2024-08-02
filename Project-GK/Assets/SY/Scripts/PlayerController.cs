@@ -43,8 +43,6 @@ public class PlayerController : MonoBehaviour
         // 마우스 커서 제거
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        // 에임 오브젝트 초기 위치
-        //aim.localPosition = Vector3.zero;
     }
 
     private void Update()
@@ -57,25 +55,38 @@ public class PlayerController : MonoBehaviour
         Jump();
         SavePlayer();
     }
+    
+    private void FixedUpdate()
+    {
+        if (!PV.IsMine)
+            return;
+        rb.MovePosition(rb.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
+    }
 
     void Look()
+    {
+        MoveCamera();
+        MoveAimObject();
+    }
+
+    void MoveCamera()
     {
         // TPS (3인칭 시점)
         float horizontalRotation = Input.GetAxisRaw("Mouse X") * mouseSensitivity;
         float verticalRotation = Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
 
-        // 카메라 회전
+        // Player Body Rotation
         playerBody.Rotate(Vector3.up * horizontalRotation);
 
         verticalLookRotation -= verticalRotation;
         verticalLookRotation = Mathf.Clamp(verticalLookRotation, -90f, 90f);
 
+        // Camera Rotation
         cameraHolder.transform.localEulerAngles = Vector3.right * verticalLookRotation;
-
         Vector3 cameraPosition = playerBody.position - cameraHolder.transform.forward * distanceFromPlayer;
 
-        // 벽 뚫기 방지
         RaycastHit hit;
+        // 벽 뚫기 방지
         if (Physics.Linecast(playerBody.position, cameraPosition, out hit, collisionMask))
         {
             cameraHolder.transform.position = hit.point;
@@ -84,21 +95,19 @@ public class PlayerController : MonoBehaviour
         {
             cameraHolder.transform.position = cameraPosition;
         }
+    }
 
-        // 화면의 중앙에 해당하는 Ray를 쏩니다.
+    void MoveAimObject()
+    {
+        // aim object의 위치를 옮겨 Upper body rotation
         Ray ray = cameraHolder.GetComponentInChildren<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-        
-        // Ray의 방향으로 distanceFromPlayer 거리만큼 떨어진 지점을 계산합니다.
         Vector3 desiredPosition = ray.origin + ray.direction * 10.0f;
-        
-        // 타겟 오브젝트의 위치를 부드럽게 업데이트합니다.
         aim.position = Vector3.Lerp(aim.position, desiredPosition, aimSpeed);
     }
 
     void Move()
     {
         Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-
         moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);
     }
 
@@ -113,14 +122,6 @@ public class PlayerController : MonoBehaviour
     public void SetGroundedState(bool _grounded)
     {
         grounded = _grounded;
-    }
-
-
-    void FixedUpdate()
-    {
-        if (!PV.IsMine)
-            return;
-        rb.MovePosition(rb.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
     }
 
     public void SetCanMove(bool value)
@@ -143,7 +144,7 @@ public class PlayerController : MonoBehaviour
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 반경 2.0f 플레이어 주위에 있는 콜라이더 검색
             foreach (var hitCollider in hitColliders)
             {
-                if (hitCollider.CompareTag("Player"))
+                if (hitCollider.CompareTag("Player")) // Player이면
                 {
                     PhotonView targetPV;
                     hitCollider.TryGetComponent<PhotonView>(out targetPV);
@@ -151,7 +152,7 @@ public class PlayerController : MonoBehaviour
                     {
                         PlayerStateManager targetPlayerState;
                         hitCollider.TryGetComponent<PlayerStateManager>(out targetPlayerState);
-                        if (targetPlayerState != null && !targetPlayerState.GetIsAlive())
+                        if (targetPlayerState != null && !targetPlayerState.GetIsAlive()) // isAlive가 false이면
                         {
                             Save(targetPlayerState);
                             break;
