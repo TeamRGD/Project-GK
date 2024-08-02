@@ -773,7 +773,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraHolder: {fileID: 8846499971463357096}
   mouseSensitivity: 2
-  aimSpeed: 0.15
   sprintSpeed: 5
   walkSpeed: 3
   jumpForce: 300
@@ -833,8 +832,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5074aeea017a88d4fbe7f3d1104f85c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainWeapon: {fileID: 3473220262267699999}
-  telautograph: {fileID: 7094403025439266597}
+  tools:
+  - {fileID: 3473220262267699999}
+  - {fileID: 7094403025439266597}
 --- !u!136 &7554676214059806413
 CapsuleCollider:
   m_ObjectHideFlags: 0

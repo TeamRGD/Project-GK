@@ -12,7 +12,7 @@ public class PlayerAttack : MonoBehaviour
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
     private int attackCount = 0;
-    public bool canAttack = true; // 외부에서 설정해주는 값 (Rescue activity)
+    public bool canAttack = true; // 외부에서 설정해주는 값 (Rescue activity & Tool change)
     private float lastAttackTime;
     public float attackCool = 0.5f;
     public float projectileSpeed = 20f;
@@ -39,21 +39,19 @@ public class PlayerAttack : MonoBehaviour
         if (!canAttack)
             return false;
 
-        if (playerTool.GetToolNumber() == 1)
+        if (Time.time - lastAttackTime < attackCool)
         {
-            if (Time.time - lastAttackTime < attackCool)
-            {
-                return false;
-            }
-            if (attackCount < 2 && playerState.currentPower >= 10)
-            {
-                return true;
-            }
-            else if (attackCount >= 2 && playerState.currentPower >= 15)
-            {
-                return true;
-            }
+            return false;
         }
+        if (attackCount < 2 && playerState.currentPower >= 10)
+        {
+            return true;
+        }
+        else if (attackCount >= 2 && playerState.currentPower >= 15)
+        {
+            return true;
+        }
+        
         return false;
     }
 
@@ -89,19 +87,9 @@ public class PlayerAttack : MonoBehaviour
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
             // 에임을 향해 투사체 발사
-            Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            Vector3 targetPoint;
-
-            if (Physics.Raycast(ray, out RaycastHit hit, maxRayDistance))
-            {
-                targetPoint = hit.point;
-            }
-            else
-            {
-                targetPoint = ray.GetPoint(maxRayDistance);
-            }
-
-            Vector3 direction = (targetPoint - projectileSpawnPoint.position).normalized;
+            Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            Vector3 desiredPosition = ray.origin + ray.direction * 10.0f;
+            Vector3 direction = (desiredPosition - projectileSpawnPoint.position).normalized;
 
             // 투사체 생성
             GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));

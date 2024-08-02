@@ -6,60 +6,97 @@ using UnityEngine;
 public class PlayerToolManager : MonoBehaviour
 {
     PhotonView PV;
-    public GameObject mainWeapon; // 주무기
-    public GameObject telautograph; // 전송기
-    private int toolNumber = 1;
+    PlayerAttack playerAttack;
+    public List<GameObject> tools = new List<GameObject>();
+    private int currentToolIndex = 0;
     private bool canChange = true;
 
     void Awake()
     {
         TryGetComponent<PhotonView>(out PV);
+        TryGetComponent<PlayerAttack>(out playerAttack);
+    }
+
+    void Start()
+    {
+        UpdateToolVisibility();
     }
 
     void Update()
     {
         if (!PV.IsMine || !canChange)
             return;
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SwitchToMainWeapon();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SwitchToTelautograph();
-        }
+        SwitchToNextTool();
+        SwitchToPreviousTool();
     }
 
-    public void SwitchToMainWeapon()
+    void SwitchToNextTool()
     {
-        PV.RPC("SwitchToMainWeaponRPC", RpcTarget.AllBuffered);
+        PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
     }
 
-    public void SwitchToTelautograph()
+    void SwitchToPreviousTool()
     {
-        PV.RPC("SwitchToTelautographRPC", RpcTarget.AllBuffered);
+        PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
     }
 
     [PunRPC]
-    void SwitchToMainWeaponRPC()
+    void SwitchToNextToolRPC()
     {
-        mainWeapon.SetActive(true);
-        telautograph.SetActive(false);
-        toolNumber = 1;
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            currentToolIndex = (currentToolIndex + 1) % tools.Count;
+            UpdateToolVisibility();
+        }
     }
 
     [PunRPC]
-    void SwitchToTelautographRPC()
+    void SwitchToPreviousToolRPC()
     {
-        mainWeapon.SetActive(false);
-        telautograph.SetActive(true);
-        toolNumber = 2;
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
+            UpdateToolVisibility();
+        }
     }
 
-    public int GetToolNumber()
+    void UpdateToolVisibility()
     {
-        return toolNumber;
+        PV.RPC("UpdateToolVisibilityRPC", RpcTarget.AllBuffered);
     }
+
+    [PunRPC]
+    void UpdateToolVisibilityRPC()
+    {
+        for (int i = 0; i < tools.Count; i++)
+        {
+            tools[i].SetActive(i == currentToolIndex);
+        }
+        playerAttack.SetCanAttack(currentToolIndex == 0); 
+    }
+
+    public int GetCurrentToolIndex()
+    {
+        return currentToolIndex;
+    }
+
+    /* 상호작용 부분에서 수정 필요.
+    public void AddTool(GameObject newTool)
+    {
+        PV.RPC("AddToolRPC", RpcTarget.AllBuffered, newTool.GetComponent<PhotonView>().ViewID);
+    }
+
+    [PunRPC]
+    void AddToolRPC(int newToolViewID)
+    {
+        PhotonView newToolPV = PhotonView.Find(newToolViewID);
+        if (newToolPV != null)
+        {
+            tools.Add(newToolPV.gameObject);
+            UpdateToolVisibility();
+        }
+    }
+    */
 
     public void SetCanChange(bool value)
     {
