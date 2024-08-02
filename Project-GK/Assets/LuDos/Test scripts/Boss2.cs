@@ -269,34 +269,70 @@ public class Boss2 : MonoBehaviour
         {
             Debug.Log("RandomBasicAttack");
 
-            int attackType = UnityEngine.Random.Range(1, 5);
+            int attackType = UnityEngine.Random.Range(1, 7);
             switch (attackType)
             {
                 case 1:
-                    StartCoroutine(DashAndSlash());
+                    StartCoroutine(ShortDashAndSlash());
                     break;
                 case 2:
-                    StartCoroutine(Dash());
+                    StartCoroutine(DoubleDash());
                     break;
                 case 3:
-                    StartCoroutine(Bite());
+                    StartCoroutine(HeadSlamWithShockwave());
                     break;
                 case 4:
-                    StartCoroutine(Slash());
+                    StartCoroutine(SpinAndTargetAttack());
+                    break;
+                case 5:
+                    StartCoroutine(RoarAndDash());
+                    break;
+                case 6:
+                    StartCoroutine(FocusAndSmash());
                     break;
             }
         }
         return true;
     }
 
-    IEnumerator DashAndSlash()
+    IEnumerator ShortDashAndSlash()
     {
-        Debug.Log("DashAndSlash");
+        Debug.Log("ShortDashAndSlash");
 
         isExecutingAttack = true;
 
-        // 대쉬
-        //animator.SetTrigger("Dash");
+        // 짧은 대쉬
+        //animator.SetTrigger("ShortDash");
+
+        float dashTime = 0.5f;
+        float dashSpeed = 10.0f * navMeshAgent.speed;
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < dashTime)
+        {
+            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // 양 앞발 휘두르기
+        //animator.SetTrigger("Slash");
+        yield return new WaitForSeconds(1.0f);
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator DoubleDash()
+    {
+        Debug.Log("DoubleDash");
+
+        isExecutingAttack = true;
+
+        // 첫 번째 돌진 (A 플레이어)
+        GameObject playerA = GetRandomPlayer();
+        Vector3 directionToPlayerA = (playerA.transform.position - transform.position).normalized;
+        Quaternion lookRotationA = Quaternion.LookRotation(directionToPlayerA);
+        transform.rotation = lookRotationA;
 
         float dashTime = 1.0f;
         float dashSpeed = 10.0f * navMeshAgent.speed;
@@ -309,29 +345,91 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
-        // 앞발 휘두르기
-        //animator.SetTrigger("Slash");
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(0.5f);
+
+        // 두 번째 돌진 (B 플레이어)
+        GameObject playerB = GetRandomPlayer(exclude: playerA);
+        Vector3 directionToPlayerB = (playerB.transform.position - transform.position).normalized;
+        Quaternion lookRotationB = Quaternion.LookRotation(directionToPlayerB);
+        transform.rotation = lookRotationB;
+
+        elapsedTime = 0.0f;
+
+        while (elapsedTime < dashTime)
+        {
+            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(2.0f);
 
         isExecutingAttack = false;
     }
 
-    IEnumerator Dash()
+    IEnumerator HeadSlamWithShockwave()
     {
-        Debug.Log("Dash");
+        Debug.Log("HeadSlamWithShockwave");
 
         isExecutingAttack = true;
 
-        //animator.SetTrigger("Dash");
+        //animator.SetTrigger("HeadSlam");
+        yield return new WaitForSeconds(2.0f); // 캐스팅 시간
 
-        player = GameObject.FindWithTag("Player"); // player 랜덤으로 선택하는 로직 필요함
-        Debug.Log(player);
+        // 충격파
 
-        Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
+
+        yield return new WaitForSeconds(1.0f);
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator SpinAndTargetAttack()
+    {
+        Debug.Log("SpinAndTargetAttack");
+
+        isExecutingAttack = true;
+
+        // 시계 방향 회전 및 공격
+        //animator.SetTrigger("SpinClockwise");
+        yield return new WaitForSeconds(1.0f);
+        // 공격 로직 추가
+
+        // 반시계 방향 회전 및 공격
+        //animator.SetTrigger("SpinCounterClockwise");
+        yield return new WaitForSeconds(1.0f);
+        // 공격 로직 추가
+
+        // 다시 시계 방향 회전 및 공격
+        //animator.SetTrigger("SpinClockwise");
+        yield return new WaitForSeconds(1.0f);
+        // 공격 로직 추가
+
+        yield return new WaitForSeconds(2.0f);
+
+        isExecutingAttack = false;
+    }
+
+    IEnumerator RoarAndDash()
+    {
+        Debug.Log("RoarAndDash");
+
+        isExecutingAttack = true;
+
+        //animator.SetTrigger("Roar");
+
+        // 슬로우
+        SlowAllPlayers(0.3f, 2.0f); // 2초간 30% 슬로우
+
+        yield return new WaitForSeconds(1.0f); // 슬로우 지속 시간
+
+        // 대쉬
+        GameObject targetPlayer = GetRandomPlayer();
+        Vector3 directionToPlayer = (targetPlayer.transform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
         transform.rotation = lookRotation;
 
-        float dashTime = 1.0f;
+        float dashTime = 0.5f;
         float dashSpeed = 10.0f * navMeshAgent.speed;
         float elapsedTime = 0.0f;
 
@@ -342,35 +440,57 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(4.0f);
+        // 앞발 내리찍기
+        //animator.SetTrigger("Smash");
+        yield return new WaitForSeconds(1.0f);
 
         isExecutingAttack = false;
     }
 
-    IEnumerator Slash()
+    IEnumerator FocusAndSmash()
     {
-        Debug.Log("Slash");
+        Debug.Log("FocusAndSmash");
 
         isExecutingAttack = true;
 
-        //animator.SetTrigger("Slash"); // 애니메이션 재생 속도 조절
+        // 정신 집중
+        //animator.SetTrigger("Focus");
+        yield return new WaitForSeconds(2.0f); // 정신 집중 시간 동안 받는 데미지 50% 감소
 
-        yield return new WaitForSeconds(4.0f);
+        // 내리찍기
+        //animator.SetTrigger("Smash");
+        yield return new WaitForSeconds(0.5f); // 충전 완료 후 짧은 대기
+
+        // 충격파
+
+
+        yield return new WaitForSeconds(1.0f);
 
         isExecutingAttack = false;
     }
 
-    IEnumerator Bite()
+    GameObject GetRandomPlayer(GameObject exclude = null)
     {
-        Debug.Log("Bite");
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        List<GameObject> playerList = new List<GameObject>(players);
 
-        isExecutingAttack = true;
+        if (exclude != null)
+        {
+            playerList.Remove(exclude);
+        }
 
-        //animator.SetTrigger("Bite"); // 애니메이션 재생 속도 조절
+        int randomIndex = UnityEngine.Random.Range(0, playerList.Count);
+        return playerList[randomIndex];
+    }
 
-        yield return new WaitForSeconds(4.0f);
-
-        isExecutingAttack = false;
+    void SlowAllPlayers(float slowAmount, float duration)
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            // 플레이어의 슬로우 로직 추가
+            // 예시: player.GetComponent<PlayerController>().ApplySlow(slowAmount, duration);
+        }
     }
 
     // 패턴 1
@@ -468,19 +588,23 @@ public class Boss2 : MonoBehaviour
 
     System.Action GetRandomAttack()
     {
-        int attackType = UnityEngine.Random.Range(1, 5);
+        int attackType = UnityEngine.Random.Range(1, 7);
         switch (attackType)
         {
             case 1:
-                return () => StartCoroutine(DashAndSlash());
+                return () => StartCoroutine(ShortDashAndSlash());
             case 2:
-                return () => StartCoroutine(Dash());
+                return () => StartCoroutine(DoubleDash());
             case 3:
-                return () => StartCoroutine(Bite());
+                return () => StartCoroutine(HeadSlamWithShockwave());
             case 4:
-                return () => StartCoroutine(Slash());
+                return () => StartCoroutine(SpinAndTargetAttack());
+            case 5:
+                return () => StartCoroutine(RoarAndDash());
+            case 6:
+                return () => StartCoroutine(FocusAndSmash());
             default:
-                return () => StartCoroutine(DashAndSlash());
+                return () => StartCoroutine(ShortDashAndSlash());
         }
     }
 
@@ -563,6 +687,37 @@ public class Boss2 : MonoBehaviour
     {
         Debug.Log("Roar");
         //animator.SetTrigger("Roar");
+    }
+
+    IEnumerator Dash()
+    {
+        Debug.Log("Dash");
+
+        isExecutingAttack = true;
+
+        //animator.SetTrigger("Dash");
+
+        player = GameObject.FindWithTag("Player"); // player 랜덤으로 선택하는 로직 필요함
+        Debug.Log(player);
+
+        Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+        transform.rotation = lookRotation;
+
+        float dashTime = 1.0f;
+        float dashSpeed = 10.0f * navMeshAgent.speed;
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < dashTime)
+        {
+            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(4.0f);
+
+        isExecutingAttack = false;
     }
 
     bool DashAttack()

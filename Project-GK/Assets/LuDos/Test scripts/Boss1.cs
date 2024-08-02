@@ -273,15 +273,15 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        // 두 팔로 타격과 동시에 3단계 충격파
+        // animator.SetTrigger("Shockwave");
+
+        // 3단계 충격파
         for (int i = 0; i < 3; i++)
         {
-            // animator.SetTrigger("Shockwave");
-
             // 충격파 생성
 
 
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(3.0f);
         }
 
         isExecutingAttack = false;
@@ -290,7 +290,6 @@ public class Boss1 : MonoBehaviour
     IEnumerator AlternatingArmSlamCoroutine()
     {
         isExecutingAttack = true;
-        Debug.Log("Alternating Arm Slam Attack");
 
         // 각 팔을 번갈아 들어 내리치며 타격 (총 5번)
         for (int i = 0; i < 5; i++)
@@ -314,8 +313,10 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        // 범위 타격 + 충격파
         // animator.SetTrigger("LegStomp");
+
+        // 범위 타격 + 충격파
+
 
         yield return new WaitForSeconds(1.0f);
 
@@ -326,10 +327,9 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        // 손바닥으로 내려치기
         // animator.SetTrigger("PalmStrike");
 
-        // 피격 플레이어 2초 기절
+        // 손바닥으로 내려치기 (피격 플레이어 2초 기절)
 
 
         yield return new WaitForSeconds(2.0f);
@@ -341,8 +341,10 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        // 한 팔로 맵의 반 쓸기 (반원형태의 범위)
         // animator.SetTrigger("HalfMapSweep");
+
+        // 맵 쓸기 (반원 형태의 범위)
+
 
         yield return new WaitForSeconds(1.0f);
 
