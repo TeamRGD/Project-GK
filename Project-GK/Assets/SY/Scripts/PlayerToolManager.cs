@@ -26,8 +26,14 @@ public class PlayerToolManager : MonoBehaviour
     {
         if (!PV.IsMine || !canChange)
             return;
-        SwitchToNextTool();
-        SwitchToPreviousTool();
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            SwitchToNextTool();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            SwitchToPreviousTool();
+        }
     }
 
     void SwitchToNextTool()
@@ -43,21 +49,15 @@ public class PlayerToolManager : MonoBehaviour
     [PunRPC]
     void SwitchToNextToolRPC()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
-        {
-            currentToolIndex = (currentToolIndex + 1) % tools.Count;
-            UpdateToolVisibility();
-        }
+        currentToolIndex = (currentToolIndex + 1) % tools.Count;
+        UpdateToolVisibility();
     }
 
     [PunRPC]
     void SwitchToPreviousToolRPC()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
-        {
-            currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
-            UpdateToolVisibility();
-        }
+        currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
+        UpdateToolVisibility();
     }
 
     void UpdateToolVisibility()
