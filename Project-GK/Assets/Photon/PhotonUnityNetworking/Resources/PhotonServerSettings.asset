@@ -58,6 +58,7 @@ MonoBehaviour:
   - OnDeathRPC
   - ReviveRPC
   - Save
+  - SetProjectileRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -9,6 +9,7 @@ TagManager:
   - Projectile_Wi
   - Projectile_Zard
   - Projectile
+  - Wall
   layers:
   - Default
   - TransparentFX

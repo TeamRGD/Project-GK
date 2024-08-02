@@ -9,9 +9,9 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] GameObject cameraHolder; // should be edit
 
-    [SerializeField] float mouseSensitivity, aimSpeed, sprintSpeed, walkSpeed, jumpForce, smoothTime;
+    [SerializeField] float mouseSensitivity, sprintSpeed, walkSpeed, jumpForce, smoothTime;
     [SerializeField] Transform playerBody;
-    [SerializeField] float distanceFromPlayer;
+    [SerializeField] float distanceFromPlayer, minDistanceFromPlayer;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] Transform aim;
 
@@ -78,10 +78,9 @@ public class PlayerController : MonoBehaviour
         // Player Body Rotation
         playerBody.Rotate(Vector3.up * horizontalRotation);
 
-        verticalLookRotation -= verticalRotation;
-        verticalLookRotation = Mathf.Clamp(verticalLookRotation, -90f, 90f);
-
         // Camera Rotation
+        verticalLookRotation -= verticalRotation;
+        verticalLookRotation = Mathf.Clamp(verticalLookRotation, -60f, 60f);
         cameraHolder.transform.localEulerAngles = Vector3.right * verticalLookRotation;
         Vector3 cameraPosition = playerBody.position - cameraHolder.transform.forward * distanceFromPlayer;
 
@@ -89,11 +88,20 @@ public class PlayerController : MonoBehaviour
         // 벽 뚫기 방지
         if (Physics.Linecast(playerBody.position, cameraPosition, out hit, collisionMask))
         {
-            cameraHolder.transform.position = hit.point;
+            float hitDistance = Vector3.Distance(playerBody.position, hit.point);
+            if (hitDistance < minDistanceFromPlayer && hit.collider.CompareTag("Wall")) // 벽과 충돌했을 경우
+            {
+                cameraHolder.transform.position = hit.point + cameraHolder.transform.forward * 0.1f;
+            }
+            else // Player와 일정 거리 두기
+            {
+                float clampedDistance = Mathf.Clamp(hitDistance, minDistanceFromPlayer, distanceFromPlayer);
+                cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, playerBody.position - cameraHolder.transform.forward * clampedDistance, 0.03f); // 부드러운 움직임
+            }
         }
         else
         {
-            cameraHolder.transform.position = cameraPosition;
+            cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, cameraPosition, 0.03f); // 부드러운 움직임
         }
     }
 
@@ -102,7 +110,7 @@ public class PlayerController : MonoBehaviour
         // aim object의 위치를 옮겨 Upper body rotation
         Ray ray = cameraHolder.GetComponentInChildren<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         Vector3 desiredPosition = ray.origin + ray.direction * 10.0f;
-        aim.position = Vector3.Lerp(aim.position, desiredPosition, aimSpeed);
+        aim.position = Vector3.Lerp(aim.position, desiredPosition, smoothTime);
     }
 
     void Move()

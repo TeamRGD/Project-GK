@@ -774,12 +774,13 @@ MonoBehaviour:
   cameraHolder: {fileID: 8846499971463357096}
   mouseSensitivity: 2
   aimSpeed: 0.15
-  sprintSpeed: 6
+  sprintSpeed: 5
   walkSpeed: 3
   jumpForce: 300
   smoothTime: 0.15
   playerBody: {fileID: 8066266023678136256}
   distanceFromPlayer: 5
+  minDistanceFromPlayer: 3
   collisionMask:
     serializedVersion: 2
     m_Bits: 4294967295
