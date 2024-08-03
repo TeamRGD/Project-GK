@@ -165,4 +165,19 @@ public class PlayerStateManager : MonoBehaviour
     {
         return isAlive;
     }
+
+    public int GetHealth()
+    {
+        return currentHealth;
+    }
+
+    public int GetPower()
+    {
+        return currentPower;
+    }
+
+    public int GetUltimatePower()
+    {
+        return currentUltimatePower;
+    }
 }
