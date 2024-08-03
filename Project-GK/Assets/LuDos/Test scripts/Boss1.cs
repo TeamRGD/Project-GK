@@ -29,7 +29,7 @@ public class Boss1 : MonoBehaviour
 
     private bool canChange1 = true;
     private bool canChange2 = true;
-    private bool IsCorrect = false;
+    public bool IsCorrect = false;
     private bool canDisplay = true;
 
     public int Code;
