@@ -23,12 +23,37 @@ public class Launcher : MonoBehaviourPunCallbacks
     [SerializeField] GameObject roomListItemPrefab;
     [SerializeField] GameObject playerListItemPrefab;
     [SerializeField] GameObject startGameButton;
+    private bool isInStartMenu = false;
+    private bool isFirst = true;
+
     void Start()
     {
         Debug.Log("Connecting to Master");
         PhotonNetwork.ConnectUsingSettings();
     }
 
+    void Update()
+    {
+        if (isInStartMenu && IsAnyKeyPressed())
+        {
+            OpenTitleMenu();
+        }
+    }
+
+    bool IsAnyKeyPressed() // 마우스 제외 키보드에서 아무 키 입력
+    {
+        foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+        {
+            if (keyCode >= KeyCode.Mouse0 && keyCode <= KeyCode.Mouse6)
+                continue;
+
+            if (Input.GetKeyDown(keyCode))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public override void OnConnectedToMaster()
     {
@@ -39,9 +64,25 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public override void OnJoinedLobby()
     {
-        MenuManager.Instance.OpenMenu("Title");
+        if (isFirst)
+        {
+            MenuManager.Instance.OpenMenu("Start");
+            isInStartMenu = true;
+            isFirst = false;
+        }
+        else
+        {
+            MenuManager.Instance.OpenMenu("Title");
+        }
         Debug.Log("Joined Lobby");
-        PhotonNetwork.NickName = "Player " + Random.Range(0, 1000).ToString("0000");
+        //PhotonNetwork.NickName = "Player " + Random.Range(0, 1000).ToString("0000");
+        isInStartMenu = true;
+    }
+
+    void OpenTitleMenu()
+    {
+        MenuManager.Instance.OpenMenu("Title");
+        isInStartMenu = false;
     }
 
     public void CreateRoom()
@@ -51,6 +92,7 @@ public class Launcher : MonoBehaviourPunCallbacks
             return;
         }
         PhotonNetwork.CreateRoom(roomNameInputField.text);
+        PhotonNetwork.NickName = "Wi";
         MenuManager.Instance.OpenMenu("Loading");
     }
 
@@ -76,6 +118,18 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
+        PhotonNetwork.NickName = "Wi";
+        Player[] players = PhotonNetwork.PlayerList;
+
+        foreach(Transform child in playerListContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        for (int i = 0; i < players.Count(); i++)
+        {
+            Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().SetUp(players[i]);
+        }
         startGameButton.SetActive(PhotonNetwork.IsMasterClient);
     }
 
@@ -100,6 +154,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.JoinRoom(info.Name);
         MenuManager.Instance.OpenMenu("Loading");
+        PhotonNetwork.NickName = "Zard";
     }
 
     public override void OnLeftRoom()
