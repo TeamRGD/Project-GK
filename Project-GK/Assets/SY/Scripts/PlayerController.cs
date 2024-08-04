@@ -24,11 +24,13 @@ public class PlayerController : MonoBehaviour
     Rigidbody rb;
 
     PhotonView PV;
+    PlayerAttack playerAttack;
 
     void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<PhotonView>(out PV);
+        TryGetComponent<PlayerAttack>(out playerAttack);
     }
 
     private void Start()
@@ -46,14 +48,20 @@ public class PlayerController : MonoBehaviour
 
     public void CursorOn()
     {
+        if (!PV.IsMine)
+            return;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        playerAttack.SetCanAttack(false);
     }
 
     public void CursorOff()
     {
+        if (!PV.IsMine)
+            return;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        playerAttack.SetCanAttack(true);
     }
 
     private void Update()
