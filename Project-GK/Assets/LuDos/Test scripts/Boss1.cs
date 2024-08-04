@@ -35,6 +35,8 @@ public class Boss1 : MonoBehaviour
     private bool canDisplay = true;
     public bool IsCorrect = false;
 
+    private bool isInvincible = false;
+
     public int Code;
 
     private Vector3 targetBookCasePosition;
@@ -72,12 +74,10 @@ public class Boss1 : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
-            // Debug.Log("IsCorrect true");
             IsCorrect = true;
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            // Debug.Log("IsCorrect true");
             collisionCount++;
         }
     }
@@ -202,7 +202,6 @@ public class Boss1 : MonoBehaviour
     IEnumerator ExecutePattern(BTNode patternTree)
     {
         isExecutingPattern = true;
-        // isGroggy = false;
 
         while (!isGroggy)
         {
@@ -215,10 +214,13 @@ public class Boss1 : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        currentHealth -= amount;
-        if (currentHealth < 0)
+        if (!isInvincible)
         {
-            currentHealth = 0;
+            currentHealth -= amount;
+            if (currentHealth < 0)
+            {
+                currentHealth = 0;
+            }
         }
     }
 
@@ -380,11 +382,15 @@ public class Boss1 : MonoBehaviour
     void MakeInvincible()
     {
         Debug.Log("MakeInvincible");
+
+        isInvincible = true;
     }
 
     void LeftArmSlam()
     {
         Debug.Log("LeftArmSlam");
+
+        // animator.SetTrigger("LeftArmSlam");
     }
 
     bool ChangeBooksToGreen()
@@ -396,7 +402,6 @@ public class Boss1 : MonoBehaviour
             Debug.Log("ChangeBooksToGreen");
 
 
-            //canChange1 = false;
         }
         return true;
     }
@@ -409,7 +414,6 @@ public class Boss1 : MonoBehaviour
             Debug.Log("SelectAggroTarget");
 
 
-            //canChange1 = false;
         }
         return true;
     }
@@ -421,7 +425,7 @@ public class Boss1 : MonoBehaviour
         {
             Debug.Log("ChangeStaffToRed");
 
-            //canChange1 = false;
+
         }
         return true;
     }
