@@ -11,7 +11,10 @@ public class UIManager_Ygg : MonoBehaviour
 
     // Get default Prefabs
     public GameObject boss;
-    private GameObject player;
+
+    // Temporary
+    public GameObject interactionNotice;
+
 
     // Variables being used in pattern1 logic
     public int patternCode;
@@ -51,14 +54,14 @@ public class UIManager_Ygg : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            ActivateCipher();
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            DeactivateCipher();
-        }
+        //if (Input.GetKeyDown(KeyCode.V))
+        //{
+        //    ActivateCipher();
+        //}
+        //if (Input.GetKeyDown(KeyCode.B))
+        //{
+        //    DeactivateCipher();
+        //}
 
         if (Input.GetKeyDown(KeyCode.N))
         {
@@ -84,26 +87,24 @@ public class UIManager_Ygg : MonoBehaviour
     }
 
     //------------PATTERN 1--------------
-    void ActivateCipher()
+    public void ActivateCipher()
     {
         inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
-        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPos3DY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
-        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
+        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
+        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
 
-        GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().CursorOn();
-        GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().CursorOn();
+        interactionNotice.gameObject.SetActive(false);
     }
 
-    void DeactivateCipher()
+    public void DeactivateCipher()
     {
         inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(0, 0.15f);
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(0, 0.15f);
-        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPos3DY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherDisplay.gameObject.SetActive(false));
-        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherEnter.gameObject.SetActive(false));
+        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherDisplay.gameObject.SetActive(false));
+        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherEnter.gameObject.SetActive(false));
 
-        GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().CursorOff();
-        GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().CursorOff();
+        interactionNotice.gameObject.SetActive(true);
     }
 
     public void InputNumber(int num)
@@ -167,5 +168,18 @@ public class UIManager_Ygg : MonoBehaviour
     {
         playerAttackCount = 0;
         attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1, 0.2f).SetEase(Ease.OutSine).OnComplete(() => attackNodeContainer.SetActive(false));
+    }
+
+    //------------TEMP--------------
+    public void EnableInteractionNotice()
+    {
+        interactionNotice.GetComponent<CanvasGroup>().DOFade(1, 0.1f).SetEase(Ease.OutSine);
+        interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(-70f, 0.1f).SetEase(Ease.OutBack);
+    }
+
+    public void DisableInteractionNotice()
+    {
+        interactionNotice.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
+        interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
     }
 }
