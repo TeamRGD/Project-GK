@@ -50,6 +50,7 @@ public class PlayerToolManager : MonoBehaviour
     void SwitchToNextToolRPC()
     {
         currentToolIndex = (currentToolIndex + 1) % tools.Count;
+        UIManager_Player.Instance.SetInventory(currentToolIndex);
         UpdateToolVisibility();
     }
 
@@ -57,6 +58,7 @@ public class PlayerToolManager : MonoBehaviour
     void SwitchToPreviousToolRPC()
     {
         currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
+        UIManager_Player.Instance.SetInventory(currentToolIndex);
         UpdateToolVisibility();
     }
 

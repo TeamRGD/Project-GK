@@ -13,12 +13,13 @@ public class UIManager_Player : MonoBehaviour
     public Image ultBar;
 
     // for Inventory
-    public Image inventoryContainer;
-    public Image[] inventories;
+    public Image[] inventoryOutlines;
+    public Image aim;
 
     // for Interaction
     public GameObject interactionNotice;
 
+    // set Singleton
     void Awake()
     {
         if (Instance == null)
@@ -33,9 +34,15 @@ public class UIManager_Player : MonoBehaviour
 
     void Start()
     {
-        
+        for (int i = 0; i < inventoryOutlines.Length; i++)
+        {
+            inventoryOutlines[i].enabled = false;
+        }
+        inventoryOutlines[0].enabled = true;
     }
 
+
+    // Player Stats
     public void ManageHealth(float currentHp, float maxHp)
     {
         healthBar.DOFillAmount(currentHp / maxHp, 0.05f).SetEase(Ease.OutFlash);
@@ -51,7 +58,30 @@ public class UIManager_Player : MonoBehaviour
         ultBar.DOFillAmount(currentUlt / maxUlt, 0.2f).SetEase(Ease.OutSine);
     }
 
+    // Inventory
+    public void SetInventory(int num)
+    {
+        if (num == 0)
+        {
+            aim.enabled = true;
+        }
+        else
+        {
+            aim.enabled = false;
+        }
+        for (int i = 0; i < inventoryOutlines.Length; i++)
+        {
+            if (i == num)
+            {
+                inventoryOutlines[i].enabled = true;
+            } else
+            {
+                inventoryOutlines[i].enabled = false;
+            }
+        }
+    }
 
+    // Interaction
     public void EnableInteractionNotice()
     {
         interactionNotice.GetComponent<CanvasGroup>().DOFade(1, 0.1f).SetEase(Ease.OutSine);
