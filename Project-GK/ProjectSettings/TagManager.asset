@@ -10,6 +10,7 @@ TagManager:
   - Projectile_Zard
   - Projectile
   - Wall
+  - BookCase
   layers:
   - Default
   - TransparentFX
