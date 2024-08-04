@@ -528,6 +528,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss1_Ygg_V1
       objectReference: {fileID: 0}
+    - target: {fileID: 6922771121859358072, guid: 63619963e99940d40b654a92f2ccd99f, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 7735300716561053634, guid: 63619963e99940d40b654a92f2ccd99f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5110,6 +5114,10 @@ PrefabInstance:
     - target: {fileID: 2936555752396236712, guid: 7c6cb36f9d3bd9e4f9eb0a80e1e0d7c7, type: 3}
       propertyPath: m_Name
       value: Zard
+      objectReference: {fileID: 0}
+    - target: {fileID: 2936555752396236712, guid: 7c6cb36f9d3bd9e4f9eb0a80e1e0d7c7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2944289348764677885, guid: 7c6cb36f9d3bd9e4f9eb0a80e1e0d7c7, type: 3}
       propertyPath: sceneViewId

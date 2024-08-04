@@ -41,6 +41,17 @@ public class PlayerController : MonoBehaviour
             rb.isKinematic = true;
         }
         // 마우스 커서 제거
+        CursorOff();
+    }
+
+    public void CursorOn()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void CursorOff()
+    {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
