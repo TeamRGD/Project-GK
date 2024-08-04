@@ -5,22 +5,41 @@ using TMPro;
 
 public class UIManager_Ygg : MonoBehaviour
 {
+    // for Singleton Pattern
     public static UIManager_Ygg Instance;
 
+    // Get Yggdrasil Prefab
     public GameObject boss;
+
+    // Variables being used in pattern1 logic
     public int patternCode;
 
     public GameObject inputCipherDisplay;
     public GameObject inputCipherEnter;
 
-    public RectTransform inputCipherDisplayTarget;
-    public RectTransform inputCipherEnterTarget;
-
-
     public TextMeshProUGUI inputField;
     public Button inputButton;
 
+
+    // Variables being used in pattern2 logic
+    public TextMeshProUGUI areaNumText;
+
+
+
     private int playerAttackCount;
+
+    // for Singleton Pattern (Don't know meaning but everyone uses this)
+    void Awake()
+    {
+        if (Instance == null) 
+        { 
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
 
     void Start()
     {
@@ -37,15 +56,24 @@ public class UIManager_Ygg : MonoBehaviour
         {
             DeactivateCipher();
         }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            EnableAreaNum();
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            DisableAreaNum();
+        }
     }
 
-
+    //------------PATTERN 1--------------
     void ActivateCipher()
     {
         inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
-        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPos3DY(inputCipherDisplayTarget.anchoredPosition.y, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
-        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(inputCipherEnterTarget.anchoredPosition.y, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
+        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPos3DY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
+        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
     }
 
     void DeactivateCipher()
@@ -81,5 +109,21 @@ public class UIManager_Ygg : MonoBehaviour
     public void ResetCipher()
     {
         inputField.text = "";
+    }
+
+    //------------PATTERN 2--------------
+    public void EnableAreaNum()
+    {
+        areaNumText.DOFade(1, 0.25f).SetEase(Ease.OutSine).OnStart(() => areaNumText.enabled = true);
+    }
+
+    public void SetAreaNum(int num)
+    {
+        areaNumText.text = "Area " + num.ToString();
+    }
+
+    public void DisableAreaNum()
+    {
+        areaNumText.DOFade(0, 0.25f).SetEase(Ease.OutSine).OnComplete(() => areaNumText.enabled = false);
     }
 }
