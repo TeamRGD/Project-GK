@@ -56,11 +56,14 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         PV.RPC("CursorOnRPC", RpcTarget.AllBuffered);
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     [PunRPC]
     void CursorOnRPC()
     {
+        moveAmount = Vector3.zero;
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
         SetCanMove(false);
