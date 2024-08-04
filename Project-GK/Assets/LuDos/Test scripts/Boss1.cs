@@ -403,7 +403,7 @@ public class Boss1 : MonoBehaviour
         if (canChange1)
         {
             Code = 1111; // 임시 설정 코드, 원래 계산하는 로직임
-
+            UIManager_Ygg.Instance.patternCode = Code;
             canChange1 = false;
         }
         return true;
@@ -479,7 +479,7 @@ public class Boss1 : MonoBehaviour
         if (canChange2)
         {
             Code = 2222; // 임시, 원래 attackedAreas를 통해 전달
-
+            UIManager_Ygg.Instance.patternCode = Code;
             canChange2 = false;
         }
         return true;

@@ -5,8 +5,10 @@ using TMPro;
 
 public class UIManager_Ygg : MonoBehaviour
 {
+    public static UIManager_Ygg Instance;
+
     public GameObject boss;
-    private int patternCode;
+    public int patternCode;
 
     public GameObject inputCipherDisplay;
     public GameObject inputCipherEnter;
@@ -65,12 +67,14 @@ public class UIManager_Ygg : MonoBehaviour
         {
             Debug.Log("That's Right!");
             inputField.DOColor(Color.green, 0.2f).SetEase(Ease.OutSine);
+            boss.GetComponent<Boss1>().IsCorrect = true;
         }
         else
         {
             Debug.Log("Nope");
             inputField.DOColor(Color.red, 0.2f).SetEase(Ease.OutSine);
             inputField.DOColor(Color.white, 0.2f).SetEase(Ease.OutSine).SetDelay(0.2f);
+            boss.GetComponent<Boss1>().IsCorrect = false;
         }
     }
 
