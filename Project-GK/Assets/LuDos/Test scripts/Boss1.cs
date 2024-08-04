@@ -62,7 +62,7 @@ public class Boss1 : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            TakeDamage(10);
+            TakeDamage(1);
             Debug.Log("Boss Health: " + currentHealth);
         }
         if (Input.GetKeyDown(KeyCode.O))
@@ -359,7 +359,6 @@ public class Boss1 : MonoBehaviour
 
     void LeftArmSlam()
     {
-        // 왼쪽 팔 땅 내려치는 애니메이션 재생
         Debug.Log("LeftArmSlam");
     }
 
@@ -369,8 +368,10 @@ public class Boss1 : MonoBehaviour
         // 선택된 4개의 책장 내에서 각각 랜덤 개수만큼 책에 초록불 켜기, 각각의 개수 배열에 저장해둠
         if (canChange1)
         {
+            Debug.Log("ChangeBooksToGreen");
 
-            canChange1 = false;
+
+            //canChange1 = false;
         }
         return true;
     }
@@ -380,8 +381,10 @@ public class Boss1 : MonoBehaviour
         // 어그로 대상 선정 (50% 확률. 무작위)
         if (canChange1)
         {
+            Debug.Log("SelectAggroTarget");
 
-            canChange1 = false;
+
+            //canChange1 = false;
         }
         return true;
     }
@@ -391,8 +394,9 @@ public class Boss1 : MonoBehaviour
         // 어그로 아닌 플레이어 지팡이 붉은색으로 변경
         if (canChange1)
         {
+            Debug.Log("ChangeStaffToRed");
 
-            canChange1 = false;
+            //canChange1 = false;
         }
         return true;
     }
@@ -402,6 +406,8 @@ public class Boss1 : MonoBehaviour
         // 중앙에 암호 입력 장치 활성화
         if (canChange1)
         {
+            Debug.Log("ActivateCipherDevice1");
+
             Code = 1111; // 임시 설정 코드, 원래 계산하는 로직임
             UIManager_Ygg.Instance.patternCode = Code;
             canChange1 = false;
@@ -426,6 +432,8 @@ public class Boss1 : MonoBehaviour
     {
         // 책의 빛을 끄고 보스 어그로 풀기, 카운트 + 1
 
+        Debug.Log("ResetBookLightsAndAggro");
+
         canChange1 = true;
         IsCorrect = false;
         successCount++;
@@ -436,6 +444,8 @@ public class Boss1 : MonoBehaviour
     bool ReleaseInvincibilityAndGroggy()
     {
         // 무적 상태 해제 및 그로기
+
+        Debug.Log("ReleaseInvincibilityAndGroggy");
 
         return SetGroggy();
     }
@@ -608,10 +618,10 @@ public class Boss1 : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("BookCase"))
-        {
-            hasCollidedWithBookCase = true;
-            collidedBookCaseIndex = GetCollidedBookCaseIndex(collision.gameObject);
-        }
+        //if (collision.gameObject.CompareTag("BookCase"))
+        //{
+        //    hasCollidedWithBookCase = true;
+        //    collidedBookCaseIndex = GetCollidedBookCaseIndex(collision.gameObject);
+        //}
     }
 }
