@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
+using System;
 
 public class UIManager_Ygg : MonoBehaviour
 {
@@ -26,7 +27,8 @@ public class UIManager_Ygg : MonoBehaviour
     public TextMeshProUGUI areaNumText;
 
 
-
+    // Variables being used in pattern3 logic
+    public GameObject attackNodeContainer;
     private int playerAttackCount;
 
     // for Singleton Pattern (Don't know meaning but everyone uses this)
@@ -66,6 +68,19 @@ public class UIManager_Ygg : MonoBehaviour
         {
             DisableAreaNum();
         }
+
+        if(Input.GetKeyDown(KeyCode.Z))
+        {
+            EnableAttackNode();
+        }
+        if(Input.GetKeyDown(KeyCode.X))
+        {
+            DisableAttackNode();
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            NodeDeduction();
+        }
     }
 
     //------------PATTERN 1--------------
@@ -77,6 +92,7 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
 
         GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().CursorOn();
+        GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().CursorOn();
     }
 
     void DeactivateCipher()
@@ -87,6 +103,7 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherEnter.gameObject.SetActive(false));
 
         GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().CursorOff();
+        GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().CursorOff();
     }
 
     public void InputNumber(int num)
@@ -130,5 +147,25 @@ public class UIManager_Ygg : MonoBehaviour
     public void DisableAreaNum()
     {
         areaNumText.DOFade(0, 0.25f).SetEase(Ease.OutSine).OnComplete(() => areaNumText.enabled = false);
+    }
+
+    //------------PATTERN 3--------------
+    public void EnableAttackNode()
+    {
+        playerAttackCount = 0;
+        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1, 0.2f).SetEase(Ease.OutSine).OnStart(() => attackNodeContainer.SetActive(true));
+    }
+
+    public void NodeDeduction()
+    {
+        Image node = attackNodeContainer.GetComponent<RectTransform>().GetChild(playerAttackCount).GetComponent<Image>();
+        node.DOFade(0, 0.15f);
+        playerAttackCount++;
+    }
+
+    public void DisableAttackNode()
+    {
+        playerAttackCount = 0;
+        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1, 0.2f).SetEase(Ease.OutSine).OnComplete(() => attackNodeContainer.SetActive(false));
     }
 }
