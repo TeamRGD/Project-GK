@@ -55,6 +55,12 @@ public class PlayerController : MonoBehaviour
             return;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        PV.RPC("CursorOnRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void CursorOnRPC()
+    {
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
         SetCanMove(false);
@@ -66,6 +72,12 @@ public class PlayerController : MonoBehaviour
             return;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        PV.RPC("CursorOffRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void CursorOffRPC()
+    {
         playerAttack.SetCanAttack(true);
         playerToolManager.SetCanChange(true);
         SetCanMove(true);
