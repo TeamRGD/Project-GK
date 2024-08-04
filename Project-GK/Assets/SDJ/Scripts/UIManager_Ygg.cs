@@ -8,8 +8,9 @@ public class UIManager_Ygg : MonoBehaviour
     // for Singleton Pattern
     public static UIManager_Ygg Instance;
 
-    // Get Yggdrasil Prefab
+    // Get default Prefabs
     public GameObject boss;
+    private GameObject player;
 
     // Variables being used in pattern1 logic
     public int patternCode;
@@ -48,11 +49,11 @@ public class UIManager_Ygg : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.V))
         {
             ActivateCipher();
         }
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             DeactivateCipher();
         }
@@ -74,6 +75,8 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPos3DY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
+
+        GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().CursorOn();
     }
 
     void DeactivateCipher()
@@ -82,6 +85,8 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(0, 0.15f);
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPos3DY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherDisplay.gameObject.SetActive(false));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPos3DY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherEnter.gameObject.SetActive(false));
+
+        GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().CursorOff();
     }
 
     public void InputNumber(int num)
