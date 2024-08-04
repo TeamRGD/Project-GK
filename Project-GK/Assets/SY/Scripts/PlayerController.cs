@@ -1,5 +1,6 @@
 using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,12 +26,14 @@ public class PlayerController : MonoBehaviour
 
     PhotonView PV;
     PlayerAttack playerAttack;
+    PlayerToolManager playerToolManager;
 
     void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
         TryGetComponent<PhotonView>(out PV);
         TryGetComponent<PlayerAttack>(out playerAttack);
+        TryGetComponent<PlayerToolManager>(out playerToolManager);
     }
 
     private void Start()
@@ -53,6 +56,8 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         playerAttack.SetCanAttack(false);
+        playerToolManager.SetCanChange(false);
+        SetCanMove(false);
     }
 
     public void CursorOff()
@@ -62,6 +67,8 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         playerAttack.SetCanAttack(true);
+        playerToolManager.SetCanChange(true);
+        SetCanMove(true);
     }
 
     private void Update()
