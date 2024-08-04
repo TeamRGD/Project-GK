@@ -51,6 +51,10 @@ public class PlayerStateManager : MonoBehaviour
         {
             TakeDamage(100);
         }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            TakeDamage(20);
+        }
     }
 
     public void TakeDamage(int damage)
@@ -64,6 +68,7 @@ public class PlayerStateManager : MonoBehaviour
     void TakeDamageRPC(int damage)
     {
         currentHealth -= damage;
+        UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
         if (currentHealth <= 0)
         {
             currentHealth = 0;
@@ -110,6 +115,7 @@ public class PlayerStateManager : MonoBehaviour
             if (currentPower < maxPower)
             {
                 currentPower += 5;
+                UIManager_Player.Instance.ManageMana(currentPower, maxPower);
                 if (currentPower > maxPower)
                 {
                     currentPower = maxPower;
@@ -129,6 +135,7 @@ public class PlayerStateManager : MonoBehaviour
     void IncreaseUltimatePowerRPC(int amount)
     {
         currentUltimatePower += amount;
+        UIManager_Player.Instance.ManageUlt(currentUltimatePower, maxUltimatePower);
         if (currentUltimatePower > maxUltimatePower)
         {
             currentUltimatePower = maxUltimatePower;
@@ -146,6 +153,7 @@ public class PlayerStateManager : MonoBehaviour
     void DecreasePowerRPC(int amount)
     {
         currentPower -= amount;
+        UIManager_Player.Instance.ManageMana(currentPower, maxPower);
     }
 
     public void ResetUltimatePower()
@@ -159,6 +167,7 @@ public class PlayerStateManager : MonoBehaviour
     void ResetUltimatePowerRPC()
     {
         currentUltimatePower = 0;
+        UIManager_Player.Instance.ManageUlt(currentUltimatePower, maxUltimatePower);
     }
 
     public bool GetIsAlive()

@@ -1,0 +1,66 @@
+using DG.Tweening;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UIManager_Player : MonoBehaviour
+{
+    //for Singleton Pattern
+    public static UIManager_Player Instance;
+
+    // for Player Stats
+    public Image healthBar;
+    public Image manaBar;
+    public Image ultBar;
+
+    // for Inventory
+    public Image inventoryContainer;
+    public Image[] inventories;
+
+    // for Interaction
+    public GameObject interactionNotice;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    void Start()
+    {
+        
+    }
+
+    public void ManageHealth(float currentHp, float maxHp)
+    {
+        healthBar.DOFillAmount(currentHp / maxHp, 0.05f).SetEase(Ease.OutFlash);
+    }
+
+    public void ManageMana(float currentPower, float maxPower)
+    {
+        manaBar.DOFillAmount(currentPower / maxPower, 0.05f).SetEase(Ease.OutFlash);
+    }
+
+    public void ManageUlt(float currentUlt, float maxUlt)
+    {
+        ultBar.DOFillAmount(currentUlt / maxUlt, 0.2f).SetEase(Ease.OutSine);
+    }
+
+
+    public void EnableInteractionNotice()
+    {
+        interactionNotice.GetComponent<CanvasGroup>().DOFade(1, 0.1f).SetEase(Ease.OutSine);
+        interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(-70f, 0.1f).SetEase(Ease.OutBack);
+    }
+
+    public void DisableInteractionNotice()
+    {
+        interactionNotice.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
+        interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
+    }
+}

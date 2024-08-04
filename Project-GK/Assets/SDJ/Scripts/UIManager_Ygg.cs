@@ -12,9 +12,6 @@ public class UIManager_Ygg : MonoBehaviour
     // Get default Prefabs
     public GameObject boss;
 
-    // Temporary
-    public GameObject interactionNotice;
-
 
     // Variables being used in pattern1 logic
     public int patternCode;
@@ -94,7 +91,7 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
 
-        interactionNotice.gameObject.SetActive(false);
+        UIManager_Player.Instance.interactionNotice.gameObject.SetActive(false);
     }
 
     public void DeactivateCipher()
@@ -104,7 +101,7 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherDisplay.gameObject.SetActive(false));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherEnter.gameObject.SetActive(false));
 
-        interactionNotice.gameObject.SetActive(true);
+        UIManager_Player.Instance.interactionNotice.gameObject.SetActive(true);
     }
 
     public void InputNumber(int num)
@@ -168,18 +165,5 @@ public class UIManager_Ygg : MonoBehaviour
     {
         playerAttackCount = 0;
         attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1, 0.2f).SetEase(Ease.OutSine).OnComplete(() => attackNodeContainer.SetActive(false));
-    }
-
-    //------------TEMP--------------
-    public void EnableInteractionNotice()
-    {
-        interactionNotice.GetComponent<CanvasGroup>().DOFade(1, 0.1f).SetEase(Ease.OutSine);
-        interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(-70f, 0.1f).SetEase(Ease.OutBack);
-    }
-
-    public void DisableInteractionNotice()
-    {
-        interactionNotice.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
-        interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
     }
 }

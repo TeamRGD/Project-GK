@@ -43,7 +43,7 @@ public class CipherDevice : MonoBehaviour
                 players.Add(playerController, PV);
                 if (PV.IsMine) // Enter한 플레이어에게만.
                 {
-                    UIManager_Ygg.Instance.EnableInteractionNotice();
+                    UIManager_Player.Instance.EnableInteractionNotice();
                 }
             }
         }
@@ -61,7 +61,7 @@ public class CipherDevice : MonoBehaviour
             {
                 if (PV.IsMine) // Exit한 플레이어에게만.
                 {
-                    UIManager_Ygg.Instance.DisableInteractionNotice();
+                    UIManager_Player.Instance.DisableInteractionNotice();
                 }
                 players.Remove(playerController);
             }
