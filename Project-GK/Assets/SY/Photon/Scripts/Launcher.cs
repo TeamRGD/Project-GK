@@ -14,17 +14,18 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         instance = this;
     }
-
-    [SerializeField] TMP_InputField roomNameInputField;
+    [SerializeField] TMP_InputField roomCodeInputField;
     [SerializeField] TMP_Text errorText;
     [SerializeField] TMP_Text roomNameText;
-    [SerializeField] Transform roomListContent;
     [SerializeField] Transform playerListContent;
     [SerializeField] GameObject roomListItemPrefab;
     [SerializeField] GameObject playerListItemPrefab;
     [SerializeField] GameObject startGameButton;
+    [SerializeField] GameObject readyGameButton;
     private bool isInStartMenu = false;
     private bool isFirst = true;
+    public bool isReady;
+    private List<RoomInfo> roomInfos = new List<RoomInfo>();
 
     void Start()
     {
@@ -38,6 +39,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         {
             OpenTitleMenu();
         }
+
     }
 
     bool IsAnyKeyPressed() // 마우스 제외 키보드에서 아무 키 입력
@@ -76,7 +78,6 @@ public class Launcher : MonoBehaviourPunCallbacks
         }
         Debug.Log("Joined Lobby");
         //PhotonNetwork.NickName = "Player " + Random.Range(0, 1000).ToString("0000");
-        isInStartMenu = true;
     }
 
     void OpenTitleMenu()
@@ -87,50 +88,93 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
-        if(string.IsNullOrEmpty(roomNameInputField.text))
-        {
-            return;
-        }
-        PhotonNetwork.CreateRoom(roomNameInputField.text);
+        PhotonNetwork.CreateRoom("Room Code: " + Random.Range(100000, 999999).ToString("000000"));
         PhotonNetwork.NickName = "Wi";
         MenuManager.Instance.OpenMenu("Loading");
+    }
+
+    public void EnterRoom()
+    {
+        foreach (RoomInfo roomInfo in roomInfos)
+        {
+            if (roomInfo.Name == "Room Code: " + roomCodeInputField.text)
+            {
+                Debug.Log("Success");
+                JoinRoom(roomInfo);
+                roomCodeInputField.text = "";
+                return;
+            }
+        }
+        roomCodeInputField.text = "";
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        roomInfos.Clear();
+        foreach (RoomInfo roomInfo in roomList)
+        {
+            if (!roomInfo.RemovedFromList)
+            {
+                roomInfos.Add(roomInfo);
+            }
+        }
+    }
+
+    void UpdatePlayerList()
+    {
+        Player[] players = PhotonNetwork.PlayerList;
+
+        foreach(Transform child in playerListContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        for (int i = 0; i < players.Count(); i++)
+        {
+            if (players[i].IsMasterClient)
+            {
+                Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().SetUp(players[i], "Host");
+            }
+            else
+            {
+                object isReady_;
+                if (players[i].CustomProperties.TryGetValue("isReady", out isReady_))
+                {
+                    Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().SetUp(players[i], ((bool)isReady_) ? "Ready" : "Not Ready");
+                }
+            }
+        }
     }
 
     public override void OnJoinedRoom()
     {
         MenuManager.Instance.OpenMenu("room");
         roomNameText.text = PhotonNetwork.CurrentRoom.Name;
+        roomCodeInputField.text = "";
 
-        Player[] players = PhotonNetwork.PlayerList;
-
-        foreach(Transform child in playerListContent)
-        {
-            Destroy(child.gameObject);
-        }
-
-        for (int i = 0; i < players.Count(); i++)
-        {
-            Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().SetUp(players[i]);
-        }
+        SetIsReady(PhotonNetwork.IsMasterClient);
+        UpdatePlayerList();
 
         startGameButton.SetActive(PhotonNetwork.IsMasterClient);
+        readyGameButton.SetActive(!PhotonNetwork.IsMasterClient);
+    }
+
+    void SetIsReady(bool value)
+    {
+        isReady = value;
+        SetPlayerReadyState(isReady);
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         PhotonNetwork.NickName = "Wi";
-        Player[] players = PhotonNetwork.PlayerList;
+        
+        SetIsReady(PhotonNetwork.IsMasterClient);
 
-        foreach(Transform child in playerListContent)
-        {
-            Destroy(child.gameObject);
-        }
+        UpdatePlayerList();
 
-        for (int i = 0; i < players.Count(); i++)
-        {
-            Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().SetUp(players[i]);
-        }
         startGameButton.SetActive(PhotonNetwork.IsMasterClient);
+        readyGameButton.SetActive(!PhotonNetwork.IsMasterClient);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -141,7 +185,49 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void StartGame()
     {
-        PhotonNetwork.LoadLevel(1);
+        if (AreAllPlayersReady())
+        {
+            PhotonNetwork.LoadLevel(1);
+        }
+        else
+        {
+            Debug.Log("Not all players are ready.");
+        }
+    }
+
+    bool AreAllPlayersReady()
+    {
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            object isReady;
+            if (player.CustomProperties.TryGetValue("isReady", out isReady))
+            {
+                if ((bool)isReady == false)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void OnClickReadyButton()
+    {
+        SetIsReady(!isReady);
+        UpdatePlayerList();
+    }
+
+    void SetPlayerReadyState(bool readyState)
+    {
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        {
+            { "isReady", readyState }
+        };
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
     public void LeaveRoom()
@@ -155,6 +241,7 @@ public class Launcher : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(info.Name);
         MenuManager.Instance.OpenMenu("Loading");
         PhotonNetwork.NickName = "Zard";
+        SetIsReady(PhotonNetwork.IsMasterClient);
     }
 
     public override void OnLeftRoom()
@@ -162,22 +249,13 @@ public class Launcher : MonoBehaviourPunCallbacks
         MenuManager.Instance.OpenMenu("Title");
     }
 
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        foreach (Transform trans in roomListContent)
-        {
-            Destroy(trans.gameObject);
-        }
-        for (int i=0; i<roomList.Count; i++) 
-        {
-            if (roomList[i].RemovedFromList)
-                continue;
-            Instantiate(roomListItemPrefab, roomListContent).GetComponent<RoomListItem>().SetUp(roomList[i]);
-        }
-    }
-
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        Instantiate(playerListItemPrefab, playerListContent).GetComponent<PlayerListItem>().SetUp(newPlayer);
+        UpdatePlayerList();
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        UpdatePlayerList();
     }
 }

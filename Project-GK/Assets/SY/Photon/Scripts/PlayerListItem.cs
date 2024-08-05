@@ -8,11 +8,21 @@ using UnityEngine;
 public class PlayerListItem : MonoBehaviourPunCallbacks
 {
     [SerializeField] TMP_Text text;
+    [SerializeField] TMP_Text role;
+
     Player player;
-    public void SetUp(Player _player)
+    public void SetUp(Player _player, string value)
     {
         player = _player;
         text.text = _player.NickName;
+        if (_player.IsMasterClient)
+        {
+            role.text = value;
+        }
+        else
+        {
+            role.text = value;
+        }
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -26,5 +36,10 @@ public class PlayerListItem : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         Destroy(gameObject);
+    }
+
+    public void ChangeRoleText(string value)
+    {
+        role.text = value;
     }
 }
