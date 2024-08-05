@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -45,6 +46,7 @@ public class Boss1 : MonoBehaviour
     private List<int> numberOfBooks = new List<int>();
     private List<int> attackedAreas = new List<int>();
     public List<GameObject> BookCases; // 7개의 책장의 위치를 담아둔 리스트
+    public List<GameObject> Areas;
 
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
@@ -53,6 +55,7 @@ public class Boss1 : MonoBehaviour
     private GameObject aggroTarget;
     public GameObject ChangedStaff;
     private Rigidbody rb;
+    public GameObject Pattern3ShockWave;
 
     private BTNode pattern1Tree;
     private BTNode pattern2Tree;
@@ -119,7 +122,7 @@ public class Boss1 : MonoBehaviour
                         }
 
                         MakeInvincible();
-                        JumpToCenter();
+                        yield return StartCoroutine(JumpToCenter());
                         hasExecutedInitialActions2 = true;
                     }
 
@@ -454,13 +457,13 @@ public class Boss1 : MonoBehaviour
                 }
                 Debug.Log("Bookcase " + bookcaseIndex + ": Selected Book Indices: " + string.Join(", ", bookIndices));
 
-                // 책을 초록색으로 바꿈
-                foreach (int bookIndex in bookIndices)
-                {
-                    Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex);
-                    book.gameObject.SetActive(true);
-                    // Debug.Log("Bookcase " + bookcaseIndex + ": Book " + bookIndex + " light turned on.");
-                }
+                // 책을 초록색으로 바꿈 [임시완]
+                //foreach (int bookIndex in bookIndices)
+                //{
+                //    Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex);
+                //    book.gameObject.SetActive(true);
+                //    // Debug.Log("Bookcase " + bookcaseIndex + ": Book " + bookIndex + " light turned on.");
+                //}
             }
         }
         return true;
@@ -484,7 +487,7 @@ public class Boss1 : MonoBehaviour
         {
             Debug.Log("ChangeStaffToRed");
 
-            // setActive 할듯 (ChangedStaff)
+            // ChangedStaff.SetActive(true); [임시완] 이거 하나 끄고 하나 켜는 방식으로 할까
         }
         return true;
     }
@@ -522,18 +525,18 @@ public class Boss1 : MonoBehaviour
     {
         Debug.Log("ResetBookLightsAndAggro");
 
-        // 책 불빛 끄기
-        foreach (GameObject bookCase in BookCases)
-        {
-            foreach (Transform book in bookCase.transform)
-            {
-                if (book.gameObject.activeSelf)
-                {
-                    book.gameObject.SetActive(false);
-                    // Debug.Log("Book " + book.name + " light turned off.");
-                }
-            }
-        }
+        // 책 불빛 끄기 [임시완]
+        //foreach (GameObject bookCase in BookCases)
+        //{
+        //    foreach (Transform book in bookCase.transform)
+        //    {
+        //        if (book.gameObject.activeSelf)
+        //        {
+        //            book.gameObject.SetActive(false);
+        //            // Debug.Log("Book " + book.name + " light turned off.");
+        //        }
+        //    }
+        //}
 
         canChange1 = true;
         IsCorrect = false;
@@ -567,10 +570,33 @@ public class Boss1 : MonoBehaviour
     }
 
     // 패턴 2
-    void JumpToCenter() // 코루틴으로 수정해야함
+    IEnumerator JumpToCenter()
     {
-        Debug.Log("JumpToCenter");
+        isExecutingPattern = true;
+
+        Vector3 targetPosition = new Vector3(-4.0f, 0.31f, 2.25f); // [임시완]
+        float jumpSpeed = 15f;
+
+        Vector3 startPosition = transform.position;
+        float distance = Vector3.Distance(startPosition, targetPosition);
+        float totalTime = distance / jumpSpeed;
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < totalTime)
+        {
+            float t = elapsedTime / totalTime;
+            float height = Mathf.Sin(Mathf.PI * t) * 10.0f; // 점프 높이
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // 최종 위치 설정
+        transform.position = targetPosition;
+
+        isExecutingPattern = false;
     }
+
     bool AttackAreas()
     {
         if (isExecutingAreaAttack) return false;
@@ -587,17 +613,29 @@ public class Boss1 : MonoBehaviour
         isExecutingAreaAttack = true;
 
         // animator.SetTrigger("RaiseArms");
+        Debug.Log("RaiseArms...");
 
-        yield return new WaitForSeconds(1.0f); // 애니메이션 대기 시간
-
-        int untouchedArea = Random.Range(1, 9);
+        int untouchedArea = Random.Range(0, 8);
 
         attackedAreas.Add(untouchedArea); // ActivateCipherDevice 에서 암호 입력 장치로 전달
         // Debug.Log("Untouched Area: " + untouchedArea);
 
+        for (int i = 0; i < Areas.Count; i++) // [임시완]
+        {
+            if (i != untouchedArea)
+            {
+                Areas[i].SetActive(true);
+            }
+        }
+
+        yield return new WaitForSeconds(4.0f);
+
         // animator.SetTrigger("AttackAreas");
 
-        // yield return new WaitForSeconds(0.5f); // 타격 애니메이션 대기 시간
+        for (int i = 0; i < Areas.Count; i++)
+        {
+            Areas[i].SetActive(false);
+        }
 
         attackCount++;
 
@@ -608,12 +646,22 @@ public class Boss1 : MonoBehaviour
         // 중앙에 암호 입력 장치 활성화
         if (canChange2)
         {
-            Code = 2222; // 임시, 원래 attackedAreas를 통해 전달
+            Code = ConvertListToInt(attackedAreas);
+            Debug.Log("Code: " + Code);
             Debug.Log("Attacked Areas: " + string.Join(", ", attackedAreas));
             // UIManager_Ygg.Instance.patternCode = Code;
-            //canChange2 = false;
         }
         return true;
+    }
+
+    int ConvertListToInt(List<int> list)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (int value in list)
+        {
+            sb.Append(value);
+        }
+        return int.Parse(sb.ToString());
     }
 
 
@@ -639,9 +687,33 @@ public class Boss1 : MonoBehaviour
         // animator.SetTrigger("ReleaseCharge");
         Debug.Log("ReleaseCharge");
 
+        StartCoroutine(CreateShockwave());
+
         attackedAreas.Clear();
         attackCount = 0;
         canChange2 = true;
+    }
+
+    IEnumerator CreateShockwave()
+    {
+        GameObject shockwave = Instantiate(Pattern3ShockWave, transform.position, Quaternion.identity);
+        float duration = 2.0f; // 충격파가 퍼지는 시간
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            float outerRadius = Mathf.Lerp(1, 10, t); // 외부 반지름 조정
+            float innerRadius = Mathf.Lerp(0, 9, t); // 내부 반지름 조정
+            shockwave.transform.localScale = new Vector3(outerRadius, 1, outerRadius);
+            // 내부 반지름 조정은 쉐이더 또는 메쉬 조작이 필요할 수 있습니다.
+            // 여기에 추가적인 로직을 넣어야 합니다.
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(shockwave); // 충격파 효과 제거
     }
 
     // 패턴 3
