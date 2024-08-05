@@ -36,17 +36,22 @@ public class Boss1 : MonoBehaviour
     public bool IsCorrect = false;
 
     private bool isInvincible = false;
+    private bool isAggroFixed = false;
 
     public int Code;
 
-    private Vector3 targetBookCasePosition;
 
+    private List<int> bookcaseIndices = new List<int>();
+    private List<int> numberOfBooks = new List<int>();
     private List<int> attackedAreas = new List<int>();
-    public List<GameObject> BookCases; // 8개의 책장의 위치를 담아둔 리스트
+    public List<GameObject> BookCases; // 7개의 책장의 위치를 담아둔 리스트
 
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
     private GameObject player;
+    public List<GameObject> PlayerList;
+    private GameObject aggroTarget;
+    public GameObject ChangedStaff;
     private Rigidbody rb;
 
     private BTNode pattern1Tree;
@@ -248,7 +253,20 @@ public class Boss1 : MonoBehaviour
         {
             Debug.Log("RandomBasicAttack");
 
+            if (isAggroFixed)
+            {
+                // 한놈만 팬다
+                aggroTarget = PlayerList[0];
+            }
+            else
+            {
+                // 랜덤하게 둘 중 선택
+                int idx = Random.Range(0, PlayerList.Count);
+                aggroTarget = PlayerList[idx];
+            }
+
             int attackType = UnityEngine.Random.Range(1, 7);
+
             switch (attackType)
             {
                 case 1:
@@ -395,25 +413,66 @@ public class Boss1 : MonoBehaviour
 
     bool ChangeBooksToGreen()
     {
-        // 8개의 책장에서 4개의 책장 선택, 배열에 저장해둠
-        // 선택된 4개의 책장 내에서 각각 랜덤 개수만큼 책에 초록불 켜기, 각각의 개수 배열에 저장해둠
         if (canChange1)
         {
             Debug.Log("ChangeBooksToGreen");
 
+            // 7개의 책장 중에서 랜덤하게 4개의 책장 선택
+            while (bookcaseIndices.Count < 4)
+            {
+                int index = Random.Range(0, 7);
+                if (!bookcaseIndices.Contains(index))
+                {
+                    bookcaseIndices.Add(index);
+                }
+            }
+            Debug.Log("Selected Bookcase Indices: " + string.Join(", ", bookcaseIndices));
 
+            // 각 책장에서 몇 개의 책을 선택할건지 정함
+            for (int i = 0; i < 4; i++)
+            {
+                int numBooks = Random.Range(1, 11);
+                numberOfBooks.Add(numBooks);
+            }
+            Debug.Log("Number of Books to Select: " + string.Join(", ", numberOfBooks));
+
+            for (int i = 0; i < bookcaseIndices.Count; i++)
+            {
+                int bookcaseIndex = bookcaseIndices[i];
+                int numBooks = numberOfBooks[i];
+                Debug.Log("Bookcase " + bookcaseIndex + ": Selecting " + numBooks + " books");
+
+                // 각 책장에서 책 선택
+                List<int> bookIndices = new List<int>();
+                while (bookIndices.Count < numBooks)
+                {
+                    int bookIndex = Random.Range(0, 10);
+                    if (!bookIndices.Contains(bookIndex))
+                    {
+                        bookIndices.Add(bookIndex);
+                    }
+                }
+                Debug.Log("Bookcase " + bookcaseIndex + ": Selected Book Indices: " + string.Join(", ", bookIndices));
+
+                // 책을 초록색으로 바꿈
+                foreach (int bookIndex in bookIndices)
+                {
+                    Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex);
+                    book.gameObject.SetActive(true);
+                    // Debug.Log("Bookcase " + bookcaseIndex + ": Book " + bookIndex + " light turned on.");
+                }
+            }
         }
         return true;
     }
 
     bool SelectAggroTarget()
     {
-        // 어그로 대상 선정 (50% 확률. 무작위)
         if (canChange1)
         {
             Debug.Log("SelectAggroTarget");
 
-
+            isAggroFixed = true;
         }
         return true;
     }
@@ -425,7 +484,7 @@ public class Boss1 : MonoBehaviour
         {
             Debug.Log("ChangeStaffToRed");
 
-
+            // setActive 할듯 (ChangedStaff)
         }
         return true;
     }
@@ -437,7 +496,10 @@ public class Boss1 : MonoBehaviour
         {
             Debug.Log("ActivateCipherDevice1");
 
-            Code = 1111; // 임시 설정 코드, 원래 계산하는 로직임
+            for(int i = 0; i < 4; i++)
+            {
+                Code += (bookcaseIndices[i] + 1) * numberOfBooks[i];
+            }
             // UIManager_Ygg.Instance.patternCode = Code;
             canChange1 = false;
         }
@@ -446,8 +508,7 @@ public class Boss1 : MonoBehaviour
 
     bool IsCipherCorrect()
     {
-        // 옳은 암호 입력시, true 출력. 틀릴 시, false 출력.
-        if (IsCorrect) // IsCorrect는 암호 입력 장치에 올바른 암호가 입력되었을 때 true로 바뀜.
+        if (IsCorrect)
         {
             return true;
         }
@@ -459,9 +520,20 @@ public class Boss1 : MonoBehaviour
 
     bool ResetBookLightsAndAggro()
     {
-        // 책의 빛을 끄고 보스 어그로 풀기, 카운트 + 1
-
         Debug.Log("ResetBookLightsAndAggro");
+
+        // 책 불빛 끄기
+        foreach (GameObject bookCase in BookCases)
+        {
+            foreach (Transform book in bookCase.transform)
+            {
+                if (book.gameObject.activeSelf)
+                {
+                    book.gameObject.SetActive(false);
+                    // Debug.Log("Book " + book.name + " light turned off.");
+                }
+            }
+        }
 
         canChange1 = true;
         IsCorrect = false;
@@ -475,6 +547,8 @@ public class Boss1 : MonoBehaviour
         // 무적 상태 해제 및 그로기
 
         Debug.Log("ReleaseInvincibilityAndGroggy");
+
+        isInvincible = false;
 
         if (!canChange2)
         {
@@ -602,7 +676,7 @@ public class Boss1 : MonoBehaviour
         isExecutingBookAttack = true;
 
         // 랜덤하게 책장 선택
-        selectedBookCaseIndex = Random.Range(0, 8);
+        selectedBookCaseIndex = Random.Range(0, 7);
         Debug.Log("Book Case Index: " + selectedBookCaseIndex);
 
         // BookCase의 Light ON

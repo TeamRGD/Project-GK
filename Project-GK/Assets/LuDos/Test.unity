@@ -1293,7 +1293,8 @@ MonoBehaviour:
   - {fileID: 1169656495}
   - {fileID: 1402831873}
   - {fileID: 909551188}
-  - {fileID: 1875857151}
+  PlayerList: []
+  ChangedStaff: {fileID: 0}
 --- !u!1 &1169656495
 GameObject:
   m_ObjectHideFlags: 0
@@ -2298,7 +2299,7 @@ GameObject:
   - component: {fileID: 1875857153}
   - component: {fileID: 1875857152}
   m_Layer: 0
-  m_Name: BookCase8
+  m_Name: Door
   m_TagString: BookCase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2345,7 +2346,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: abb35290466d4be48b1154fbebc2e7de, type: 2}
+  - {fileID: 2100000, guid: 5122ca10396912f409d0d105cc3674ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
