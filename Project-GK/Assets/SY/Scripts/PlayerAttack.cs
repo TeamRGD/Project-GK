@@ -11,12 +11,13 @@ public class PlayerAttack : MonoBehaviour
     PlayerToolManager playerTool;
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
+    public Transform aim;
     private int attackCount = 0;
     public bool canAttack = true; // 외부에서 설정해주는 값 (Rescue activity & Tool change)
     private float lastAttackTime;
     public float attackCool = 0.5f;
     public float projectileSpeed = 20f;
-    public float maxRayDistance = 1000f;
+    public float maxRayDistance = 100f;
     Camera playerCamera;
 
     void Awake()
@@ -82,14 +83,38 @@ public class PlayerAttack : MonoBehaviour
         ShotProjectile(count);
     }
 
-    void ShotProjectile(int count) // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
+    void ShotProjectile(int count) // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정 // 하다가 일단 멈춤. 꼭 Refactoring 조만간..
     {
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
-            // 에임을 향해 투사체 발사
-            Ray ray = playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-            Vector3 desiredPosition = ray.origin + ray.direction * 10.0f;
-            Vector3 direction = (desiredPosition - projectileSpawnPoint.position).normalized;
+            Ray[] rays = new Ray[3]; // Ray의 개수를 늘림으로써 에임 타겟팅 정확도 향상
+            rays[0] = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            //rays[1] = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.51f, 0));
+            //rays[2] = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.49f, 0)); 
+
+            Vector3 targetPoint = Vector3.zero;
+            bool hitDetected = false;
+
+            // Debug each Ray
+            for (int i = 0; i < rays.Length; i++)
+            {
+                Debug.DrawRay(rays[i].origin, rays[i].direction * maxRayDistance, Color.red, 2f);
+                if (Physics.Raycast(rays[i], out RaycastHit hit, maxRayDistance))
+                {
+                    if (!hitDetected) // 첫 번째로 충돌한 지점을 타겟으로 설정
+                    {
+                        targetPoint = hit.point;
+                        hitDetected = true;
+                    }
+                }
+            }
+
+            if (!hitDetected)
+            {
+                targetPoint = aim.position;
+            }
+
+            Vector3 direction = (targetPoint - projectileSpawnPoint.position).normalized;
 
             // 투사체 생성
             GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));

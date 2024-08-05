@@ -6127,6 +6127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 3597697435051772679, guid: 8146d7a3d8f587f42be190c577a431b8, type: 3}
   projectileSpawnPoint: {fileID: 2752021027909542079}
+  aim: {fileID: 8770323177228056638}
   canAttack: 1
   attackCool: 0.5
   projectileSpeed: 20
