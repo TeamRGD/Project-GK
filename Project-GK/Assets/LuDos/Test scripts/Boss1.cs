@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Boss1 : MonoBehaviour
 {
-    public int maxHealth = 33;
+    public int maxHealth = 100;
     private int currentHealth;
 
     private int successCount = 0;
@@ -51,7 +51,7 @@ public class Boss1 : MonoBehaviour
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
 
-    public List<GameObject> playerList;
+    public List<GameObject> PlayerList;
     private GameObject aggroTarget;
     public GameObject ChangedStaff;
     private Rigidbody rb;
@@ -104,7 +104,7 @@ public class Boss1 : MonoBehaviour
                     if (!hasExecutedInitialActions1)
                     {
                         MakeInvincible();
-                        LeftArmSlam();
+                        yield return StartCoroutine(LeftArmSlam());
                         hasExecutedInitialActions1 = true;
                     }
 
@@ -264,13 +264,13 @@ public class Boss1 : MonoBehaviour
             if (isAggroFixed)
             {
                 // 한놈만 팬다
-                aggroTarget = playerList[0];
+                aggroTarget = PlayerList[0];
             }
             else
             {
                 // 랜덤하게 둘 중 선택
-                int idx = Random.Range(0, playerList.Count);
-                aggroTarget = playerList[idx];
+                int idx = Random.Range(0, PlayerList.Count);
+                aggroTarget = PlayerList[idx];
             }
 
             int attackType = UnityEngine.Random.Range(1, 7);
@@ -412,11 +412,17 @@ public class Boss1 : MonoBehaviour
         isInvincible = true;
     }
 
-    void LeftArmSlam() // [임시완] 애니메이션 전부 코루틴으로 처리해야할듯
+    IEnumerator LeftArmSlam()
     {
+        isExecutingPattern = true;
+
         Debug.Log("LeftArmSlam");
 
         // animator.SetTrigger("LeftArmSlam");
+
+        yield return new WaitForSeconds(3.0f);
+
+        isExecutingPattern = true;
     }
 
     bool ChangeBooksToGreen()
@@ -756,8 +762,8 @@ public class Boss1 : MonoBehaviour
         selectedBookCaseIndex = Random.Range(0, 7);
         Debug.Log("Book Case Index: " + selectedBookCaseIndex);
 
-        // BookCase의 Light ON
-
+        // BookCase의 Light ON [임시완]
+        // BookCases[selectedBookCaseIndex].SetActive(true);
 
         yield return new WaitForSeconds(5.0f); // 불 켜는 시간
 
@@ -769,11 +775,11 @@ public class Boss1 : MonoBehaviour
 
         if (playerIdx == 0)
         {
-            targetPosition = playerList[playerIdx++].transform.position;
+            targetPosition = PlayerList[playerIdx++].transform.position;
         }
         else
         {
-            targetPosition = playerList[playerIdx--].transform.position;
+            targetPosition = PlayerList[playerIdx--].transform.position;
         }
 
         Vector3 direction = (targetPosition - transform.position).normalized;
@@ -824,7 +830,7 @@ public class Boss1 : MonoBehaviour
 
     bool DamageAllMap()
     {
-        // 맵 전역 데미지
+        // 맵 전역 데미지 [임시완]
         Debug.Log("DamageAllMap");
 
         canDisplay = true;
