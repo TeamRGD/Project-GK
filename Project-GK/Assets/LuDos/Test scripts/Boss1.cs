@@ -50,7 +50,8 @@ public class Boss1 : MonoBehaviour
 
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
-    private GameObject player;
+    private GameObject playerWi;
+    private GameObject playerZard;
     public List<GameObject> PlayerList;
     private GameObject aggroTarget;
     public GameObject ChangedStaff;
@@ -64,9 +65,24 @@ public class Boss1 : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+
         //animator = GetComponent<Animator>();
         // navMeshAgent = GetComponent<NavMeshAgent>();
+
         rb = GetComponent<Rigidbody>();
+        playerWi = GameObject.FindWithTag("PlayerWi");
+        playerZard = GameObject.FindWithTag("PlayerZard");
+
+        if (playerWi != null)
+        {
+            PlayerList.Add(playerWi);
+        }
+
+        if (playerZard != null)
+        {
+            PlayerList.Add(playerZard);
+        }
+
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
@@ -576,7 +592,7 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingPattern = true;
 
-        Vector3 targetPosition = new Vector3(-4.0f, 0.31f, 2.25f); // [임시완]
+        Vector3 targetPosition = new Vector3(0.0f, 0.0f, 9.0f); // [임시완]
         float jumpSpeed = 15f;
 
         Vector3 startPosition = transform.position;
@@ -762,8 +778,8 @@ public class Boss1 : MonoBehaviour
         Debug.Log("Attack BookCase");
         // animator.SetTrigger("AttackBookCase");
 
-        player = GameObject.FindWithTag("Player"); // 두 플레이어 번갈아가며 선택하는 로직 필요함
-        Vector3 targetPosition = player.transform.position;
+        playerWi = GameObject.FindWithTag("Player"); // 두 플레이어 번갈아가며 선택하는 로직 필요함 [임시완]
+        Vector3 targetPosition = playerWi.transform.position;
         Vector3 direction = (targetPosition - transform.position).normalized;
         transform.LookAt(targetPosition);
 
@@ -796,7 +812,7 @@ public class Boss1 : MonoBehaviour
         Debug.Log("MoveBackToCenter");
 
         Vector3 startPosition = transform.position;
-        Vector3 centerPosition = new Vector3(-4.0f, 0.31f, 2.25f); // 맵의 중앙 위치
+        Vector3 centerPosition = new Vector3(0.0f, 0.0f, 9.0f); // [임시완]
         float moveDuration = 5.0f;
         float elapsedTime = 0.0f;
 
