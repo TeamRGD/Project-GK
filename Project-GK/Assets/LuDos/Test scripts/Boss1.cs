@@ -8,64 +8,64 @@ using UnityEngine.UI;
 public class Boss1 : MonoBehaviour
 {
     public int maxHealth = 100;
-    private int currentHealth;
+    int currentHealth;
 
-    private int successCount = 0;
-    private int attackCount = 0;
+    int successCount = 0;
+    int attackCount = 0;
     public int collisionCount = 0;
 
-    private int selectedBookCaseIndex = 0;
-    private bool hasCollidedWithBookCase = false;
-    private int collidedBookCaseIndex = -1;
+    int selectedBookCaseIndex = 0;
+    bool hasCollidedWithBookCase = false;
+    int collidedBookCaseIndex = -1;
 
-    private bool isGroggy = false;
-    private bool isExecutingPattern = false;
-    private bool isExecutingAttack = false;
-    private bool isExecutingAreaAttack = false;
-    private bool isExecutingBookAttack = false;
-    private bool hasExecutedInitialActions1 = false;
-    private bool hasExecutedInitialActions2 = false;
-    private bool hasExecutedInitialActions3 = false;
-    private bool isWrongBookCase = false;
+    bool isGroggy = false;
+    bool isExecutingPattern = false;
+    bool isExecutingAttack = false;
+    bool isExecutingAreaAttack = false;
+    bool isExecutingBookAttack = false;
+    bool hasExecutedInitialActions1 = false;
+    bool hasExecutedInitialActions2 = false;
+    bool hasExecutedInitialActions3 = false;
+    bool isWrongBookCase = false;
 
-    private Coroutine chargeAttackCoroutine;
-    private Coroutine moveBackCoroutine;
+    Coroutine chargeAttackCoroutine;
+    Coroutine moveBackCoroutine;
 
-    private bool canChange1 = true;
-    private bool canChange2 = true;
-    private bool canDisplay = true;
+    bool canChange1 = true;
+    bool canChange2 = true;
+    bool canDisplay = true;
     public bool IsCorrect = false;
 
-    private bool isInvincible = false;
-    private bool isAggroFixed = false;
+    bool isInvincible = false;
+    bool isAggroFixed = false;
 
     public int Code;
-    private int playerIdx = 0;
+    int playerIdx = 0;
 
-    private List<int> bookcaseIndices = new List<int>();
-    private List<int> numberOfBooks = new List<int>();
-    private List<int> attackedAreas = new List<int>();
+    List<int> bookcaseIndices = new List<int>();
+    List<int> numberOfBooks = new List<int>();
+    List<int> attackedAreas = new List<int>();
     public List<GameObject> BookCases; // 7개의 책장의 위치를 담아둔 리스트
     public List<GameObject> Areas;
 
-    // private NavMeshAgent navMeshAgent;
-    // private Animator animator;
+    // NavMeshAgent navMeshAgent;
+    // Animator animator;
 
     public List<GameObject> PlayerList;
-    private GameObject aggroTarget;
+    GameObject aggroTarget;
     public GameObject ChangedStaff;
-    private Rigidbody rb;
+    Rigidbody rb;
     public GameObject Pattern3ShockWave;
 
-    private BTNode pattern1Tree;
-    private BTNode pattern2Tree;
-    private BTNode pattern3Tree;
+    BTNode pattern1Tree;
+    BTNode pattern2Tree;
+    BTNode pattern3Tree;
 
     void Start()
     {
         currentHealth = maxHealth;
 
-        //animator = GetComponent<Animator>();
+        // animator = GetComponent<Animator>();
         // navMeshAgent = GetComponent<NavMeshAgent>();
 
         rb = GetComponent<Rigidbody>();
@@ -304,12 +304,12 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        // 팔을 돌리며 원형범위로 맵 전범위 타격
+        // 팔을 돌리며 원형범위로 맵 전범위 타격 [임시완]
         for (int i = 0; i < 4; i++)
         {
             // 시계방향
             // animator.SetTrigger("SpinArmsClockwise");
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(3.0f);
 
             // 반시계방향
             if (i == 1)
@@ -332,9 +332,9 @@ public class Boss1 : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             // 충격파 생성
+            StartCoroutine(CreateShockwave(5.0f * i + 5.0f, 0.1f, 5.0f));
 
-
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(5.0f);
         }
 
         isExecutingAttack = false;
@@ -344,19 +344,27 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        // 각 팔을 번갈아 들어 내리치며 타격 (총 5번)
+        // 각 팔을 번갈아 들어 내리치며 타격 (총 5번) [임시완]
         for (int i = 0; i < 5; i++)
         {
+            int num = Random.Range(0, 2);
+            Vector3 targetPosition = PlayerList[num].transform.position;
+            transform.LookAt(targetPosition);
+
             if (i == 4)
             {
                 // animator.SetTrigger("StrongArmSlam");
             }
+            else if (i == 0 || i == 2)
+            {
+                // animator.SetTrigger("LeftArmSlam");
+            }
             else
             {
-                // animator.SetTrigger("ArmSlam" + (i % 2));
+                // animator.SetTrigger("RightArmSlam");
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(2.0f);
         }
 
         isExecutingAttack = false;
@@ -368,10 +376,10 @@ public class Boss1 : MonoBehaviour
 
         // animator.SetTrigger("LegStomp");
 
-        // 범위 타격 + 충격파
+        yield return new WaitForSeconds(2.0f);
 
-
-        yield return new WaitForSeconds(1.0f);
+        // 범위 타격 + 충격파 [임시완] 범위 타격 구현해야함
+        StartCoroutine(CreateShockwave(15.0f, 0.1f, 5.0f));
 
         isExecutingAttack = false;
     }
@@ -382,10 +390,9 @@ public class Boss1 : MonoBehaviour
 
         // animator.SetTrigger("PalmStrike");
 
-        // 손바닥으로 내려치기 (피격 플레이어 2초 기절)
-
-
         yield return new WaitForSeconds(2.0f);
+
+        // 손바닥으로 내려치기 (피격 플레이어 2초 기절) [임시완] 기절 콜라이더 태그 만들어서 하면 될듯
 
         isExecutingAttack = false;
     }
@@ -396,10 +403,7 @@ public class Boss1 : MonoBehaviour
 
         // animator.SetTrigger("HalfMapSweep");
 
-        // 맵 쓸기 (반원 형태의 범위)
-
-
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(3.0f);              
 
         isExecutingAttack = false;
     }
@@ -698,34 +702,30 @@ public class Boss1 : MonoBehaviour
         // animator.SetTrigger("ReleaseCharge");
         Debug.Log("ReleaseCharge");
 
-        StartCoroutine(CreateShockwave());
+        StartCoroutine(CreateShockwave(10.0f, 0.1f, 5.0f));
 
         attackedAreas.Clear();
         attackCount = 0;
         canChange2 = true;
     }
 
-    IEnumerator CreateShockwave()
+    IEnumerator CreateShockwave(float maxRadius, float startScale, float speed) // 최대 반지름, 초기 크기, 확장 속도
     {
         GameObject shockwave = Instantiate(Pattern3ShockWave, transform.position, Quaternion.identity);
 
-        float duration = 2.0f; // 충격파가 퍼지는 시간
-        float maxRadius = 10.0f; // 충격파의 최대 반지름
-        float startScale = 0.1f; // 초기 크기
-        float elapsedTime = 0.0f;
+        float currentScale = startScale;
 
-        while (elapsedTime < duration) // [임시완]
+        while (currentScale < maxRadius)
         {
-            float t = elapsedTime / duration;
-            float currentScale = Mathf.Lerp(startScale, maxRadius, t);
+            currentScale += speed * Time.deltaTime;
             shockwave.transform.localScale = new Vector3(currentScale, shockwave.transform.localScale.y, currentScale);
 
-            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         Destroy(shockwave);
     }
+
 
     // 패턴 3
     void Scream()
