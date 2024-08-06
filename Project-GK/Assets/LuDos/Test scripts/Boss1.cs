@@ -235,7 +235,7 @@ public class Boss1 : MonoBehaviour
     bool SetGroggy()
     {
         isGroggy = true; // 일단 이거 켜지면 로직은 실행 안됨
-        //animator.SetTrigger("Groggy");
+        // animator.SetTrigger("Groggy");
         // navMeshAgent.isStopped = true; // 이중 멈춤이면 없애도 됨
         return true;
     }
@@ -243,6 +243,8 @@ public class Boss1 : MonoBehaviour
     void Die()
     {
         Debug.Log("Die");
+
+        isInvincible = true;
 
         //navMeshAgent.isStopped = true;
 
@@ -407,7 +409,7 @@ public class Boss1 : MonoBehaviour
         isInvincible = true;
     }
 
-    void LeftArmSlam()
+    void LeftArmSlam() // [임시완] 애니메이션 전부 코루틴으로 처리해야할듯
     {
         Debug.Log("LeftArmSlam");
 
@@ -697,23 +699,23 @@ public class Boss1 : MonoBehaviour
     IEnumerator CreateShockwave()
     {
         GameObject shockwave = Instantiate(Pattern3ShockWave, transform.position, Quaternion.identity);
+
         float duration = 2.0f; // 충격파가 퍼지는 시간
+        float maxRadius = 10.0f; // 충격파의 최대 반지름
+        float startScale = 0.1f; // 초기 크기
         float elapsedTime = 0.0f;
 
-        while (elapsedTime < duration)
+        while (elapsedTime < duration) // [임시완]
         {
             float t = elapsedTime / duration;
-            float outerRadius = Mathf.Lerp(1, 10, t); // 외부 반지름 조정
-            float innerRadius = Mathf.Lerp(0, 9, t); // 내부 반지름 조정
-            shockwave.transform.localScale = new Vector3(outerRadius, 1, outerRadius);
-            // 내부 반지름 조정은 쉐이더 또는 메쉬 조작이 필요할 수 있습니다.
-            // 여기에 추가적인 로직을 넣어야 합니다.
+            float currentScale = Mathf.Lerp(startScale, maxRadius, t);
+            shockwave.transform.localScale = new Vector3(currentScale, shockwave.transform.localScale.y, currentScale);
 
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        Destroy(shockwave); // 충격파 효과 제거
+        Destroy(shockwave);
     }
 
     // 패턴 3
