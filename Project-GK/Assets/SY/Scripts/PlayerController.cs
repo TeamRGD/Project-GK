@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        //UnityEngine.Debug.Log(this.gameObject);
         canMove = true;
         // 자신만 제어할 수 있도록
         if (!PV.IsMine)
@@ -47,6 +48,9 @@ public class PlayerController : MonoBehaviour
         }
         // 마우스 커서 제거
         CursorOff();
+        GameObject boss1 = GameObject.Find("Boss1_Ygg_V1");
+        UnityEngine.Debug.Log(boss1);
+        boss1.GetComponent<Boss1>().playerList.Add(this.gameObject);
     }
 
     public void CursorOn()
