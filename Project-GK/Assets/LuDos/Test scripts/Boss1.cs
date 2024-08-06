@@ -40,7 +40,7 @@ public class Boss1 : MonoBehaviour
     private bool isAggroFixed = false;
 
     public int Code;
-
+    private int playerIdx = 0;
 
     private List<int> bookcaseIndices = new List<int>();
     private List<int> numberOfBooks = new List<int>();
@@ -52,7 +52,7 @@ public class Boss1 : MonoBehaviour
     // private Animator animator;
     private GameObject playerWi;
     private GameObject playerZard;
-    public List<GameObject> PlayerList;
+    private List<GameObject> playerList;
     private GameObject aggroTarget;
     public GameObject ChangedStaff;
     private Rigidbody rb;
@@ -75,12 +75,12 @@ public class Boss1 : MonoBehaviour
 
         if (playerWi != null)
         {
-            PlayerList.Add(playerWi);
+            playerList.Add(playerWi);
         }
 
         if (playerZard != null)
         {
-            PlayerList.Add(playerZard);
+            playerList.Add(playerZard);
         }
 
         pattern1Tree = CreatePattern1Tree();
@@ -277,13 +277,13 @@ public class Boss1 : MonoBehaviour
             if (isAggroFixed)
             {
                 // 한놈만 팬다
-                aggroTarget = PlayerList[0];
+                aggroTarget = playerList[0];
             }
             else
             {
                 // 랜덤하게 둘 중 선택
-                int idx = Random.Range(0, PlayerList.Count);
-                aggroTarget = PlayerList[idx];
+                int idx = Random.Range(0, playerList.Count);
+                aggroTarget = playerList[idx];
             }
 
             int attackType = UnityEngine.Random.Range(1, 7);
@@ -521,7 +521,7 @@ public class Boss1 : MonoBehaviour
             {
                 Code += (bookcaseIndices[i] + 1) * numberOfBooks[i];
             }
-            // UIManager_Ygg.Instance.patternCode = Code;
+            UIManager_Ygg.Instance.patternCode = Code;
             canChange1 = false;
         }
         return true;
@@ -667,7 +667,7 @@ public class Boss1 : MonoBehaviour
             Code = ConvertListToInt(attackedAreas);
             Debug.Log("Code: " + Code);
             Debug.Log("Attacked Areas: " + string.Join(", ", attackedAreas));
-            // UIManager_Ygg.Instance.patternCode = Code;
+            UIManager_Ygg.Instance.patternCode = Code;
         }
         return true;
     }
@@ -778,8 +778,19 @@ public class Boss1 : MonoBehaviour
         Debug.Log("Attack BookCase");
         // animator.SetTrigger("AttackBookCase");
 
-        playerWi = GameObject.FindWithTag("Player"); // 두 플레이어 번갈아가며 선택하는 로직 필요함 [임시완]
-        Vector3 targetPosition = playerWi.transform.position;
+        Vector3 targetPosition;
+
+        if (playerIdx == 0)
+        {
+            targetPosition = playerList[0].transform.position;
+            playerIdx++;
+        }
+        else
+        {
+            targetPosition = playerList[1].transform.position;
+            playerIdx = 0;
+        }
+
         Vector3 direction = (targetPosition - transform.position).normalized;
         transform.LookAt(targetPosition);
 
