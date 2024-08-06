@@ -50,9 +50,8 @@ public class Boss1 : MonoBehaviour
 
     // private NavMeshAgent navMeshAgent;
     // private Animator animator;
-    private GameObject playerWi;
-    private GameObject playerZard;
-    private List<GameObject> playerList;
+
+    public List<GameObject> playerList;
     private GameObject aggroTarget;
     public GameObject ChangedStaff;
     private Rigidbody rb;
@@ -70,18 +69,6 @@ public class Boss1 : MonoBehaviour
         // navMeshAgent = GetComponent<NavMeshAgent>();
 
         rb = GetComponent<Rigidbody>();
-        playerWi = GameObject.FindWithTag("PlayerWi");
-        playerZard = GameObject.FindWithTag("PlayerZard");
-
-        if (playerWi != null)
-        {
-            playerList.Add(playerWi);
-        }
-
-        if (playerZard != null)
-        {
-            playerList.Add(playerZard);
-        }
 
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
@@ -782,13 +769,11 @@ public class Boss1 : MonoBehaviour
 
         if (playerIdx == 0)
         {
-            targetPosition = playerList[0].transform.position;
-            playerIdx++;
+            targetPosition = playerList[playerIdx++].transform.position;
         }
         else
         {
-            targetPosition = playerList[1].transform.position;
-            playerIdx = 0;
+            targetPosition = playerList[playerIdx--].transform.position;
         }
 
         Vector3 direction = (targetPosition - transform.position).normalized;
