@@ -8,10 +8,11 @@ TagManager:
   - Enemy
   - Projectile_Wi
   - Projectile_Zard
-  - Projectile
   - Wall
   - BookCase
   - Note
+  - PlayerWi
+  - PlayerZard
   layers:
   - Default
   - TransparentFX
