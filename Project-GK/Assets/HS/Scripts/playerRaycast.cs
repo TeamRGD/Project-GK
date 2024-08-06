@@ -2,7 +2,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class playerRaycast : MonoBehaviour
+public class PlayerRaycast : MonoBehaviour
 {
     public float interactionRange = 100f; // 상호작용 가능한 거리
     public LayerMask interactableLayer; // 상호작용 가능한 레이어
@@ -19,16 +19,13 @@ public class playerRaycast : MonoBehaviour
     private void Start()
     {
         playerCamera = GetComponentInChildren<Camera>();
-        playerController = GetComponentInChildren<PlayerController>();
+        playerController = GetComponent<PlayerController>();
         PV = GetComponentInChildren<PhotonView>();
     }
 
     private void Update()
     {
-        List<PlayerController> players_ = new List<PlayerController>(players.Keys);
-        foreach (PlayerController playerController in players_) // 상호작용 하고 있는 모든 플레이어의 입력을 각각 처리할 수 있도록 함.
-        {
-            PhotonView PV = players[playerController];
+
             if (PV != null && PV.IsMine)
             {
                 if (Input.GetKeyDown(KeyCode.T))
@@ -40,7 +37,7 @@ public class playerRaycast : MonoBehaviour
                     playerController.CursorOff();
                     interactionUI.SetActive(false);
                 }
-            }
+         
         }
 
         CheckForInteractable();

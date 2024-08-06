@@ -10,6 +10,8 @@ public class Puzzle1Note : MonoBehaviour
 
     private bool canInteract = false;
 
+
+    // 안 쓰는 코드들.
     private void Update()
     {
         CheckForInteractable();
