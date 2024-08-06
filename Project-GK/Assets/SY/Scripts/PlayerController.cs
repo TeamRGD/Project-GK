@@ -34,9 +34,6 @@ public class PlayerController : MonoBehaviour
         TryGetComponent<PhotonView>(out PV);
         TryGetComponent<PlayerAttack>(out playerAttack);
         TryGetComponent<PlayerToolManager>(out playerToolManager);
-        GameObject boss1 = GameObject.Find("Boss1_Ygg_V1");
-        UnityEngine.Debug.Log(boss1);
-        boss1.GetComponent<Boss1>().playerList.Add(this.gameObject);
     }
 
     private void Start()
@@ -51,6 +48,9 @@ public class PlayerController : MonoBehaviour
         }
         // 마우스 커서 제거
         CursorOff();
+        GameObject boss1 = GameObject.Find("Boss1_Ygg_V1");
+        UnityEngine.Debug.Log(boss1);
+        boss1.GetComponent<Boss1>().playerList.Add(this.gameObject);
     }
 
     public void CursorOn()
