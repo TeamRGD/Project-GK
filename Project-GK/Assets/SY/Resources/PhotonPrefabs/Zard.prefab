@@ -5979,7 +5979,7 @@ GameObject:
   - component: {fileID: 7943840140893421715}
   m_Layer: 0
   m_Name: Zard
-  m_TagString: Player
+  m_TagString: PlayerZard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

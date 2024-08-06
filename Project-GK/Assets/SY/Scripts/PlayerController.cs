@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 반경 2.0f 플레이어 주위에 있는 콜라이더 검색
             foreach (var hitCollider in hitColliders)
             {
-                if (hitCollider.CompareTag("Player")) // Player이면
+                if (hitCollider.CompareTag("PlayerWi")||hitCollider.CompareTag("PlayerZard")) // Player이면
                 {
                     PhotonView targetPV;
                     hitCollider.TryGetComponent<PhotonView>(out targetPV);
