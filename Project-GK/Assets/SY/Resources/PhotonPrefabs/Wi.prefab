@@ -5160,7 +5160,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5004593097560982869}
   - {fileID: 3012074748258660536}
   - {fileID: 6430927473172431467}
   - {fileID: 1901472125540140474}
@@ -5214,6 +5213,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 9109449560428289249}
+  - {fileID: -6139773246994478324}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -5258,6 +5258,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   aim: {fileID: 3431846509754168344}
+  isJumping: 0
 --- !u!114 &7662682973169423791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5329,10 +5330,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.4979578
+  m_Radius: 0.3533349
   m_Height: 1.245437
   m_Direction: 1
-  m_Center: {x: -0.0020422041, y: 0.6087683, z: 0}
+  m_Center: {x: -0.1466651, y: 0.6087683, z: 0}
 --- !u!95 &672124432312061678
 Animator:
   serializedVersion: 5
@@ -5400,8 +5401,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowLayerWeightsInspector: 1
   ShowParameterInspector: 1
-  m_SynchronizeParameters: []
-  m_SynchronizeLayers: []
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 0
+    Name: isWalking
+  - Type: 4
+    SynchronizeType: 0
+    Name: isRunning
+  - Type: 4
+    SynchronizeType: 0
+    Name: isJumping
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0
 --- !u!1 &969318899471238391
 GameObject:
   m_ObjectHideFlags: 0
@@ -6293,12 +6305,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4517455222413899153}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.099999994, z: 0.7}
+  m_LocalRotation: {x: 0.00000006733179, y: 0.7071067, z: 0.0000009161448, w: -0.70710695}
+  m_LocalPosition: {x: 0.09640465, y: -0.0014400706, z: -0.13270527}
+  m_LocalScale: {x: 0.79999983, y: 0.09999997, z: 0.6999999}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6478719530023134538}
+  m_Father: {fileID: 1708328555898940909}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1600041673646626822
 BoxCollider:
@@ -7908,6 +7920,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2648606499282784420}
+  - {fileID: 5004593097560982869}
   m_Father: {fileID: 3032322243137993677}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8948813941127414215

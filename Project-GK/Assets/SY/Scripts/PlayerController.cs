@@ -104,12 +104,6 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         SavePlayer();
-        UpdateAnimator();
-    }
-
-    void UpdateAnimator()
-    {
-
     }
     
     private void FixedUpdate()
