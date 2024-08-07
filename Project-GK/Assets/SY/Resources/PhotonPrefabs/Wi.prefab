@@ -5139,6 +5139,7 @@ GameObject:
   - component: {fileID: 90319529447932834}
   - component: {fileID: 672124432312061678}
   - component: {fileID: 3899536905504140821}
+  - component: {fileID: -6139773246994478324}
   m_Layer: 0
   m_Name: Wi
   m_TagString: Player
@@ -5248,7 +5249,7 @@ MonoBehaviour:
   mouseSensitivity: 2
   sprintSpeed: 5
   walkSpeed: 3
-  jumpForce: 300
+  jumpForce: 150
   smoothTime: 0.15
   playerBody: {fileID: 6478719530023134538}
   distanceFromPlayer: 5
@@ -5385,6 +5386,22 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     m_Visible: 1
+--- !u!114 &-6139773246994478324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 909712977899993400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters: []
+  m_SynchronizeLayers: []
 --- !u!1 &969318899471238391
 GameObject:
   m_ObjectHideFlags: 0

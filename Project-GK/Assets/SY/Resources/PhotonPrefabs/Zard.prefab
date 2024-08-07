@@ -5977,6 +5977,7 @@ GameObject:
   - component: {fileID: 1967841121118044747}
   - component: {fileID: 4568800209693031333}
   - component: {fileID: 7943840140893421715}
+  - component: {fileID: 8847912402696199497}
   m_Layer: 0
   m_Name: Zard
   m_TagString: Player
@@ -6051,6 +6052,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 4834977807887330383}
+  - {fileID: 8847912402696199497}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -6086,7 +6088,7 @@ MonoBehaviour:
   mouseSensitivity: 2
   sprintSpeed: 5
   walkSpeed: 3
-  jumpForce: 300
+  jumpForce: 150
   smoothTime: 0.15
   playerBody: {fileID: 3689539947034300913}
   distanceFromPlayer: 5
@@ -6207,6 +6209,33 @@ MonoBehaviour:
   - m_Rig: {fileID: 1403123248921822935}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &8847912402696199497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2936555752396236712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 1
+    Name: isWalking
+  - Type: 4
+    SynchronizeType: 1
+    Name: isRunning
+  - Type: 4
+    SynchronizeType: 1
+    Name: isJumping
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0
 --- !u!1 &3452441987048312955
 GameObject:
   m_ObjectHideFlags: 0

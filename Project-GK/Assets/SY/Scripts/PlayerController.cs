@@ -23,10 +23,14 @@ public class PlayerController : MonoBehaviour
     Vector3 moveAmount;
 
     Rigidbody rb;
+    Animator animator;
 
     PhotonView PV;
     PlayerAttack playerAttack;
     PlayerToolManager playerToolManager;
+
+    bool isWalking = false;
+    bool isJumping = false;
 
     void Awake()
     {
@@ -34,6 +38,7 @@ public class PlayerController : MonoBehaviour
         TryGetComponent<PhotonView>(out PV);
         TryGetComponent<PlayerAttack>(out playerAttack);
         TryGetComponent<PlayerToolManager>(out playerToolManager);
+        TryGetComponent<Animator>(out animator);
     }
 
     private void Start()
@@ -99,6 +104,12 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         SavePlayer();
+        UpdateAnimator();
+    }
+
+    void UpdateAnimator()
+    {
+
     }
     
     private void FixedUpdate()
@@ -162,6 +173,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
         moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);
+        isWalking = moveDir != Vector3.zero;
+        animator.SetBool("isWalking", isWalking);
     }
 
     void Jump()
@@ -169,11 +182,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
             rb.AddForce(transform.up * jumpForce);
+            isJumping = true;
+            animator.SetBool("isJumping", isJumping);
         }
     }
 
     public void SetGroundedState(bool _grounded)
     {
+        if (_grounded != grounded && _grounded) 
+        {
+            isJumping = false;
+            animator.SetBool("isJumping", isJumping);
+        }
         grounded = _grounded;
     }
 

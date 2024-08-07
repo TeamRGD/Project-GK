@@ -67,6 +67,7 @@ MonoBehaviour:
   - RecoverPowerRPC
   - UpdateManaRPC
   - SetInventoryUIRPC
+  - SetTargetPosition
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
