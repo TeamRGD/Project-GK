@@ -30,6 +30,7 @@ public class UIManager_Ygg : MonoBehaviour
     // Variables being used in pattern3 logic
     public GameObject attackNodeContainer;
     private int playerAttackCount;
+    UIManager_Player uiManager;
 
     // for Singleton Pattern (Don't know meaning but everyone uses this)
     void Awake()
@@ -46,6 +47,7 @@ public class UIManager_Ygg : MonoBehaviour
 
     void Start()
     {
+        uiManager = FindObjectOfType<UIManager_Player>();
         patternCode = 1234;
     }
 
@@ -91,7 +93,7 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
 
-        UIManager_Player.Instance.interactionNotice.gameObject.SetActive(false);
+        uiManager.interactionNotice.gameObject.SetActive(false);
     }
 
     public void DeactivateCipher()
@@ -101,7 +103,7 @@ public class UIManager_Ygg : MonoBehaviour
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherDisplay.gameObject.SetActive(false));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherEnter.gameObject.SetActive(false));
 
-        UIManager_Player.Instance.interactionNotice.gameObject.SetActive(true);
+        uiManager.interactionNotice.gameObject.SetActive(true);
     }
 
     public void InputNumber(int num)

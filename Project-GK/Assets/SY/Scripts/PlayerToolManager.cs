@@ -39,11 +39,13 @@ public class PlayerToolManager : MonoBehaviour
     void SwitchToNextTool()
     {
         PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
+        PV.RPC("SetInventoryUIRPC", RpcTarget.AllBuffered);
     }
 
     void SwitchToPreviousTool()
     {
         PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
+        PV.RPC("SetInventoryUIRPC", RpcTarget.AllBuffered);
     }
 
     [PunRPC]
@@ -55,10 +57,17 @@ public class PlayerToolManager : MonoBehaviour
     }
 
     [PunRPC]
+    void SetInventoryUIRPC()
+    {
+        if (!PV.IsMine)
+            return;
+        UIManager_Player.Instance.SetInventory(currentToolIndex);
+    }
+
+    [PunRPC]
     void SwitchToPreviousToolRPC()
     {
         currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
-        UIManager_Player.Instance.SetInventory(currentToolIndex);
         UpdateToolVisibility();
     }
 

@@ -64,6 +64,9 @@ MonoBehaviour:
   - UpdateToolVisibilityRPC
   - CursorOffRPC
   - CursorOnRPC
+  - RecoverPowerRPC
+  - UpdateManaRPC
+  - SetInventoryUIRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

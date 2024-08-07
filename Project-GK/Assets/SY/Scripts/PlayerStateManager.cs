@@ -67,13 +67,15 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void TakeDamageRPC(int damage)
     {
+        if (!PV.IsMine)
+            return;
         currentHealth -= damage;
-        UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
         if (currentHealth <= 0)
         {
             currentHealth = 0;
             OnDeath();
         }
+        UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
     }
 
     void OnDeath()
@@ -107,6 +109,14 @@ public class PlayerStateManager : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0); // 임시로 부활 표현
     }
 
+    [PunRPC]
+    void UpdateManaRPC()
+    {
+        if (!PV.IsMine)
+            return;
+        UIManager_Player.Instance.ManageMana(currentPower, maxPower);
+    }
+    
     IEnumerator RecoverPower() // 매초마다 마력 5씩 회복
     {
         while (true)
@@ -115,11 +125,11 @@ public class PlayerStateManager : MonoBehaviour
             if (currentPower < maxPower)
             {
                 currentPower += 5;
-                UIManager_Player.Instance.ManageMana(currentPower, maxPower);
                 if (currentPower > maxPower)
                 {
                     currentPower = maxPower;
                 }
+                PV.RPC("UpdateManaRPC", RpcTarget.AllBuffered);
             }
         }
     }
@@ -134,12 +144,14 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void IncreaseUltimatePowerRPC(int amount)
     {
+        if (!PV.IsMine)
+            return;
         currentUltimatePower += amount;
-        UIManager_Player.Instance.ManageUlt(currentUltimatePower, maxUltimatePower);
         if (currentUltimatePower > maxUltimatePower)
         {
             currentUltimatePower = maxUltimatePower;
         }
+        UIManager_Player.Instance.ManageUlt(currentUltimatePower, maxUltimatePower);
     }
 
     public void DecreasePower(int amount)
@@ -152,6 +164,8 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void DecreasePowerRPC(int amount)
     {
+        if (!PV.IsMine)
+            return;
         currentPower -= amount;
         UIManager_Player.Instance.ManageMana(currentPower, maxPower);
     }
@@ -166,6 +180,8 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void ResetUltimatePowerRPC()
     {
+        if (!PV.IsMine)
+            return;
         currentUltimatePower = 0;
         UIManager_Player.Instance.ManageUlt(currentUltimatePower, maxUltimatePower);
     }
