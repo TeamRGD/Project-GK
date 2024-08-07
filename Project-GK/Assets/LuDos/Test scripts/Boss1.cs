@@ -42,13 +42,15 @@ public class Boss1 : MonoBehaviour
     public int Code;
     int playerIdx = 0;
 
+    public List<GameObject> AttackIndicators;
+    public List<GameObject> AttackFills;
+
     List<int> bookcaseIndices = new List<int>();
     List<int> numberOfBooks = new List<int>();
     List<int> attackedAreas = new List<int>();
     public List<GameObject> BookCases; // 7개의 책장의 위치를 담아둔 리스트
     public List<GameObject> Areas;
 
-    // NavMeshAgent navMeshAgent;
     // Animator animator;
 
     public List<GameObject> PlayerList;
@@ -66,8 +68,6 @@ public class Boss1 : MonoBehaviour
         currentHealth = maxHealth;
 
         // animator = GetComponent<Animator>();
-        // navMeshAgent = GetComponent<NavMeshAgent>();
-
         rb = GetComponent<Rigidbody>();
 
         pattern1Tree = CreatePattern1Tree();
@@ -121,7 +121,6 @@ public class Boss1 : MonoBehaviour
                         {
                             StopCoroutine(ExecutePattern(pattern1Tree));
                             isGroggy = false;
-                            // navMeshAgent.isStopped = false;
                         }
 
                         MakeInvincible();
@@ -142,7 +141,6 @@ public class Boss1 : MonoBehaviour
                         {
                             StopCoroutine(ExecutePattern(pattern2Tree));
                             isGroggy = false;
-                            // navMeshAgent.isStopped = false;
                         }
 
                         MakeInvincible();
@@ -237,9 +235,10 @@ public class Boss1 : MonoBehaviour
 
     bool SetGroggy()
     {
-        isGroggy = true; // 일단 이거 켜지면 로직은 실행 안됨
+        isGroggy = true;
+
         // animator.SetTrigger("Groggy");
-        // navMeshAgent.isStopped = true; // 이중 멈춤이면 없애도 됨
+
         return true;
     }
 
@@ -249,9 +248,38 @@ public class Boss1 : MonoBehaviour
 
         isInvincible = true;
 
-        //navMeshAgent.isStopped = true;
-
         //animator.SetTrigger("Die");
+    }
+
+    IEnumerator ShowIndicator(int idx, float maxRadius, Vector3 position, float duration)
+    {
+        if (idx == 0) // maxRadius 안씀.
+        {
+
+        }
+        else
+        {
+            GameObject indicator = Instantiate(AttackIndicators[idx], position, Quaternion.identity);
+            GameObject fill = Instantiate(AttackFills[idx], position, Quaternion.identity);
+
+            indicator.transform.localScale = new Vector3(maxRadius, indicator.transform.localScale.y, maxRadius);
+            fill.transform.localScale = Vector3.zero;
+
+            float elapsedTime = 0f;
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / duration;
+
+                float currentScale = Mathf.Lerp(0, maxRadius, t);
+                fill.transform.localScale = new Vector3(currentScale, fill.transform.localScale.y, currentScale);
+
+                yield return null;
+            }
+
+            Destroy(indicator);
+            Destroy(fill);
+        }
     }
 
     bool RandomBasicAttack()
@@ -273,26 +301,24 @@ public class Boss1 : MonoBehaviour
                 aggroTarget = PlayerList[idx];
             }
 
-            int attackType = UnityEngine.Random.Range(1, 7);
+            //int attackType = UnityEngine.Random.Range(1, 6);
+            int attackType = 1;
 
             switch (attackType)
             {
                 case 1:
-                    StartCoroutine(SpinningArmAttackCoroutine());
-                    break;
-                case 2:
                     StartCoroutine(ShockwaveAttackCoroutine());
                     break;
-                case 3:
+                case 2:
                     StartCoroutine(AlternatingArmSlamCoroutine());
                     break;
-                case 4:
+                case 3:
                     StartCoroutine(LegStompShockwaveCoroutine());
                     break;
-                case 5:
+                case 4:
                     StartCoroutine(PalmStrikeCoroutine());
                     break;
-                case 6:
+                case 5:
                     StartCoroutine(HalfMapSweepCoroutine());
                     break;
             }
@@ -300,42 +326,15 @@ public class Boss1 : MonoBehaviour
         return true;
     }
 
-    IEnumerator SpinningArmAttackCoroutine()
-    {
-        isExecutingAttack = true;
-
-        // 팔을 돌리며 원형범위로 맵 전범위 타격 [임시완]
-        for (int i = 0; i < 4; i++)
-        {
-            // 시계방향
-            // animator.SetTrigger("SpinArmsClockwise");
-            yield return new WaitForSeconds(3.0f);
-
-            // 반시계방향
-            if (i == 1)
-            {
-                // animator.SetTrigger("SpinArmsCounterclockwise");
-                yield return new WaitForSeconds(1.0f);
-            }
-        }
-
-        isExecutingAttack = false;
-    }
-
     IEnumerator ShockwaveAttackCoroutine()
     {
         isExecutingAttack = true;
 
-        // animator.SetTrigger("Shockwave");
+        // animator.SetTrigger("Shockwave"); // 두팔로 내려치기
+        StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f));
+        yield return new WaitForSeconds(3.0f);
 
-        // 3단계 충격파
-        for (int i = 0; i < 3; i++)
-        {
-            // 충격파 생성
-            StartCoroutine(CreateShockwave(5.0f * i + 5.0f, 0.1f, 5.0f));
-
-            yield return new WaitForSeconds(5.0f);
-        }
+        // 충격파
 
         isExecutingAttack = false;
     }
@@ -347,7 +346,7 @@ public class Boss1 : MonoBehaviour
         // 각 팔을 번갈아 들어 내리치며 타격 (총 5번) [임시완]
         for (int i = 0; i < 5; i++)
         {
-            int num = Random.Range(0, 2);
+            int num = Random.Range(0, PlayerList.Count);
             Vector3 targetPosition = PlayerList[num].transform.position;
             transform.LookAt(targetPosition);
 

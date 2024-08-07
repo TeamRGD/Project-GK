@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3614641416150662044}
   - component: {fileID: 5785780395954149736}
   m_Layer: 0
-  m_Name: Indicator
+  m_Name: AttackIndicator1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 6197301155000544402}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -32.105198, y: 0, z: 16.76432}
-  m_LocalScale: {x: 7.2681274, y: 0.3146068, z: 7.2681274}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 7.2681274, y: 0.007790668, z: 7.2681274}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5122ca10396912f409d0d105cc3674ec, type: 2}
+  - {fileID: 2100000, guid: 6a729a70b13d3d943820b42d6285f5d0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

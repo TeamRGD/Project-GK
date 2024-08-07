@@ -749,6 +749,12 @@ MonoBehaviour:
   collisionCount: 0
   IsCorrect: 0
   Code: 0
+  AttackIndicators:
+  - {fileID: 0}
+  - {fileID: 6197301155000544402, guid: 26ca77827efb6be4696423fb9e52dbae, type: 3}
+  AttackFills:
+  - {fileID: 0}
+  - {fileID: 6197301155000544402, guid: c9e6dda18a6d7bf43b40db46bd18b65a, type: 3}
   BookCases:
   - {fileID: 459122126}
   - {fileID: 1960434536}
@@ -766,7 +772,7 @@ MonoBehaviour:
   - {fileID: 1446991419}
   - {fileID: 646997462}
   - {fileID: 441228314}
-  playerList: []
+  PlayerList: []
   ChangedStaff: {fileID: 0}
   Pattern3ShockWave: {fileID: 6365691922683211244, guid: 16f1f50ef4f41b44bb8f609aeff2fd49, type: 3}
 --- !u!195 &126616140
@@ -1025,7 +1031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &158548197
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1272,7 +1278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &211352325
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2393,7 +2399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &419972652
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2587,7 +2593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &441228315
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2780,7 +2786,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &459122127
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3468,7 +3474,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &523941439
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3782,7 +3788,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &646997463
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4300,6 +4306,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5332455779810159917, guid: 6efc6e7ab71eb824bb511e3b9259d782, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8fc50cc17b115c842ab4a7abc66c8a7c, type: 2}
     - target: {fileID: 8326915578039671320, guid: 6efc6e7ab71eb824bb511e3b9259d782, type: 3}
       propertyPath: m_Name
       value: CipherDevice
@@ -5074,7 +5084,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &891962816
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5342,7 +5352,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &986544748
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5448,7 +5458,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1016277691
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5881,7 +5891,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1111605925
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5999,7 +6009,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1115210613
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7039,7 +7049,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1446991420
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7638,7 +7648,7 @@ GameObject:
   - component: {fileID: 1548863035}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7685,7 +7695,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c4e359e47adc8d64a855f310305bf45a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8328,7 +8338,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1757538570
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8668,7 +8678,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1960434537
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9246,7 +9256,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &2033378653
 BoxCollider:
   m_ObjectHideFlags: 0

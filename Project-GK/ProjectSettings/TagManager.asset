@@ -13,6 +13,8 @@ TagManager:
   - Note
   - PlayerWi
   - PlayerZard
+  - Projectile
+  - Ground
   layers:
   - Default
   - TransparentFX
