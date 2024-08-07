@@ -750,10 +750,10 @@ MonoBehaviour:
   IsCorrect: 0
   Code: 0
   AttackIndicators:
-  - {fileID: 0}
+  - {fileID: 8244578177886748486, guid: d378c38c9462d7f48a46dc6142990057, type: 3}
   - {fileID: 6197301155000544402, guid: 26ca77827efb6be4696423fb9e52dbae, type: 3}
   AttackFills:
-  - {fileID: 0}
+  - {fileID: 8244578177886748486, guid: 06b6e517fd68bbf438484d54ef9bfc83, type: 3}
   - {fileID: 6197301155000544402, guid: c9e6dda18a6d7bf43b40db46bd18b65a, type: 3}
   BookCases:
   - {fileID: 459122126}
@@ -774,7 +774,7 @@ MonoBehaviour:
   - {fileID: 441228314}
   PlayerList: []
   ChangedStaff: {fileID: 0}
-  Pattern3ShockWave: {fileID: 6365691922683211244, guid: 16f1f50ef4f41b44bb8f609aeff2fd49, type: 3}
+  Pattern3ShockWave: {fileID: 8018053144242486632, guid: f33d4029644de4f4ca52c058a5e9284f, type: 3}
 --- !u!195 &126616140
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -7695,7 +7695,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c4e359e47adc8d64a855f310305bf45a, type: 2}
+  - {fileID: -4745932956296957305, guid: ea134c88e1392c749b4fb1d85b5b88fb, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
