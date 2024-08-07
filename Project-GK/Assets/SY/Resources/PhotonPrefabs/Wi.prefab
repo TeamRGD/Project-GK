@@ -5258,7 +5258,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   aim: {fileID: 3431846509754168344}
-  isJumping: 0
 --- !u!114 &7662682973169423791
 MonoBehaviour:
   m_ObjectHideFlags: 0

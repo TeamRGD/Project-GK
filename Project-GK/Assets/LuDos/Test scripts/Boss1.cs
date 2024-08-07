@@ -322,8 +322,8 @@ public class Boss1 : MonoBehaviour
                 aggroTarget = PlayerList[idx];
             }
 
-            //int attackType = UnityEngine.Random.Range(1, 6);
-            int attackType = 1;
+            int attackType = UnityEngine.Random.Range(1, 6);
+            // int attackType = 1;
 
             switch (attackType)
             {
