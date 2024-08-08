@@ -266,8 +266,8 @@ public class Boss1 : MonoBehaviour
     {
         if (idx == 0)
         {
-            GameObject indicator = Instantiate(AttackIndicators[idx], position, Quaternion.identity);
-            GameObject fill = Instantiate(AttackFills[idx], position, Quaternion.identity);
+            GameObject indicator = Instantiate(AttackIndicators[idx], position, Quaternion.LookRotation(transform.forward));
+            GameObject fill = Instantiate(AttackFills[idx], position, Quaternion.LookRotation(transform.forward));
 
             float width = 0.3f;
             indicator.transform.localScale = new Vector3(width, indicator.transform.localScale.y, maxLength);
@@ -317,16 +317,36 @@ public class Boss1 : MonoBehaviour
     {
         if (!isExecutingAttack)
         {
-            randomBasicAttackCoroutine = StartCoroutine(RandomBasicAttackCoroutine());
+            Debug.Log("RandomBasicAttack");
+
+            int attackType = UnityEngine.Random.Range(1, 6);
+            // int attackType = 3;
+
+            switch (attackType)
+            {
+                case 1:
+                    StartCoroutine(LandAttackCoroutine());
+                    break;
+                case 2:
+                    StartCoroutine(TwoArmSlamCoroutine());
+                    break;
+                case 3:
+                    StartCoroutine(AlternatingArmSlamCoroutine());
+                    break;
+                case 4:
+                    StartCoroutine(LegStompCoroutine());
+                    break;
+                case 5:
+                    StartCoroutine(PalmStrikeCoroutine());
+                    break;
+            }
         }
         return true;
     }
 
-    IEnumerator RandomBasicAttackCoroutine()
+    IEnumerator LandAttackCoroutine()
     {
         isExecutingAttack = true;
-
-        Debug.Log("RandomBasicAttack");
 
         yield return new WaitForSeconds(5.0f);
 
@@ -340,34 +360,6 @@ public class Boss1 : MonoBehaviour
             aggroTarget = PlayerList[idx];
         }
 
-        int attackType = UnityEngine.Random.Range(1, 6);
-        // int attackType = 1;
-
-        switch (attackType)
-        {
-            case 1:
-                StartCoroutine(LandAttackCoroutine());
-                break;
-            case 2:
-                StartCoroutine(TwoArmSlamCoroutine());
-                break;
-            case 3:
-                StartCoroutine(AlternatingArmSlamCoroutine());
-                break;
-            case 4:
-                StartCoroutine(LegStompCoroutine());
-                break;
-            case 5:
-                StartCoroutine(PalmStrikeCoroutine());
-                break;
-        }
-        yield return null;
-
-        isExecutingAttack = false;
-    }
-
-    IEnumerator LandAttackCoroutine()
-    {
         transform.LookAt(aggroTarget.transform.position);
 
         Vector3 targetPosition = aggroTarget.transform.position;
@@ -395,10 +387,26 @@ public class Boss1 : MonoBehaviour
 
         StartCoroutine(CreateShockwave(5.0f, 0.1f, targetPosition, 2.0f));
         yield return new WaitForSeconds(3.0f);
+
+        isExecutingAttack = false;
     }
 
     IEnumerator TwoArmSlamCoroutine()
     {
+        isExecutingAttack = true;
+
+        yield return new WaitForSeconds(5.0f);
+
+        if (isAggroFixed)
+        {
+            aggroTarget = PlayerList[0];
+        }
+        else
+        {
+            int idx = Random.Range(0, PlayerList.Count);
+            aggroTarget = PlayerList[idx];
+        }
+
         transform.LookAt(aggroTarget.transform.position);
 
         // animator.SetTrigger("Shockwave"); // 두팔로 내려치기
@@ -408,14 +416,32 @@ public class Boss1 : MonoBehaviour
         // 충격파
         StartCoroutine(CreateShockwave(5.0f, 3.0f, transform.position + transform.forward * 2.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
+
+        isExecutingAttack = false;
     }
 
     IEnumerator AlternatingArmSlamCoroutine()
     {
+        isExecutingAttack = true;
+
+        yield return new WaitForSeconds(5.0f);
+
+        if (isAggroFixed)
+        {
+            aggroTarget = PlayerList[0];
+        }
+        else
+        {
+            int idx = Random.Range(0, PlayerList.Count);
+            aggroTarget = PlayerList[idx];
+        }
+
         // 각 팔을 번갈아 들어 내리치며 타격 (총 5번) [임시완]
         for (int i = 0; i < 5; i++)
         {
             transform.LookAt(aggroTarget.transform.position);
+
+            yield return new WaitForSeconds(0.5f);
 
             if (i == 4)
             {
@@ -435,13 +461,27 @@ public class Boss1 : MonoBehaviour
                 StartCoroutine(ShowIndicator(0, 0.6f, transform.position + transform.forward * 4.0f + transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요 [임시완]
                 yield return new WaitForSeconds(2.0f);
             }
-
-            yield return new WaitForSeconds(1.0f);
         }
+
+        isExecutingAttack = false;
     }
 
     IEnumerator LegStompCoroutine()
     {
+        isExecutingAttack = true;
+
+        yield return new WaitForSeconds(5.0f);
+
+        if (isAggroFixed)
+        {
+            aggroTarget = PlayerList[0];
+        }
+        else
+        {
+            int idx = Random.Range(0, PlayerList.Count);
+            aggroTarget = PlayerList[idx];
+        }
+
         transform.LookAt(aggroTarget.transform.position);
 
         // animator.SetTrigger("LegStomp");
@@ -453,10 +493,26 @@ public class Boss1 : MonoBehaviour
         // 충격파
         StartCoroutine(CreateShockwave(5.0f, 0.1f, transform.position + transform.forward * 2.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
+
+        isExecutingAttack = false;
     }
 
     IEnumerator PalmStrikeCoroutine()
     {
+        isExecutingAttack = true;
+
+        yield return new WaitForSeconds(5.0f);
+
+        if (isAggroFixed)
+        {
+            aggroTarget = PlayerList[0];
+        }
+        else
+        {
+            int idx = Random.Range(0, PlayerList.Count);
+            aggroTarget = PlayerList[idx];
+        }
+
         transform.LookAt(aggroTarget.transform.position);
 
         // animator.SetTrigger("PalmStrike");
@@ -466,6 +522,8 @@ public class Boss1 : MonoBehaviour
         // 손바닥으로 내려치기 (피격 플레이어 2초 기절) [임시완] 기절 콜라이더 태그 만들어서 하면 될듯
         StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 3.0f)); // 위치, 크기 조정 필요 [임시완]
         yield return new WaitForSeconds(3.0f);
+
+        isExecutingAttack = false;
     }
 
     // 패턴 1
