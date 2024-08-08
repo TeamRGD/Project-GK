@@ -28,10 +28,10 @@ public class Projectile : MonoBehaviour
             PhotonView PV = PhotonView.Find(ownerPhotonViewId);
             if (PV != null && PV.IsMine)
             {
-                PhotonNetwork.Destroy(gameObject);
                 PV.TryGetComponent<PlayerStateManager>(out playerState);
                 playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
-                other.GetComponentInParent<Boss1>().TakeDamage(attackPower);
+                other.GetComponent<Boss1>().TakeDamage(attackPower);
+                PhotonNetwork.Destroy(gameObject);
             }
         }
     }
