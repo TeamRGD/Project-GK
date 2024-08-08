@@ -19,12 +19,14 @@ public class PlayerAttack : MonoBehaviour
     public float projectileSpeed = 20f;
     public float maxRayDistance = 100f;
     Camera playerCamera;
+    Animator animator;
 
     void Awake()
     {
         TryGetComponent<PhotonView>(out PV);
         TryGetComponent<PlayerStateManager>(out playerState);
         TryGetComponent<PlayerToolManager>(out playerTool);
+        TryGetComponent<Animator>(out animator);
         playerCamera = GetComponentInChildren<Camera>();
     }
 
@@ -44,11 +46,11 @@ public class PlayerAttack : MonoBehaviour
         {
             return false;
         }
-        if (attackCount < 2 && playerState.currentPower >= 10)
+        if (attackCount < 2 && playerState.GetPower() >= 10)
         {
             return true;
         }
-        else if (attackCount >= 2 && playerState.currentPower >= 15)
+        else if (attackCount >= 2 && playerState.GetPower() >= 15)
         {
             return true;
         }
@@ -58,10 +60,26 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack()
     {
-        if (Input.GetMouseButtonDown(0)&&CanAttack())
+        if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()<100) // 기본 공격
         {
             PV.RPC("AttackRPC", RpcTarget.AllBuffered, attackCount);
+            animator.SetInteger("attackCount", attackCount+1);
+            animator.SetTrigger("isAttacking");
         }
+        else if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()==100) // 궁극기
+        {
+            PV.RPC("UltimateAttackRPC", RpcTarget.AllBuffered);
+        }
+    }
+
+    [PunRPC]
+    void UltimateAttackRPC()
+    {
+        if (!PV.IsMine) return;
+        playerState.ResetUltimatePower();
+        animator.SetTrigger("isUltimate");
+        attackCount = 0;
+        lastAttackTime = Time.time;
     }
 
     [PunRPC]
@@ -83,7 +101,7 @@ public class PlayerAttack : MonoBehaviour
         ShotProjectile(count);
     }
 
-    void ShotProjectile(int count) // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정 // 하다가 일단 멈춤. 꼭 Refactoring 조만간..
+    void ShotProjectile(int count) // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
     {
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
@@ -91,7 +109,7 @@ public class PlayerAttack : MonoBehaviour
 
             Vector3 targetPoint = Vector3.zero;
 
-            Debug.DrawRay(ray.origin, ray.direction * maxRayDistance, Color.red, 2f);
+            //Debug.DrawRay(ray.origin, ray.direction * maxRayDistance, Color.red, 2f);
             if (Physics.Raycast(ray, out RaycastHit hit, maxRayDistance))
             {
                 targetPoint = hit.point;

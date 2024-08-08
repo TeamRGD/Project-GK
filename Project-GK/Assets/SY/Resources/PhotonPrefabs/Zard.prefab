@@ -6096,7 +6096,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   aim: {fileID: 8770323177228056638}
-  isJumping: 0
 --- !u!114 &730783521546183074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6109,11 +6108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21877f62f16c7ec47a087161a4efcc76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
   currentHealth: 0
-  maxPower: 150
   currentPower: 0
-  maxUltimatePower: 100
   currentUltimatePower: 0
 --- !u!114 &52286798947685371
 MonoBehaviour:
@@ -6171,7 +6167,7 @@ CapsuleCollider:
   m_Radius: 0.3533349
   m_Height: 1.245437
   m_Direction: 1
-  m_Center: {x: -0.1466651, y: 0.6087683, z: 0}
+  m_Center: {x: 0, y: 0.6087683, z: 0}
 --- !u!95 &4568800209693031333
 Animator:
   serializedVersion: 5
@@ -6233,6 +6229,15 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: isJumping
+  - Type: 3
+    SynchronizeType: 1
+    Name: attackCount
+  - Type: 9
+    SynchronizeType: 1
+    Name: isAttacking
+  - Type: 9
+    SynchronizeType: 1
+    Name: isUltimate
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0

@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/SY/Scenes/Launcher.unity
+    path: Assets/Scenes/Launcher.unity
     guid: 3db775f9af3121e4db09a8bb584df78a
   - enabled: 1
-    path: Assets/SDJ/Scenes/Yggdrasil.unity
+    path: Assets/Scenes/Yggdrasil.unity
     guid: 96f16aa820d92bc4d9634a78a043af32
   m_configObjects: {}

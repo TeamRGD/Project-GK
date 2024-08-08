@@ -9,16 +9,16 @@ public class PlayerStateManager : MonoBehaviour
     PhotonView PV;
     
     // HP
-    public int maxHealth = 100;
+    private int maxHealth = 100;
     public int currentHealth; // (test) should be private.
     private bool isAlive;
 
     // 마력
-    public int maxPower = 150;
+    private int maxPower = 150;
     public int currentPower; // (test) should be private.
 
     // 궁극주문력
-    public int maxUltimatePower = 100;
+    private int maxUltimatePower = 100;
     public int currentUltimatePower; // (test) should be private.
 
     private WaitForSeconds oneSecond = new WaitForSeconds(1f);
@@ -47,14 +47,6 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
-        if (Input.GetKeyDown(KeyCode.K)) // 기절 테스트
-        {
-            TakeDamage(100);
-        }
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            TakeDamage(20);
-        }
     }
 
     public void TakeDamage(int damage)
