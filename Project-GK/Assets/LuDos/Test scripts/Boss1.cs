@@ -24,14 +24,14 @@ public class Boss1 : MonoBehaviour
     bool isExecutingAttack = false;
     bool isExecutingAreaAttack = false;
     bool isExecutingBookAttack = false;
-    bool isPatternRemain = false;
     bool hasExecutedInitialActions1 = false;
     bool hasExecutedInitialActions2 = false;
     bool hasExecutedInitialActions3 = false;
     bool isWrongBookCase = false;
 
     Coroutine randomBasicAttackCoroutine;
-    Coroutine patternCoroutine;
+    Coroutine indicatorCoroutine;
+    Coroutine shockwaveCoroutine;
     Coroutine chargeAttackCoroutine;
     Coroutine moveBackCoroutine;
 
@@ -62,6 +62,10 @@ public class Boss1 : MonoBehaviour
     public GameObject ChangedStaff;
     Rigidbody rb;
     public GameObject Pattern3ShockWave;
+
+    GameObject currentIndicator;
+    GameObject currentFill;
+    GameObject currentShockwave;
 
     BTNode pattern1Tree;
     BTNode pattern2Tree;
@@ -107,15 +111,17 @@ public class Boss1 : MonoBehaviour
                 {
                     if (!hasExecutedInitialActions1)
                     {
-                        StopCoroutine(randomBasicAttackCoroutine);
-
+                        if (randomBasicAttackCoroutine != null)
+                        {
+                            StopRandomBasicAttack();
+                        }
+                        
                         MakeInvincible();
                         yield return StartCoroutine(LeftArmSlam());
                         hasExecutedInitialActions1 = true;
-                        isPatternRemain = true;
                     }
 
-                    patternCoroutine = StartCoroutine(ExecutePattern(pattern1Tree));
+                    StartCoroutine(ExecutePattern(pattern1Tree));
                 }
             }
             else if (currentHealth == 33)
@@ -124,15 +130,16 @@ public class Boss1 : MonoBehaviour
                 {
                     if (!hasExecutedInitialActions2)
                     {
-                        StopCoroutine(randomBasicAttackCoroutine);
+                        if (randomBasicAttackCoroutine != null)
+                        {
+                            StopRandomBasicAttack();
+                        }
 
                         MakeInvincible();
                         yield return StartCoroutine(JumpToCenter());
                         hasExecutedInitialActions2 = true;
-                        isPatternRemain = true;
                     }
-
-                    patternCoroutine = StartCoroutine(ExecutePattern(pattern2Tree));
+                    StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
             else if (currentHealth == 2)
@@ -141,32 +148,34 @@ public class Boss1 : MonoBehaviour
                 {
                     if (!hasExecutedInitialActions3)
                     {
-                        StopCoroutine(randomBasicAttackCoroutine);
+                        if (randomBasicAttackCoroutine != null)
+                        {
+                            StopRandomBasicAttack();
+                        }
 
                         MakeInvincible();
                         Scream();
                         hasExecutedInitialActions3 = true;
-                        isPatternRemain = true;
                     }
 
-                    patternCoroutine = StartCoroutine(ExecutePattern(pattern3Tree));
+                    StartCoroutine(ExecutePattern(pattern3Tree));
                 }
             }
             else if (currentHealth == 0)
             {
-                StopCoroutine(randomBasicAttackCoroutine);
+                if (randomBasicAttackCoroutine != null)
+                {
+                    StopRandomBasicAttack();
+                }
                 Die();
                 break;
             }
             else
             {
-                if (isPatternRemain)
+                if (!isGroggy)
                 {
-                    StopCoroutine(patternCoroutine);
-                    isPatternRemain = false;
+                    RandomBasicAttack();
                 }
-
-                RandomBasicAttack();
             }
             yield return null;
         }
@@ -246,11 +255,22 @@ public class Boss1 : MonoBehaviour
 
     bool SetGroggy()
     {
+        Debug.Log("Groggy");
+
         isGroggy = true;
 
         // animator.SetTrigger("Groggy");
 
+        StartCoroutine(GroggyTime(10.0f));
+
         return true;
+    }
+
+    IEnumerator GroggyTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        currentHealth--;
+        isGroggy = false;
     }
 
     void Die()
@@ -266,12 +286,12 @@ public class Boss1 : MonoBehaviour
     {
         if (idx == 0)
         {
-            GameObject indicator = Instantiate(AttackIndicators[idx], position, Quaternion.LookRotation(transform.forward));
-            GameObject fill = Instantiate(AttackFills[idx], position, Quaternion.LookRotation(transform.forward));
+            currentIndicator = Instantiate(AttackIndicators[idx], position, Quaternion.LookRotation(transform.forward));
+            currentFill = Instantiate(AttackFills[idx], position, Quaternion.LookRotation(transform.forward));
 
             float width = 0.3f;
-            indicator.transform.localScale = new Vector3(width, indicator.transform.localScale.y, maxLength);
-            fill.transform.localScale = new Vector3(width, fill.transform.localScale.y, 0);
+            currentIndicator.transform.localScale = new Vector3(width, currentIndicator.transform.localScale.y, maxLength);
+            currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, 0);
 
             float elapsedTime = 0f;
             while (elapsedTime < duration)
@@ -280,21 +300,25 @@ public class Boss1 : MonoBehaviour
                 float t = elapsedTime / duration;
 
                 float currentLength = Mathf.Lerp(0, maxLength, t);
-                fill.transform.localScale = new Vector3(width, fill.transform.localScale.y, currentLength);
+                currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, currentLength);
+
+                currentFill.transform.position = position + transform.forward * (currentLength / 2);
 
                 yield return null;
             }
 
-            Destroy(indicator);
-            Destroy(fill);
+            Destroy(currentIndicator);
+            Destroy(currentFill);
+            currentIndicator = null;
+            currentFill = null;
         }
         else
         {
-            GameObject indicator = Instantiate(AttackIndicators[idx], position, Quaternion.identity);
-            GameObject fill = Instantiate(AttackFills[idx], position, Quaternion.identity);
+            currentIndicator = Instantiate(AttackIndicators[idx], position, Quaternion.identity);
+            currentFill = Instantiate(AttackFills[idx], position, Quaternion.identity);
 
-            indicator.transform.localScale = new Vector3(maxLength, indicator.transform.localScale.y, maxLength);
-            fill.transform.localScale = Vector3.zero;
+            currentIndicator.transform.localScale = new Vector3(maxLength, currentIndicator.transform.localScale.y, maxLength);
+            currentFill.transform.localScale = Vector3.zero;
 
             float elapsedTime = 0f;
             while (elapsedTime < duration)
@@ -303,13 +327,43 @@ public class Boss1 : MonoBehaviour
                 float t = elapsedTime / duration;
 
                 float currentScale = Mathf.Lerp(0, maxLength, t);
-                fill.transform.localScale = new Vector3(currentScale, fill.transform.localScale.y, currentScale);
+                currentFill.transform.localScale = new Vector3(currentScale, currentFill.transform.localScale.y, currentScale);
 
                 yield return null;
             }
 
-            Destroy(indicator);
-            Destroy(fill);
+            Destroy(currentIndicator);
+            Destroy(currentFill);
+            currentIndicator = null;
+            currentFill = null;
+        }
+    }
+
+    void StopRandomBasicAttack()
+    {
+        if (randomBasicAttackCoroutine != null)
+        {
+            StopCoroutine(randomBasicAttackCoroutine);
+            randomBasicAttackCoroutine = null;
+            isExecutingAttack = false;
+
+            if (currentIndicator != null)
+            {
+                StopCoroutine(indicatorCoroutine);
+                Destroy(currentIndicator);
+                currentIndicator = null;
+            }
+            if (currentFill != null)
+            {
+                Destroy(currentFill);
+                currentFill = null;
+            }
+            if (currentShockwave != null)
+            {
+                StopCoroutine(shockwaveCoroutine);
+                Destroy(currentShockwave);
+                currentShockwave = null;
+            }
         }
     }
 
@@ -325,19 +379,19 @@ public class Boss1 : MonoBehaviour
             switch (attackType)
             {
                 case 1:
-                    StartCoroutine(LandAttackCoroutine());
+                    randomBasicAttackCoroutine = StartCoroutine(LandAttackCoroutine());
                     break;
                 case 2:
-                    StartCoroutine(TwoArmSlamCoroutine());
+                    randomBasicAttackCoroutine = StartCoroutine(TwoArmSlamCoroutine());
                     break;
                 case 3:
-                    StartCoroutine(AlternatingArmSlamCoroutine());
+                    randomBasicAttackCoroutine = StartCoroutine(AlternatingArmSlamCoroutine());
                     break;
                 case 4:
-                    StartCoroutine(LegStompCoroutine());
+                    randomBasicAttackCoroutine = StartCoroutine(LegStompCoroutine());
                     break;
                 case 5:
-                    StartCoroutine(PalmStrikeCoroutine());
+                    randomBasicAttackCoroutine = StartCoroutine(PalmStrikeCoroutine());
                     break;
             }
         }
@@ -370,7 +424,7 @@ public class Boss1 : MonoBehaviour
         float totalTime = distance / jumpSpeed;
         float elapsedTime = 0.0f;
 
-        StartCoroutine(ShowIndicator(1, 27.0f, targetPosition, totalTime)); // 위치, 크기 조정 필요 [임시완]
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 27.0f, targetPosition, totalTime)); // 위치, 크기 조정 필요
 
         while (elapsedTime < totalTime)
         {
@@ -380,12 +434,11 @@ public class Boss1 : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        // yield return new WaitForSeconds(totalTime);
 
         // 최종 위치 설정
         transform.position = targetPosition;
 
-        StartCoroutine(CreateShockwave(5.0f, 0.1f, targetPosition, 2.0f));
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(5.0f, 0.1f, targetPosition, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -410,11 +463,11 @@ public class Boss1 : MonoBehaviour
         transform.LookAt(aggroTarget.transform.position);
 
         // animator.SetTrigger("Shockwave"); // 두팔로 내려치기
-        StartCoroutine(ShowIndicator(1, 27.0f, transform.position + transform.forward * 2.0f, 3.0f)); // 위치, 크기 조정 필요 [임시완]
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 27.0f, transform.position + transform.forward * 2.0f, 3.0f)); // 위치, 크기 조정 필요
         yield return new WaitForSeconds(3.0f);
 
         // 충격파
-        StartCoroutine(CreateShockwave(5.0f, 3.0f, transform.position + transform.forward * 2.0f, 2.0f));
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(5.0f, 3.0f, transform.position + transform.forward * 2.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -436,7 +489,7 @@ public class Boss1 : MonoBehaviour
             aggroTarget = PlayerList[idx];
         }
 
-        // 각 팔을 번갈아 들어 내리치며 타격 (총 5번) [임시완]
+        // 각 팔을 번갈아 들어 내리치며 타격 (총 5번)
         for (int i = 0; i < 5; i++)
         {
             transform.LookAt(aggroTarget.transform.position);
@@ -446,19 +499,19 @@ public class Boss1 : MonoBehaviour
             if (i == 4)
             {
                 // animator.SetTrigger("StrongArmSlam");
-                StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 5.0f - transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요 [임시완]
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 5.0f - transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요
                 yield return new WaitForSeconds(2.0f);
             }
             else if (i == 0 || i == 2)
             {
                 // animator.SetTrigger("LeftArmSlam");
-                StartCoroutine(ShowIndicator(0, 0.6f, transform.position + transform.forward * 4.0f - transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요 [임시완]
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 0.6f, transform.position + transform.forward * 4.0f - transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요
                 yield return new WaitForSeconds(2.0f);
             }
             else
             {
                 // animator.SetTrigger("RightArmSlam");
-                StartCoroutine(ShowIndicator(0, 0.6f, transform.position + transform.forward * 4.0f + transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요 [임시완]
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 0.6f, transform.position + transform.forward * 4.0f + transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요
                 yield return new WaitForSeconds(2.0f);
             }
         }
@@ -487,11 +540,11 @@ public class Boss1 : MonoBehaviour
         // animator.SetTrigger("LegStomp");
 
         // 범위 타격 + 충격파
-        StartCoroutine(ShowIndicator(1, 27.0f, transform.position + transform.forward * 2.0f, 3.0f)); // 위치, 크기 조정 필요 [임시완]
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 27.0f, transform.position + transform.forward * 2.0f, 3.0f)); // 위치, 크기 조정 필요
         yield return new WaitForSeconds(3.0f);
 
         // 충격파
-        StartCoroutine(CreateShockwave(5.0f, 0.1f, transform.position + transform.forward * 2.0f, 2.0f));
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(5.0f, 0.1f, transform.position + transform.forward * 2.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -520,7 +573,7 @@ public class Boss1 : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         // 손바닥으로 내려치기 (피격 플레이어 2초 기절) [임시완] 기절 콜라이더 태그 만들어서 하면 될듯
-        StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 3.0f)); // 위치, 크기 조정 필요 [임시완]
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 3.0f)); // 위치, 크기 조정 필요
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -536,7 +589,7 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator LeftArmSlam()
     {
-        isExecutingPattern = true;
+        // isExecutingPattern = true;
 
         Debug.Log("LeftArmSlam");
 
@@ -544,7 +597,7 @@ public class Boss1 : MonoBehaviour
 
         yield return new WaitForSeconds(3.0f);
 
-        isExecutingPattern = true;
+        // isExecutingPattern = false;
     }
 
     bool ChangeBooksToGreen()
@@ -680,23 +733,21 @@ public class Boss1 : MonoBehaviour
 
     bool ReleaseInvincibilityAndGroggy()
     {
-        // 무적 상태 해제 및 그로기
-
         Debug.Log("ReleaseInvincibilityAndGroggy");
 
         isInvincible = false;
 
-        if (!canChange2)
+        if (randomBasicAttackCoroutine != null)
         {
-            Debug.Log("StopCoroutine");
-            StopCoroutine(chargeAttackCoroutine);
-            canChange2 = true;
+            StopRandomBasicAttack();
         }
-        if (!canDisplay)
+        if (chargeAttackCoroutine != null)
         {
-            Debug.Log("StopCoroutine");
+            StopCoroutine(chargeAttackCoroutine);
+        }
+        if (moveBackCoroutine != null)
+        {
             StopCoroutine(moveBackCoroutine);
-            canDisplay = true;
         }
 
         return SetGroggy();
@@ -705,10 +756,10 @@ public class Boss1 : MonoBehaviour
     // 패턴 2
     IEnumerator JumpToCenter()
     {
-        isExecutingPattern = true;
+        // isExecutingPattern = true;
 
-        Vector3 targetPosition = new Vector3(0.0f, 0.0f, 9.0f); // [임시완]
-        float jumpSpeed = 15f;
+        Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        float jumpSpeed = 5.0f;
 
         Vector3 startPosition = transform.position;
         float distance = Vector3.Distance(startPosition, targetPosition);
@@ -727,7 +778,9 @@ public class Boss1 : MonoBehaviour
         // 최종 위치 설정
         transform.position = targetPosition;
 
-        isExecutingPattern = false;
+        yield return new WaitForSeconds(totalTime);
+
+        // isExecutingPattern = false;
     }
 
     bool AttackAreas()
@@ -751,13 +804,13 @@ public class Boss1 : MonoBehaviour
         int untouchedArea = Random.Range(0, 8);
 
         attackedAreas.Add(untouchedArea); // ActivateCipherDevice 에서 암호 입력 장치로 전달
-        // Debug.Log("Untouched Area: " + untouchedArea);
+        Debug.Log("Untouched Area: " + untouchedArea);
 
         for (int i = 0; i < Areas.Count; i++) // [임시완]
         {
             if (i != untouchedArea)
             {
-                Areas[i].SetActive(true);
+                //Areas[i].SetActive(true);
             }
         }
 
@@ -767,7 +820,7 @@ public class Boss1 : MonoBehaviour
 
         for (int i = 0; i < Areas.Count; i++)
         {
-            Areas[i].SetActive(false);
+            //Areas[i].SetActive(false);
         }
 
         attackCount++;
@@ -776,7 +829,7 @@ public class Boss1 : MonoBehaviour
     }
     bool ActivateCipherDevice2()
     {
-        // 중앙에 암호 입력 장치 활성화
+        // 중앙에 암호 입력 장치 활성화 [임시완] 이거는 활성화 될 때만 암호 입력 가능하게 해야함
         if (canChange2)
         {
             Code = ConvertListToInt(attackedAreas);
@@ -829,19 +882,20 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // 최대 반지름, 초기 크기, 확장 속도
     {
-        GameObject shockwave = Instantiate(Pattern3ShockWave, position, Quaternion.identity);
+        currentShockwave = Instantiate(Pattern3ShockWave, position, Quaternion.identity);
 
         float currentScale = startScale;
 
         while (currentScale < maxRadius)
         {
             currentScale += speed * Time.deltaTime;
-            shockwave.transform.localScale = new Vector3(currentScale, shockwave.transform.localScale.y, currentScale);
+            currentShockwave.transform.localScale = new Vector3(currentScale, currentShockwave.transform.localScale.y, currentScale);
 
             yield return null;
         }
 
-        Destroy(shockwave);
+        Destroy(currentShockwave);
+        currentShockwave = null;
     }
 
 
@@ -932,7 +986,7 @@ public class Boss1 : MonoBehaviour
         Debug.Log("MoveBackToCenter");
 
         Vector3 startPosition = transform.position;
-        Vector3 centerPosition = new Vector3(0.0f, 0.0f, 9.0f); // [임시완]
+        Vector3 centerPosition = new Vector3(0.0f, 0.0f, 0.0f); // [임시완]
         float moveDuration = 5.0f;
         float elapsedTime = 0.0f;
 
