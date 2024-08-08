@@ -136,12 +136,13 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit hit;
         // 벽 뚫기 방지
-        if (Physics.Linecast(playerBody.position, cameraPosition, out hit, collisionMask))
+        if (Physics.Linecast(new Vector3(playerBody.position.x, playerBody.position.y+1, playerBody.position.z), new Vector3(cameraHolder.transform.position.x, cameraHolder.transform.position.y+2, cameraHolder.transform.position.z), out hit, collisionMask))
         {
+            UnityEngine.Debug.DrawLine(new Vector3(playerBody.position.x, playerBody.position.y+1, playerBody.position.z), new Vector3(cameraHolder.transform.position.x, cameraHolder.transform.position.y+2, cameraHolder.transform.position.z), Color.red);
             float hitDistance = Vector3.Distance(playerBody.position, hit.point);
-            if (hitDistance < minDistanceFromPlayer && hit.collider.CompareTag("Wall")) // 벽과 충돌했을 경우
+            if (hitDistance < minDistanceFromPlayer) // 벽과 충돌했을 경우
             {
-                cameraHolder.transform.position = hit.point + cameraHolder.transform.forward * 0.1f;
+                cameraHolder.transform.position =  Vector3.Lerp(cameraHolder.transform.position, hit.point + cameraHolder.transform.forward * 0.1f, 0.03f);
             }
             else // Player와 일정 거리 두기
             {
