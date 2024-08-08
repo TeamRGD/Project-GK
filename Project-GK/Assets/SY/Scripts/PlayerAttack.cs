@@ -87,29 +87,16 @@ public class PlayerAttack : MonoBehaviour
     {
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
-            Ray[] rays = new Ray[3]; // Ray의 개수를 늘림으로써 에임 타겟팅 정확도 향상
-            rays[0] = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            //rays[1] = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.51f, 0));
-            //rays[2] = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.49f, 0)); 
+            Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
             Vector3 targetPoint = Vector3.zero;
-            bool hitDetected = false;
 
-            // Debug each Ray
-            for (int i = 0; i < rays.Length; i++)
+            Debug.DrawRay(ray.origin, ray.direction * maxRayDistance, Color.red, 2f);
+            if (Physics.Raycast(ray, out RaycastHit hit, maxRayDistance))
             {
-                Debug.DrawRay(rays[i].origin, rays[i].direction * maxRayDistance, Color.red, 2f);
-                if (Physics.Raycast(rays[i], out RaycastHit hit, maxRayDistance))
-                {
-                    if (!hitDetected) // 첫 번째로 충돌한 지점을 타겟으로 설정
-                    {
-                        targetPoint = hit.point;
-                        hitDetected = true;
-                    }
-                }
+                targetPoint = hit.point;
             }
-
-            if (!hitDetected)
+            else
             {
                 targetPoint = aim.position;
             }
@@ -144,7 +131,7 @@ public class PlayerAttack : MonoBehaviour
         projectile.TryGetComponent<Rigidbody>(out rb);
         if (rb != null)
         {
-            rb.velocity = direction  * projectileSpeed;
+            rb.velocity = direction * projectileSpeed;
         }
     }
 
