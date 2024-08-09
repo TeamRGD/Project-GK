@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
         TryGetComponent<Animator>(out animator);
     }
 
-    private void Start()
+    void Start()
     {
         //UnityEngine.Debug.Log(this.gameObject);
         canMove = true;
@@ -56,6 +56,17 @@ public class PlayerController : MonoBehaviour
 
         GameObject boss1 = GameObject.Find("Boss1_Ygg_V1"); // [임시완]
         boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
+    }
+
+    void Update()
+    {
+        // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
+        if (!PV.IsMine || !canMove)
+            return;
+        Look();
+        Move();
+        Jump();
+        Save();
     }
 
     public void CursorOn()
@@ -93,17 +104,6 @@ public class PlayerController : MonoBehaviour
         playerAttack.SetCanAttack(true);
         playerToolManager.SetCanChange(true);
         SetCanMove(true);
-    }
-
-    private void Update()
-    {
-        // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
-        if (!PV.IsMine || !canMove)
-            return;
-        Look();
-        Move();
-        Jump();
-        SavePlayer();
     }
     
     private void FixedUpdate()
@@ -205,7 +205,7 @@ public class PlayerController : MonoBehaviour
         canMove = value;
     }
 
-    void SavePlayer()
+    void Save()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -222,7 +222,7 @@ public class PlayerController : MonoBehaviour
                         hitCollider.TryGetComponent<PlayerStateManager>(out targetPlayerState);
                         if (targetPlayerState != null && !targetPlayerState.GetIsAlive()) // isAlive가 false이면
                         {
-                            Save(targetPlayerState);
+                            PV.RPC("SaveRPC", RpcTarget.AllBuffered, targetPlayerState);
                             break;
                         }
                     }
@@ -232,7 +232,7 @@ public class PlayerController : MonoBehaviour
     }
 
     [PunRPC]
-    void Save(PlayerStateManager targetPlayerState)
+    void SaveRPC(PlayerStateManager targetPlayerState)
     {
         targetPlayerState.Revive();
     }

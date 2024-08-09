@@ -47,6 +47,10 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            currentUltimatePower = 100;
+        }
     }
 
     public void TakeDamage(int damage)

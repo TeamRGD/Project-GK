@@ -63,7 +63,7 @@ public class PlayerAttack : MonoBehaviour
         if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()<100) // 기본 공격
         {
             PV.RPC("AttackRPC", RpcTarget.AllBuffered, attackCount);
-            animator.SetInteger("attackCount", attackCount+1);
+            animator.SetInteger("attackCount", attackCount);
             animator.SetTrigger("isAttacking");
         }
         else if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()==100) // 궁극기
@@ -98,10 +98,10 @@ public class PlayerAttack : MonoBehaviour
         }
 
         lastAttackTime = Time.time;
-        ShotProjectile(count);
+        //ShotProjectile();
     }
 
-    void ShotProjectile(int count) // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
+    void ShotProjectile() // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
     {
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
@@ -124,7 +124,7 @@ public class PlayerAttack : MonoBehaviour
             // 투사체 생성
             GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));
 
-            PV.RPC("SetProjectileRPC", RpcTarget.AllBuffered, projectile.GetComponent<PhotonView>().ViewID, direction, count);
+            PV.RPC("SetProjectileRPC", RpcTarget.AllBuffered, projectile.GetComponent<PhotonView>().ViewID, direction, (attackCount-1+3)%3);
         }
     }
 
