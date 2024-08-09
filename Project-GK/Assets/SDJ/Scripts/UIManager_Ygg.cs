@@ -12,6 +12,8 @@ public class UIManager_Ygg : MonoBehaviour
     // Get default Prefabs
     public GameObject boss;
 
+    // Variables being used in default situation
+    public Image bossHealthBar;
 
     // Variables being used in pattern1 logic
     public int patternCode;
@@ -83,6 +85,12 @@ public class UIManager_Ygg : MonoBehaviour
         {
             NodeDeduction();
         }
+    }
+
+    //------------DEFAULT--------------
+    public void ManageHealth(float currentHealth, float maxHealth)
+    {
+        bossHealthBar.DOFillAmount(currentHealth / maxHealth, 0.05f).SetEase(Ease.OutSine);
     }
 
     //------------PATTERN 1--------------

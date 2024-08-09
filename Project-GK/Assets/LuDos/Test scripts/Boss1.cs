@@ -250,6 +250,7 @@ public class Boss1 : MonoBehaviour
             {
                 currentHealth = 0;
             }
+            UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
         }
     }
 
@@ -262,6 +263,9 @@ public class Boss1 : MonoBehaviour
         // animator.SetTrigger("Groggy");
 
         StartCoroutine(GroggyTime(10.0f));
+
+        UIManager_Ygg.Instance.DisableAreaNum();
+        UIManager_Ygg.Instance.DisableAttackNode();
 
         return true;
     }
@@ -910,7 +914,7 @@ public class Boss1 : MonoBehaviour
         if (canDisplay)
         {
             // UI에 책장의 개수만큼 원 띄우기
-
+            UIManager_Ygg.Instance.EnableAttackNode();
             Debug.Log("DisplayBookCaseOrder");
 
             canDisplay = false;
@@ -969,6 +973,7 @@ public class Boss1 : MonoBehaviour
         if (collidedBookCaseIndex == selectedBookCaseIndex)
         {
             Debug.Log("Correct Collision");
+            UIManager_Ygg.Instance.NodeDeduction();
             collisionCount++;
         }
         else
