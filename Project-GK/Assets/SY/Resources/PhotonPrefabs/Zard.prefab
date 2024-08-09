@@ -6094,6 +6094,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   interactionManager: {fileID: 8685338029613350778, guid: 3feb89df5c185ba4d90b0439600266d5, type: 3}
+  cameraHolder: {fileID: 274324658989119985}
 --- !u!114 &8887574244567179117
 MonoBehaviour:
   m_ObjectHideFlags: 0
