@@ -6,7 +6,7 @@ public class InteractionManager : MonoBehaviour
 {
     public float interactionRange = 5f; // 상호작용 범위
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
-    public GameObject[] UIManagerList; // UI 리스트.
+    public GameObject[] ObjectManagerList;
 
     void Update()
     {
@@ -28,6 +28,15 @@ public class InteractionManager : MonoBehaviour
                     UIManager_Ygg.Instance.DeactivateCipher();
                 }
             }
+        }
+    }
+
+    // 오픈할 UI를 찾기 위해 Tag들을 비교하는 함수.
+    public void CheckForTags(RaycastHit hitInfo)
+    {
+        if (hitInfo.collider.CompareTag("Note"))
+        {
+            // UIManager.SetActive(true); -> 싱글톤 쓰면 다르게 쓰겠죠?
         }
     }
 

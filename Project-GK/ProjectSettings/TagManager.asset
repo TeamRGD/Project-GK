@@ -15,6 +15,7 @@ TagManager:
   - PlayerZard
   - Projectile
   - Ground
+  - Rope
   layers:
   - Default
   - TransparentFX
