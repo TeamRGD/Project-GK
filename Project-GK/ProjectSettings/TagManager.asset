@@ -16,6 +16,7 @@ TagManager:
   - Projectile
   - Ground
   - Rope
+  - Stair
   layers:
   - Default
   - TransparentFX
