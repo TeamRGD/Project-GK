@@ -132,26 +132,27 @@ public class PlayerController : MonoBehaviour
         verticalLookRotation -= verticalRotation;
         verticalLookRotation = Mathf.Clamp(verticalLookRotation, -60f, 60f);
         cameraHolder.transform.localEulerAngles = Vector3.right * verticalLookRotation;
-        Vector3 cameraPosition = playerBody.position - cameraHolder.transform.forward * distanceFromPlayer;
+        Vector3 playerPosition = new Vector3(playerBody.position.x , playerBody.position.y+1, playerBody.position.z);
+        Vector3 cameraPosition = playerPosition - cameraHolder.transform.forward * distanceFromPlayer;
 
         RaycastHit hit;
         // 벽 뚫기 방지
-        if (Physics.Linecast(playerBody.position, cameraPosition, out hit, collisionMask))
+        if (Physics.Linecast(playerPosition, cameraPosition, out hit, collisionMask))
         {
-            float hitDistance = Vector3.Distance(playerBody.position, hit.point);
+            float hitDistance = Vector3.Distance(playerPosition, hit.point);
             if (hitDistance < minDistanceFromPlayer && hit.collider.CompareTag("Wall")) // 벽과 충돌했을 경우
             {
-                cameraHolder.transform.position = hit.point + cameraHolder.transform.forward * 0.1f;
+                cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, hit.point + cameraHolder.transform.forward * 0.1f + Vector3.up * 1f, 0.01f);
             }
             else // Player와 일정 거리 두기
             {
                 float clampedDistance = Mathf.Clamp(hitDistance, minDistanceFromPlayer, distanceFromPlayer);
-                cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, playerBody.position - cameraHolder.transform.forward * clampedDistance, 0.03f); // 부드러운 움직임
+                cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, playerPosition - cameraHolder.transform.forward * clampedDistance + Vector3.up * 1f, 0.03f); // 부드러운 움직임
             }
         }
         else
         {
-            cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, cameraPosition, 0.03f); // 부드러운 움직임
+            cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, cameraPosition + Vector3.up * 1f, 0.03f); // 부드러운 움직임
         }
     }
 
