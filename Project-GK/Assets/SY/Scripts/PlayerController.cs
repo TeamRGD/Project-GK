@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
         // 마우스 커서 제거
         CursorOff();
 
-        GameObject boss1 = GameObject.Find("Boss1_Ygg_V1"); // [임시완]
+        GameObject boss1 = GameObject.Find("Yggdrasil"); // [임시완]
         boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
     }
 
