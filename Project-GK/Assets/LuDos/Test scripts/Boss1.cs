@@ -11,6 +11,10 @@ public class Boss1 : MonoBehaviour
     public int maxHealth = 100;
     int currentHealth;
 
+    bool isFirstTimeBelow66 = true;
+    bool isFirstTimeBelow33 = true;
+    bool isFirstTimeBelow2 = true;
+
     int successCount = 0;
     int attackCount = 0;
     public int collisionCount = 0;
@@ -115,9 +119,9 @@ public class Boss1 : MonoBehaviour
                         {
                             StopRandomBasicAttack();
                         }
-                        
+                        animator.SetTrigger("Exit");
                         MakeInvincible();
-                        yield return StartCoroutine(LeftArmSlam());
+                        yield return StartCoroutine(ArmSlamAndGetEnergy());
                         hasExecutedInitialActions1 = true;
                     }
 
@@ -134,7 +138,7 @@ public class Boss1 : MonoBehaviour
                         {
                             StopRandomBasicAttack();
                         }
-
+                        animator.SetTrigger("Exit");
                         MakeInvincible();
                         yield return StartCoroutine(JumpToCenter());
                         hasExecutedInitialActions2 = true;
@@ -246,10 +250,27 @@ public class Boss1 : MonoBehaviour
         if (!isInvincible)
         {
             currentHealth -= amount;
-            if (currentHealth < 0)
+
+            if (isFirstTimeBelow66 && currentHealth <= 66 && currentHealth > 33)
+            {
+                currentHealth = 66;
+                isFirstTimeBelow66 = false;
+            }
+            else if (isFirstTimeBelow33 && currentHealth <= 33 && currentHealth > 2)
+            {
+                currentHealth = 33;
+                isFirstTimeBelow33 = false;
+            }
+            else if (isFirstTimeBelow2 && currentHealth <= 2 && currentHealth > 0)
+            {
+                currentHealth = 2;
+                isFirstTimeBelow2 = false;
+            }
+            else if (currentHealth < 0)
             {
                 currentHealth = 0;
             }
+
             UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
         }
     }
@@ -260,9 +281,11 @@ public class Boss1 : MonoBehaviour
 
         isGroggy = true;
 
-        // animator.SetTrigger("Groggy");
+        animator.SetTrigger("Groggy");
 
         StartCoroutine(GroggyTime(10.0f));
+
+        animator.SetTrigger("Idle");
 
         UIManager_Ygg.Instance.DisableAreaNum();
         UIManager_Ygg.Instance.DisableAttackNode();
@@ -283,7 +306,16 @@ public class Boss1 : MonoBehaviour
 
         isInvincible = true;
 
-        //animator.SetTrigger("Die");
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (currentState.IsName("Groggy"))
+        {
+            animator.SetTrigger("GroggytoDeath");
+        }
+        else
+        {
+            animator.SetTrigger("Death");
+        }
     }
 
     IEnumerator ShowIndicator(int idx, float maxLength, Vector3 position, float duration)
@@ -630,18 +662,20 @@ public class Boss1 : MonoBehaviour
     {
         Debug.Log("MakeInvincible");
 
+        animator.SetTrigger("Invincible");
+
         isInvincible = true;
     }
 
-    IEnumerator LeftArmSlam()
+    IEnumerator ArmSlamAndGetEnergy()
     {
         // isExecutingPattern = true;
 
-        Debug.Log("LeftArmSlam");
+        Debug.Log("ArmSlamAndGetEnergy");
 
-        // animator.SetTrigger("LeftArmSlam");
+        animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65ÃÊ
 
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(8.0f);
 
         // isExecutingPattern = false;
     }

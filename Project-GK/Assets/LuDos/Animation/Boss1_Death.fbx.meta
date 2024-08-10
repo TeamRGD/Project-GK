@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5b8768bcc1a51ea489047767e4037648
+guid: c93f89dd13e5f784c888e1d663cd9372
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -33,18 +33,18 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Groggy
+      name: Death
       takeName: Take 001
       internalID: 1827226128182048838
       firstFrame: 0
-      lastFrame: 106
+      lastFrame: 107
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
