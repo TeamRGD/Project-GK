@@ -86,6 +86,11 @@ public class Launcher : MonoBehaviourPunCallbacks
         isInStartMenu = false;
     }
 
+    public void BackToTitleMenu()
+    {
+        MenuManager.Instance.OpenMenu("Title");
+    }
+
     public void CreateRoom()
     {
         PhotonNetwork.CreateRoom("Room Code: " + Random.Range(100000, 999999).ToString("000000"));
