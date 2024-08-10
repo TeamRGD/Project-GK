@@ -9,7 +9,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (hitInfo.collider.CompareTag("Note"))
         {
-            Puzzle1Note.Instance.ActiveUI();
+            Puzzle1Note.ActiveUI(); // -> 여기서 에러가 생기는 느낌임.
             // 뭔가 보안상 싱글톤 안 쓰는게 좋을 거 같은데 이게 편해서 씀.
         }
 

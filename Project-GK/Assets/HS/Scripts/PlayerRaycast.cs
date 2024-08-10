@@ -20,6 +20,10 @@ public class PlayerRaycast : MonoBehaviour
     private void Start()
     {
         TryGetComponent<PhotonView>(out PV);
+        interactionManager = FindObjectOfType<InteractionManager>();
+
+        if (interactionManager != null)
+            Debug.Log("찾음");
     }
 
     private void Update()
@@ -36,10 +40,12 @@ public class PlayerRaycast : MonoBehaviour
         // 화면 중앙에서 Raycast 발사
         Ray ray = cameraHolder.GetComponentInChildren<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
 
-        if (Physics.Raycast(ray, out hitInfo, interactionRange, interactableLayer))
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Physics.Raycast(ray, out hitInfo, interactionRange, interactableLayer))
+            {
                 interactionManager.CheckForTags(hitInfo);
+            }
         }
         canInteract = false;
     }

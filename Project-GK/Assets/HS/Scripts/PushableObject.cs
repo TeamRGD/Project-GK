@@ -1,0 +1,130 @@
+using UnityEngine;
+using Photon.Pun;
+using System.Collections.Generic;
+
+public class PushableObject : MonoBehaviour
+{
+    public float interactionRange = 2f;   // 상호작용 가능한 거리
+    public LayerMask playerLayer;         // 플레이어 레이어 설정
+    public float moveSpeed = 2f;          // 오브젝트를 움직일 때 속도
+
+    [SerializeField] private bool isPlayerNearby = false;
+    [SerializeField] private bool isPushing = false;       // 오브젝트를 밀고 있는지 여부
+    [SerializeField] private Transform playerTransform;    // 상호작용 중인 플레이어의 트랜스폼
+
+    private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
+
+    private void Update()
+    {
+        List<PlayerController> players_ = new List<PlayerController>(players.Keys);
+        foreach (PlayerController playerController in players_) // 상호작용 하고 있는 모든 플레이어의 입력을 각각 처리할 수 있도록 함.
+        {
+            PhotonView PV = players[playerController];
+            if (PV != null && PV.IsMine)
+            {
+                if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
+                {
+                    if (isPushing)
+                    {
+                        StopPushing();
+                    }
+                    else
+                    {
+                        StartPushing();
+                    }
+                } 
+
+                if (isPushing)
+                {
+                    MoveObjectWithPlayer();
+                }
+            }
+        }
+
+        
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+
+        if (other.CompareTag("Player"))
+        {
+            PlayerController playerController;
+            PhotonView PV;
+            other.TryGetComponent<PlayerController>(out playerController);
+            playerController.TryGetComponent<PhotonView>(out PV);
+            if (!players.ContainsKey(playerController))
+            {
+                players.Add(playerController, PV);
+                if (PV.IsMine) // Enter한 플레이어에게만.
+                {
+                    Debug.Log("입장했습니다.");
+                    isPlayerNearby = true;
+                    playerTransform = other.transform; // 상호작용 중인 플레이어의 트랜스폼 저장
+                    playerController.SetSpeed(2);
+                }
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+
+        if (other.CompareTag("Player"))
+        {
+            PlayerController playerController;
+            PhotonView PV;
+            other.TryGetComponent<PlayerController>(out playerController);
+            playerController.TryGetComponent<PhotonView>(out PV);
+            if (!players.ContainsKey(playerController))
+            {
+                players.Add(playerController, PV);
+                if (PV.IsMine) // Enter한 플레이어에게만.
+                {
+                    Debug.Log("퇴장했습니다.");
+                    playerController.SetSpeed(-1);
+
+                    StopPushing();
+
+                    isPlayerNearby = false;
+                    playerTransform = null; // 플레이어가 없다면 null로 초기화
+                }
+            }
+        }
+
+
+        
+    }
+
+    private void StartPushing()
+    {
+        isPushing = true;
+    }
+
+    private void StopPushing()
+    {
+        isPushing = false;
+    }
+
+    private void MoveObjectWithPlayer()
+    {
+        if (playerTransform != null)
+        {
+            // 오브젝트가 플레이어를 향해 움직이도록 하는 방향 벡터
+            Vector3 directionToMove = (transform.position - playerTransform.position).normalized;
+
+            directionToMove.y = 0;
+
+            // 오브젝트를 플레이어가 향하는 방향으로 이동시킴
+
+            transform.position += directionToMove * moveSpeed * Time.deltaTime;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // 상호작용 범위 표시
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, interactionRange);
+    }
+}

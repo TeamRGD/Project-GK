@@ -5,8 +5,6 @@ using UnityEngine;
 public class Puzzle1Note : MonoBehaviour
 {
 
-    public static Puzzle1Note Instance;
-
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
 
     /*
@@ -35,9 +33,8 @@ public class Puzzle1Note : MonoBehaviour
     } */
 
 
-    public void ActiveUI() // InteractionManager로부터 명령받아 UI 명령을 진행하는 함수.
+    public static void ActiveUI() // InteractionManager로부터 명령받아 UI 명령을 진행하는 함수.
     {
-        // 포톤을 여기서 검사할까
         // UIManager_Ygg.Instance 처럼 사용하면 될 듯.
     }
 

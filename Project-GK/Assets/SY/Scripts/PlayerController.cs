@@ -237,4 +237,20 @@ public class PlayerController : MonoBehaviour
     {
         targetPlayerState.Revive();
     }
+
+    // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정
+    public void SetSpeed(float value)
+    {
+        if (value == -1) // 초기화 코드
+        {
+            walkSpeed = 3;
+            sprintSpeed = 5;
+        }
+
+        else
+        {
+            walkSpeed = value;
+            sprintSpeed = value;
+        }
+    }
 }
