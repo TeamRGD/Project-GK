@@ -2,6 +2,7 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using TreeEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -60,11 +61,14 @@ public class Boss1 : MonoBehaviour
     public List<GameObject> BookCaseCollisions;
     public List<GameObject> Areas;
 
+    public Material greenMaterial;
+    public GameObject CipherDevice;
+    private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
+
     Animator animator;
 
     public List<GameObject> PlayerList;
     GameObject aggroTarget;
-    public GameObject ChangedStaff;
     Rigidbody rb;
     public GameObject Pattern3ShockWave;
 
@@ -79,10 +83,8 @@ public class Boss1 : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
@@ -191,7 +193,7 @@ public class Boss1 : MonoBehaviour
         return new Sequence(
             new ActionNode(ChangeBooksToGreen),
             new ActionNode(SelectAggroTarget),
-            new ActionNode(ChangeStaffToRed),
+            new ActionNode(DisplayAggroTarget),
             new ActionNode(ActivateCipherDevice1),
             new ActionNode(RandomBasicAttack),
             new WhileNode(() => successCount < 3,
@@ -672,41 +674,48 @@ public class Boss1 : MonoBehaviour
                     bookcaseIndices.Add(index);
                 }
             }
-            Debug.Log("Selected Bookcase Indices: " + string.Join(", ", bookcaseIndices));
 
             // 각 책장에서 몇 개의 책을 선택할건지 정함
             for (int i = 0; i < 4; i++)
             {
-                int numBooks = Random.Range(1, 11);
+                int bookcaseIndex = bookcaseIndices[i];
+                int childCount = BookCases[bookcaseIndex].transform.childCount;
+                int numBooks = Random.Range(1, childCount + 1);
                 numberOfBooks.Add(numBooks);
             }
-            Debug.Log("Number of Books to Select: " + string.Join(", ", numberOfBooks));
 
             for (int i = 0; i < bookcaseIndices.Count; i++)
             {
                 int bookcaseIndex = bookcaseIndices[i];
                 int numBooks = numberOfBooks[i];
-                Debug.Log("Bookcase " + bookcaseIndex + ": Selecting " + numBooks + " books");
 
                 // 각 책장에서 책 선택
+                int numRange = Random.Range(1, 7);
                 List<int> bookIndices = new List<int>();
-                while (bookIndices.Count < numBooks)
+                while (bookIndices.Count < numRange)
                 {
-                    int bookIndex = Random.Range(0, 10);
+                    int bookIndex = Random.Range(0, numBooks);
                     if (!bookIndices.Contains(bookIndex))
                     {
                         bookIndices.Add(bookIndex);
                     }
                 }
-                Debug.Log("Bookcase " + bookcaseIndex + ": Selected Book Indices: " + string.Join(", ", bookIndices));
 
-                // 책을 초록색으로 바꿈 [임시완]
-                //foreach (int bookIndex in bookIndices)
-                //{
-                //    Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex);
-                //    book.gameObject.SetActive(true);
-                //    // Debug.Log("Bookcase " + bookcaseIndex + ": Book " + bookIndex + " light turned on.");
-                //}
+                // 책을 초록색으로 바꿈
+                foreach (int bookIndex in bookIndices)
+                {
+                    Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex);
+                    Renderer bookRenderer = book.GetComponent<Renderer>();
+                    if (bookRenderer != null)
+                    {
+                        if (!originalMaterials.ContainsKey(book))
+                        {
+                            originalMaterials.Add(book, bookRenderer.material);
+                        }
+
+                        bookRenderer.material = greenMaterial;
+                    }
+                }
             }
         }
         return true;
@@ -723,26 +732,27 @@ public class Boss1 : MonoBehaviour
         return true;
     }
 
-    bool ChangeStaffToRed()
+    bool DisplayAggroTarget()
     {
-        // 어그로 아닌 플레이어 지팡이 붉은색으로 변경
+        // 어그로 아닌 플레이어 UI에 띄우기
         if (canChange1)
         {
-            Debug.Log("ChangeStaffToRed");
+            Debug.Log("DisplayAggroTarget");
 
-            // ChangedStaff.SetActive(true); [임시완] 이거 하나 끄고 하나 켜는 방식으로 할까
+            
         }
         return true;
     }
 
     bool ActivateCipherDevice1()
     {
-        // 중앙에 암호 입력 장치 활성화
         if (canChange1)
         {
             Debug.Log("ActivateCipherDevice1");
 
-            for(int i = 0; i < 4; i++)
+            CipherDevice.SetActive(true);
+
+            for (int i = 0; i < 4; i++)
             {
                 Code += (bookcaseIndices[i] + 1) * numberOfBooks[i];
             }
@@ -768,18 +778,15 @@ public class Boss1 : MonoBehaviour
     {
         Debug.Log("ResetBookLightsAndAggro");
 
-        // 책 불빛 끄기 [임시완]
-        //foreach (GameObject bookCase in BookCases)
-        //{
-        //    foreach (Transform book in bookCase.transform)
-        //    {
-        //        if (book.gameObject.activeSelf)
-        //        {
-        //            book.gameObject.SetActive(false);
-        //            // Debug.Log("Book " + book.name + " light turned off.");
-        //        }
-        //    }
-        //}
+        foreach (var entry in originalMaterials)
+        {
+            Renderer bookRenderer = entry.Key.GetComponent<Renderer>();
+            if (bookRenderer != null)
+            {
+                bookRenderer.material = entry.Value;
+            }
+        }
+        originalMaterials.Clear();
 
         canChange1 = true;
         IsCorrect = false;
@@ -805,6 +812,11 @@ public class Boss1 : MonoBehaviour
         if (moveBackCoroutine != null)
         {
             StopCoroutine(moveBackCoroutine);
+        }
+
+        if (CipherDevice != null && CipherDevice.activeSelf)
+        {
+            CipherDevice.SetActive(false);
         }
 
         return SetGroggy();
