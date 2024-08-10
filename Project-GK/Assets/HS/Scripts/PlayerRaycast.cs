@@ -7,6 +7,7 @@ public class PlayerRaycast : MonoBehaviour
     public float interactionRange = 10f; // 상호작용 가능한 거리
     public LayerMask interactableLayer; // 상호작용 가능한 레이어
     Camera playerController;
+    PhotonView PV;
 
     [SerializeField]
     InteractionManager interactionManager; // 상호작용 스크립트 총괄
@@ -18,7 +19,7 @@ public class PlayerRaycast : MonoBehaviour
 
     private void Start()
     {
-
+        TryGetComponent<PhotonView>(out PV);
     }
 
     private void Update()
@@ -28,6 +29,9 @@ public class PlayerRaycast : MonoBehaviour
 
     private void CheckForInteractable()
     {
+        if (!PV.IsMine)
+            return;
+
         Debug.DrawRay(transform.position, transform.forward * 10, Color.red);
         // 화면 중앙에서 Raycast 발사
         Ray ray = cameraHolder.GetComponentInChildren<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
