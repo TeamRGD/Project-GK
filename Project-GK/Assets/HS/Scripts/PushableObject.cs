@@ -6,7 +6,7 @@ public class PushableObject : MonoBehaviour
 {
     public float interactionRange = 2f;   // 상호작용 가능한 거리
     public LayerMask playerLayer;         // 플레이어 레이어 설정
-    public float moveSpeed = 2f;          // 오브젝트를 움직일 때 속도
+    public float moveSpeed = 100f;          // 오브젝트를 움직일 때 속도
 
     [SerializeField] private bool isPlayerNearby = false;
     [SerializeField] private bool isPushing = false;       // 오브젝트를 밀고 있는지 여부
@@ -26,11 +26,10 @@ public class PushableObject : MonoBehaviour
             {
                 StartPushing();
             }
-        
-            if (isPushing)
-            {
-                MoveObjectWithPlayer();
-            }
+        }
+        if (isPushing)
+        {
+            MoveObjectWithPlayer();
         }
     }
 
@@ -48,7 +47,6 @@ public class PushableObject : MonoBehaviour
                 players.Add(playerController, PV);
                 if (PV.IsMine) // Enter한 플레이어에게만.
                 {
-                    Debug.Log("입장함.");
                     isPlayerNearby = true;
                     playerTransform = other.transform;
                     playerController.SetSpeed(2);
@@ -69,8 +67,6 @@ public class PushableObject : MonoBehaviour
             {
                 if (PV.IsMine) // Exit한 플레이어에게만.
                 {
-                   Debug.Log("퇴장함.");
-                   playerController.SetSpeed(-1);
                    StopPushing();
 
                    isPlayerNearby = false;
@@ -84,11 +80,31 @@ public class PushableObject : MonoBehaviour
     private void StartPushing()
     {
         isPushing = true;
+
+        if (playerTransform != null)
+        {
+            PlayerController playerController = playerTransform.GetComponent<PlayerController>();
+
+            if (playerController != null)
+            {
+                playerController.SetSpeed(2);
+            }
+        }
     }
 
     private void StopPushing()
     {
         isPushing = false;
+
+        if (playerTransform != null)
+        {
+            PlayerController playerController = playerTransform.GetComponent<PlayerController>();
+
+            if (playerController != null)
+            {
+                playerController.SetSpeed(-1);
+            }
+        }
     }
 
     private void MoveObjectWithPlayer()
@@ -97,11 +113,10 @@ public class PushableObject : MonoBehaviour
         {
             // 오브젝트가 플레이어를 향해 움직이도록 하는 방향 벡터
             Vector3 directionToMove = (transform.position - playerTransform.position).normalized;
-
             directionToMove.y = 0;
+            directionToMove.Normalize();
 
             // 오브젝트를 플레이어가 향하는 방향으로 이동시킴
-
             transform.position += directionToMove * moveSpeed * Time.deltaTime;
         }
     }
