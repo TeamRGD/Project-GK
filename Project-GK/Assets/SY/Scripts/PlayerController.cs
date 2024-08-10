@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
     PlayerToolManager playerToolManager;
 
     bool isWalking = false;
-    bool isJumping = false;
 
     void Awake()
     {
@@ -168,9 +167,28 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);
+         if (Input.GetKey(KeyCode.LeftShift))
+        {
+            Run(moveDir);
+        }
+        else
+        {
+            Walk(moveDir);
+        }
         isWalking = moveDir != Vector3.zero;
         animator.SetBool("isWalking", isWalking);
+    }
+
+    void Walk(Vector3 moveDir)
+    {
+        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * walkSpeed, ref smoothMoveVelocity, smoothTime);
+        animator.SetBool("isRunning", false); 
+    }
+
+    void Run(Vector3 moveDir)
+    {
+        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * sprintSpeed, ref smoothMoveVelocity, smoothTime);
+        animator.SetBool("isRunning", true);
     }
 
     void Jump()
@@ -178,18 +196,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
             rb.AddForce(transform.up * jumpForce);
-            isJumping = true;
-            animator.SetBool("isJumping", isJumping);
+            animator.SetTrigger("isJumping");
         }
     }
 
     public void SetGroundedState(bool _grounded)
     {
-        if (_grounded != grounded && _grounded) 
-        {
-            isJumping = false;
-            animator.SetBool("isJumping", isJumping);
-        }
         grounded = _grounded;
     }
 

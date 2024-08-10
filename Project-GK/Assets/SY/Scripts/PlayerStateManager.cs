@@ -25,6 +25,7 @@ public class PlayerStateManager : MonoBehaviour
     PlayerController playerController;
     PlayerAttack playerAttack;
     PlayerToolManager playerToolManager;
+    Animator animator;
 
     void Awake()
     {
@@ -32,6 +33,7 @@ public class PlayerStateManager : MonoBehaviour
         TryGetComponent<PlayerController>(out playerController);
         TryGetComponent<PlayerAttack>(out playerAttack);
         TryGetComponent<PlayerToolManager>(out playerToolManager);
+        TryGetComponent<Animator>(out animator);
     }
 
     void Start()
@@ -57,6 +59,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
+        animator.SetTrigger("getHit");
         PV.RPC("TakeDamageRPC", RpcTarget.AllBuffered, damage);
     }
     
