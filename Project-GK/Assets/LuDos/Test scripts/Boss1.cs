@@ -1026,7 +1026,7 @@ public class Boss1 : MonoBehaviour
 
         while (!hasCollidedWithBookCase)
         {
-            transform.position += direction * Time.deltaTime * 10.0f;
+            transform.position += targetDirection * Time.deltaTime * 10.0f;
             yield return null;
         }
 
