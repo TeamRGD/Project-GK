@@ -69,6 +69,7 @@ public class PlayerAttack : MonoBehaviour
         else if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()==100) // 궁극기
         {
             PV.RPC("UltimateAttackRPC", RpcTarget.AllBuffered);
+            animator.SetTrigger("isUltimate");
         }
     }
 
@@ -77,7 +78,6 @@ public class PlayerAttack : MonoBehaviour
     {
         if (!PV.IsMine) return;
         playerState.ResetUltimatePower();
-        animator.SetTrigger("isUltimate");
         attackCount = 0;
         lastAttackTime = Time.time;
     }
