@@ -16,32 +16,22 @@ public class PushableObject : MonoBehaviour
 
     private void Update()
     {
-        List<PlayerController> players_ = new List<PlayerController>(players.Keys);
-        foreach (PlayerController playerController in players_) // 상호작용 하고 있는 모든 플레이어의 입력을 각각 처리할 수 있도록 함.
+        if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
         {
-            PhotonView PV = players[playerController];
-            if (PV != null && PV.IsMine)
+            if (isPushing)
             {
-                if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
-                {
-                    if (isPushing)
-                    {
-                        StopPushing();
-                    }
-                    else
-                    {
-                        StartPushing();
-                    }
-                } 
-
-                if (isPushing)
-                {
-                    MoveObjectWithPlayer();
-                }
+                StopPushing();
+            }
+            else
+            {
+                StartPushing();
+            }
+        
+            if (isPushing)
+            {
+                MoveObjectWithPlayer();
             }
         }
-
-        
     }
 
     void OnTriggerEnter(Collider other)
@@ -49,51 +39,24 @@ public class PushableObject : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            PlayerController playerController;
-            PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
-            if (!players.ContainsKey(playerController))
-            {
-                players.Add(playerController, PV);
-                if (PV.IsMine) // Enter한 플레이어에게만.
-                {
-                    Debug.Log("입장했습니다.");
-                    isPlayerNearby = true;
-                    playerTransform = other.transform; // 상호작용 중인 플레이어의 트랜스폼 저장
-                    playerController.SetSpeed(2);
-                }
-            }
+            Debug.Log("입장했습니다.");
+            isPlayerNearby = true;
+            playerTransform = other.transform; // 상호작용 중인 플레이어의 트랜스폼 저장
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-
         if (other.CompareTag("Player"))
         {
-            PlayerController playerController;
-            PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
-            if (!players.ContainsKey(playerController))
-            {
-                players.Add(playerController, PV);
-                if (PV.IsMine) // Enter한 플레이어에게만.
-                {
-                    Debug.Log("퇴장했습니다.");
-                    playerController.SetSpeed(-1);
-
-                    StopPushing();
-
-                    isPlayerNearby = false;
-                    playerTransform = null; // 플레이어가 없다면 null로 초기화
-                }
-            }
-        }
-
-
-        
+            Debug.Log("퇴장했습니다.");
+            StopPushing();
+            
+            isPlayerNearby = false;
+            playerTransform = null; // 플레이어가 없다면 null로 초기화
+                
+            
+        }        
     }
 
     private void StartPushing()
