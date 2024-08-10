@@ -39,9 +39,21 @@ public class PushableObject : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            Debug.Log("입장했습니다.");
-            isPlayerNearby = true;
-            playerTransform = other.transform; // 상호작용 중인 플레이어의 트랜스폼 저장
+            PlayerController playerController;
+            PhotonView PV;
+            other.TryGetComponent<PlayerController>(out playerController);
+            playerController.TryGetComponent<PhotonView>(out PV);
+            if (!players.ContainsKey(playerController))
+            {
+                players.Add(playerController, PV);
+                if (PV.IsMine) // Enter한 플레이어에게만.
+                {
+                    Debug.Log("입장함.");
+                    isPlayerNearby = true;
+                    playerTransform = other.transform;
+                    playerController.SetSpeed(2);
+                }
+            }
         }
     }
 
@@ -49,14 +61,24 @@ public class PushableObject : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("퇴장했습니다.");
-            StopPushing();
-            
-            isPlayerNearby = false;
-            playerTransform = null; // 플레이어가 없다면 null로 초기화
-                
-            
-        }        
+            PlayerController playerController;
+            PhotonView PV;
+            other.TryGetComponent<PlayerController>(out playerController);
+            playerController.TryGetComponent<PhotonView>(out PV);
+            if (players.ContainsKey(playerController))
+            {
+                if (PV.IsMine) // Exit한 플레이어에게만.
+                {
+                   Debug.Log("퇴장함.");
+                   playerController.SetSpeed(-1);
+                   StopPushing();
+
+                   isPlayerNearby = false;
+                   playerTransform = null;
+                }
+                players.Remove(playerController);
+            }
+        }
     }
 
     private void StartPushing()
