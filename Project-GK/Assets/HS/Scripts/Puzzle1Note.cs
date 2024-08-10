@@ -4,38 +4,24 @@ using UnityEngine;
 
 public class Puzzle1Note : MonoBehaviour
 {
-
+    public static Puzzle1Note Instance;
+    [SerializeField]
+    Outline outline;
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
 
-    /*
-    void Update()
+    private void Start()
     {
-        List<PlayerController> players_ = new List<PlayerController>(players.Keys);
-        foreach (PlayerController playerController in players_) // 상호작용 하고 있는 모든 플레이어의 입력을 각각 처리할 수 있도록 함.
-        {
-            PhotonView PV = players[playerController];
-            if (PV != null && PV.IsMine)
-            {
-                // CipherDevice에서 가져온거 
-                if (Input.GetKeyDown(KeyCode.T))
-                {
-                    playerController.CursorOn();
-                    UIManager_Ygg.Instance.ActivateCipher();
-                }
-                if (Input.GetKeyDown(KeyCode.Y))
-                {
-                    playerController.CursorOff();
-                    UIManager_Ygg.Instance.DeactivateCipher();
-                }
-                
-            }
-        }
-    } */
-
+        outline = GetComponentInChildren<Outline>();
+    }
 
     public static void ActiveUI() // InteractionManager로부터 명령받아 UI 명령을 진행하는 함수.
     {
         // UIManager_Ygg.Instance 처럼 사용하면 될 듯.
+    }
+
+    public void Outliner(bool value)
+    {
+        outline.enabled = value;
     }
 
     void OnTriggerEnter(Collider other)

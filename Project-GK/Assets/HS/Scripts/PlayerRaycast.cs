@@ -14,6 +14,7 @@ public class PlayerRaycast : MonoBehaviour
 
     [SerializeField] GameObject cameraHolder;
 
+    private Outline currentOutline; // 현재 활성화된 Outline 참조
     private bool canInteract = false;
     private RaycastHit hitInfo;
 
@@ -40,13 +41,37 @@ public class PlayerRaycast : MonoBehaviour
         // 화면 중앙에서 Raycast 발사
         Ray ray = cameraHolder.GetComponentInChildren<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Physics.Raycast(ray, out hitInfo, interactionRange, interactableLayer))
         {
-            if (Physics.Raycast(ray, out hitInfo, interactionRange, interactableLayer))
+            // 이전에 활성화된 Outline이 있다면 비활성화
+            if (currentOutline != null && currentOutline != hitInfo.collider.GetComponent<Outline>())
             {
-                interactionManager.CheckForTags(hitInfo);
+                currentOutline.enabled = false;
+                currentOutline = null;
+            }
+
+            // 새로운 오브젝트의 Outline을 활성화
+            if (hitInfo.collider.TryGetComponent(out Outline outline))
+            {
+                outline.enabled = true;
+                currentOutline = outline; // 현재 활성화된 Outline 참조 저장
+                canInteract = true;
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    interactionManager.CheckForTags(hitInfo);
+                }
             }
         }
-        canInteract = false;
+        else
+        {
+            // Raycast가 아무 오브젝트에도 닿지 않을 때
+            if (currentOutline != null)
+            {
+                currentOutline.enabled = false;
+                currentOutline = null;
+            }
+            canInteract = false;
+        }
     }
 }
