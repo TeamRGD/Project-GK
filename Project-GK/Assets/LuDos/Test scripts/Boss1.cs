@@ -18,6 +18,7 @@ public class Boss1 : MonoBehaviour
 
     int successCount = 0;
     int attackCount = 0;
+    [HideInInspector]
     public int collisionCount = 0;
 
     int selectedBookCaseIndex = 0;
@@ -43,11 +44,13 @@ public class Boss1 : MonoBehaviour
     bool canChange1 = true;
     bool canChange2 = true;
     bool canDisplay = true;
+    [HideInInspector]
     public bool IsCorrect = false;
 
     bool isInvincible = false;
     bool isAggroFixed = false;
 
+    [HideInInspector]
     public int Code;
     int playerIdx = 0;
 
@@ -61,16 +64,19 @@ public class Boss1 : MonoBehaviour
     public List<GameObject> BookCaseCollisions;
     public List<GameObject> Areas;
 
-    public Material greenMaterial;
+    public Material GreenMaterial;
+    public Material RedMaterial;
     public GameObject CipherDevice;
     private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
+    private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
 
     Animator animator;
 
+    [HideInInspector]
     public List<GameObject> PlayerList;
     GameObject aggroTarget;
     Rigidbody rb;
-    public GameObject Pattern3ShockWave;
+    public GameObject ShockWave;
 
     GameObject currentIndicator;
     GameObject currentFill;
@@ -288,8 +294,6 @@ public class Boss1 : MonoBehaviour
 
         StartCoroutine(GroggyTime(10.0f));
 
-        animator.SetTrigger("Idle");
-
         UIManager_Ygg.Instance.DisableAreaNum();
         UIManager_Ygg.Instance.DisableAttackNode();
 
@@ -299,6 +303,7 @@ public class Boss1 : MonoBehaviour
     IEnumerator GroggyTime(float time)
     {
         yield return new WaitForSeconds(time);
+        animator.SetTrigger("Idle");
         currentHealth--;
         isGroggy = false;
     }
@@ -704,7 +709,7 @@ public class Boss1 : MonoBehaviour
                 // 책을 초록색으로 바꿈
                 foreach (int bookIndex in bookIndices)
                 {
-                    Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex);
+                    Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex).GetChild(0);
                     Renderer bookRenderer = book.GetComponent<Renderer>();
                     if (bookRenderer != null)
                     {
@@ -713,8 +718,9 @@ public class Boss1 : MonoBehaviour
                             originalMaterials.Add(book, bookRenderer.material);
                         }
 
-                        bookRenderer.material = greenMaterial;
+                        bookRenderer.material = GreenMaterial;
                     }
+                    Debug.Log("Bookcase " + bookcaseIndex + ": Book " + bookIndex + " light turned on.");
                 }
             }
         }
@@ -825,8 +831,6 @@ public class Boss1 : MonoBehaviour
     // 패턴 2
     IEnumerator JumpToCenter()
     {
-        // isExecutingPattern = true;
-
         Vector3 targetPosition = new Vector3(0, 0, 0);
         Vector3 startPosition = transform.position;
 
@@ -848,8 +852,6 @@ public class Boss1 : MonoBehaviour
         transform.position = targetPosition;
 
         yield return new WaitForSeconds(3.0f);
-
-        // isExecutingPattern = false;
     }
 
     bool AttackAreas()
@@ -867,30 +869,39 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAreaAttack = true;
 
-        // animator.SetTrigger("RaiseArms");
-        Debug.Log("RaiseArms...");
-
         int untouchedArea = Random.Range(0, 8);
-
-        attackedAreas.Add(untouchedArea); // ActivateCipherDevice 에서 암호 입력 장치로 전달
+        attackedAreas.Add(untouchedArea);
         Debug.Log("Untouched Area: " + untouchedArea);
 
-        for (int i = 0; i < Areas.Count; i++) // [임시완]
-        {
-            if (i != untouchedArea)
-            {
-                //Areas[i].SetActive(true);
-            }
-        }
-
-        yield return new WaitForSeconds(4.0f);
-
-        // animator.SetTrigger("AttackAreas");
 
         for (int i = 0; i < Areas.Count; i++)
         {
-            //Areas[i].SetActive(false);
+            if (i != untouchedArea)
+            {
+                Transform childTransform = Areas[i].transform.GetChild(0);
+                Renderer childRenderer = childTransform.GetComponent<Renderer>();
+                if (childRenderer != null)
+                {
+                    if (!originalAreaMaterials.ContainsKey(childRenderer))
+                    {
+                        originalAreaMaterials.Add(childRenderer, childRenderer.material);
+                    }
+
+                    childRenderer.material = RedMaterial;
+                }
+            }
         }
+
+        yield return new WaitForSeconds(3.0f);
+
+        animator.SetTrigger("BothArmSlam"); // 1.08초
+        yield return new WaitForSeconds(2.0f);
+
+        foreach (var entry in originalAreaMaterials)
+        {
+            entry.Key.material = entry.Value;
+        }
+        originalAreaMaterials.Clear();
 
         attackCount++;
 
@@ -898,9 +909,9 @@ public class Boss1 : MonoBehaviour
     }
     bool ActivateCipherDevice2()
     {
-        // 중앙에 암호 입력 장치 활성화 [임시완] 이거는 활성화 될 때만 암호 입력 가능하게 해야함
         if (canChange2)
         {
+            CipherDevice.SetActive(true);
             Code = ConvertListToInt(attackedAreas);
             Debug.Log("Code: " + Code);
             Debug.Log("Attacked Areas: " + string.Join(", ", attackedAreas));
@@ -932,26 +943,23 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator ChargeAttackCoroutine()
     {
-        // 10초간 기 모으기
-        // animator.SetTrigger("Charge");
-        Debug.Log("Charge...");
+        yield return new WaitForSeconds(3.0f);
+
+        animator.SetTrigger("ChargeAndShockWave"); // 10초
 
         yield return new WaitForSeconds(10.0f);
 
-        // 기 발사
-        // animator.SetTrigger("ReleaseCharge");
-        Debug.Log("ReleaseCharge");
-
-        StartCoroutine(CreateShockwave(10.0f, 0.1f, transform.position, 5.0f));
+        StartCoroutine(CreateShockwave(10.0f, 0.1f, transform.position, 10.0f));
 
         attackedAreas.Clear();
         attackCount = 0;
         canChange2 = true;
+        CipherDevice.SetActive(true);
     }
 
     IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // 최대 반지름, 초기 크기, 확장 속도
     {
-        currentShockwave = Instantiate(Pattern3ShockWave, position, Quaternion.identity);
+        currentShockwave = Instantiate(ShockWave, position, Quaternion.identity);
 
         float currentScale = startScale;
 
