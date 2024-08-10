@@ -57,6 +57,7 @@ public class Boss1 : MonoBehaviour
     List<int> numberOfBooks = new List<int>();
     List<int> attackedAreas = new List<int>();
     public List<GameObject> BookCases;
+    public List<GameObject> BookCaseCollisions;
     public List<GameObject> Areas;
 
     Animator animator;
@@ -440,26 +441,6 @@ public class Boss1 : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
-        if (isAggroFixed)
-        {
-            aggroTarget = PlayerList[0];
-        }
-        else
-        {
-            int idx = Random.Range(0, PlayerList.Count);
-            aggroTarget = PlayerList[idx];
-        }
-
-        // 플레이어 방향으로 회전
-        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
-        targetDirection.y = 0;
-
-        if (targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-            transform.rotation = targetRotation;
-        }
-
         Vector3 targetPosition = transform.position; // 타겟 지정
         Vector3 startPosition = transform.position;
 
@@ -669,15 +650,11 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator ArmSlamAndGetEnergy()
     {
-        // isExecutingPattern = true;
-
         Debug.Log("ArmSlamAndGetEnergy");
 
         animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65초
 
         yield return new WaitForSeconds(8.0f);
-
-        // isExecutingPattern = false;
     }
 
     bool ChangeBooksToGreen()
@@ -838,27 +815,27 @@ public class Boss1 : MonoBehaviour
     {
         // isExecutingPattern = true;
 
-        Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
-        float jumpSpeed = 5.0f;
-
+        Vector3 targetPosition = new Vector3(0, 0, 0);
         Vector3 startPosition = transform.position;
-        float distance = Vector3.Distance(startPosition, targetPosition);
-        float totalTime = distance / jumpSpeed;
+
+        float jumpDuration = 0.8f;
         float elapsedTime = 0.0f;
 
-        while (elapsedTime < totalTime)
+        animator.SetTrigger("JumpAndLand"); // 2.9초
+        yield return new WaitForSeconds(0.8f);
+
+        while (elapsedTime < jumpDuration)
         {
-            float t = elapsedTime / totalTime;
-            float height = Mathf.Sin(Mathf.PI * t) * 10.0f; // 점프 높이
-            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
             elapsedTime += Time.deltaTime;
+            float t = elapsedTime / jumpDuration;
+            float height = Mathf.Sin(Mathf.PI * t) * 5.0f;
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
             yield return null;
         }
 
-        // 최종 위치 설정
         transform.position = targetPosition;
 
-        yield return new WaitForSeconds(totalTime);
+        yield return new WaitForSeconds(3.0f);
 
         // isExecutingPattern = false;
     }
@@ -1015,7 +992,7 @@ public class Boss1 : MonoBehaviour
         Debug.Log("Book Case Index: " + selectedBookCaseIndex);
 
         // BookCase의 Light ON [임시완]
-        // BookCases[selectedBookCaseIndex].SetActive(true);
+        // BookCaseCollisions[selectedBookCaseIndex].SetActive(true);
 
         yield return new WaitForSeconds(5.0f); // 불 켜는 시간
 
@@ -1034,8 +1011,15 @@ public class Boss1 : MonoBehaviour
             targetPosition = PlayerList[playerIdx--].transform.position;
         }
 
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        transform.LookAt(targetPosition);
+        // 플레이어 방향으로 회전
+        Vector3 targetDirection = targetPosition - transform.position;
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
 
         hasCollidedWithBookCase = false;
         collidedBookCaseIndex = -1;
@@ -1096,9 +1080,9 @@ public class Boss1 : MonoBehaviour
     // 그 외
     int GetCollidedBookCaseIndex(GameObject collisionObject)
     {
-        for (int i = 0; i < BookCases.Count; i++)
+        for (int i = 0; i < BookCaseCollisions.Count; i++)
         {
-            if (BookCases[i] == collisionObject)
+            if (BookCaseCollisions[i] == collisionObject)
             {
                 return i;
             }
