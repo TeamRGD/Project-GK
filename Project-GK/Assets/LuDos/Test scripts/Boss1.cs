@@ -295,7 +295,7 @@ public class Boss1 : MonoBehaviour
             currentIndicator = Instantiate(AttackIndicators[idx], position, Quaternion.LookRotation(transform.forward));
             currentFill = Instantiate(AttackFills[idx], position, Quaternion.LookRotation(transform.forward));
 
-            float width = 0.3f;
+            float width = 0.5f;
             currentIndicator.transform.localScale = new Vector3(width, currentIndicator.transform.localScale.y, maxLength);
             currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, 0);
 
@@ -307,8 +307,6 @@ public class Boss1 : MonoBehaviour
 
                 float currentLength = Mathf.Lerp(0, maxLength, t);
                 currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, currentLength);
-
-                currentFill.transform.position = position + transform.forward * (currentLength / 2);
 
                 yield return null;
             }
@@ -379,8 +377,8 @@ public class Boss1 : MonoBehaviour
         {
             Debug.Log("RandomBasicAttack");
 
-            // int attackType = UnityEngine.Random.Range(1, 6);
-            int attackType = 1;
+            int attackType = UnityEngine.Random.Range(1, 6);
+            // int attackType = 3;
 
             switch (attackType)
             {
@@ -430,7 +428,7 @@ public class Boss1 : MonoBehaviour
             transform.rotation = targetRotation;
         }
 
-        Vector3 targetPosition = transform.position;
+        Vector3 targetPosition = transform.position; // 타겟 지정
         Vector3 startPosition = transform.position;
 
         float jumpDuration = 0.8f;
@@ -463,7 +461,7 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(1.0f);
 
         if (isAggroFixed)
         {
@@ -475,15 +473,25 @@ public class Boss1 : MonoBehaviour
             aggroTarget = PlayerList[idx];
         }
 
-        transform.LookAt(aggroTarget.transform.position);
+        // 플레이어 방향으로 회전
+        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
+        targetDirection.y = 0;
 
-        animator.SetTrigger("BothArmSlam");
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 27.0f, transform.position + transform.forward * 2.0f, 3.0f)); // 위치, 크기 조정 필요
-        yield return new WaitForSeconds(3.0f);
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 8.0f, 3.0f));
+        yield return new WaitForSeconds(2.2f);
+        animator.SetTrigger("BothArmSlam"); // 1.08초
+        yield return new WaitForSeconds(0.8f);
 
         // 충격파
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(5.0f, 3.0f, transform.position + transform.forward * 2.0f, 2.0f));
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(0.5f);
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 8.0f, 2.0f));
+        yield return new WaitForSeconds(2.0f);
 
         isExecutingAttack = false;
     }
@@ -492,7 +500,7 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(1.0f);
 
         if (isAggroFixed)
         {
@@ -504,30 +512,41 @@ public class Boss1 : MonoBehaviour
             aggroTarget = PlayerList[idx];
         }
 
-        // 각 팔을 번갈아 들어 내리치며 타격 (총 5번)
+        animator.SetTrigger("IdletoSit"); // 0.32초
+        yield return new WaitForSeconds(1.0f);
+
         for (int i = 0; i < 5; i++)
         {
-            transform.LookAt(aggroTarget.transform.position);
+            // 플레이어 방향으로 회전
+            Vector3 targetDirection = aggroTarget.transform.position - transform.position;
+            targetDirection.y = 0;
 
-            yield return new WaitForSeconds(0.5f);
+            if (targetDirection != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+                transform.rotation = targetRotation;
+            }
 
             if (i == 4)
             {
-                // animator.SetTrigger("StrongArmSlam");
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 5.0f - transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요
-                yield return new WaitForSeconds(2.0f);
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 8.0f - transform.right * 4.0f, 2.0f));
+                yield return new WaitForSeconds(1.3f);
+                animator.SetTrigger("LeftArmHardSlam"); // 1.03초
+                yield return new WaitForSeconds(3.0f);
             }
             else if (i == 0 || i == 2)
             {
-                // animator.SetTrigger("LeftArmSlam");
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 0.6f, transform.position + transform.forward * 4.0f - transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요
-                yield return new WaitForSeconds(2.0f);
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f - transform.right * 4.0f, 2.0f));
+                yield return new WaitForSeconds(1.3f);
+                animator.SetTrigger("LeftArmSlam"); // 1.03초
+                yield return new WaitForSeconds(3.0f);
             }
             else
             {
-                // animator.SetTrigger("RightArmSlam");
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 0.6f, transform.position + transform.forward * 4.0f + transform.right * 2.0f, 2.0f)); // 크기, 위치 조정 필요
-                yield return new WaitForSeconds(2.0f);
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f + transform.right * 4.0f, 2.0f));
+                yield return new WaitForSeconds(1.3f);
+                animator.SetTrigger("RightArmSlam"); // 1.03초
+                yield return new WaitForSeconds(3.0f);
             }
         }
 
@@ -550,7 +569,15 @@ public class Boss1 : MonoBehaviour
             aggroTarget = PlayerList[idx];
         }
 
-        transform.LookAt(aggroTarget.transform.position);
+        // 플레이어 방향으로 회전
+        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 3.0f));
         yield return new WaitForSeconds(2.3f);
@@ -579,7 +606,15 @@ public class Boss1 : MonoBehaviour
             aggroTarget = PlayerList[idx];
         }
 
-        transform.LookAt(aggroTarget.transform.position);
+        // 플레이어 방향으로 회전
+        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
 
         // 손바닥으로 내려치기 (피격 플레이어 2초 기절) [임시완] 기절 콜라이더 태그 만들어서 하면 될듯
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f)); // 위치, 크기 조정 필요
