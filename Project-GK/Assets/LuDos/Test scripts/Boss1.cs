@@ -55,7 +55,7 @@ public class Boss1 : MonoBehaviour
     public List<GameObject> BookCases;
     public List<GameObject> Areas;
 
-    // Animator animator;
+    Animator animator;
 
     public List<GameObject> PlayerList;
     GameObject aggroTarget;
@@ -75,7 +75,7 @@ public class Boss1 : MonoBehaviour
     {
         currentHealth = maxHealth;
 
-        // animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
         pattern1Tree = CreatePattern1Tree();
@@ -288,6 +288,8 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator ShowIndicator(int idx, float maxLength, Vector3 position, float duration)
     {
+        position.y = 0.15f; // 임시완
+
         if (idx == 0)
         {
             currentIndicator = Instantiate(AttackIndicators[idx], position, Quaternion.LookRotation(transform.forward));
@@ -377,8 +379,8 @@ public class Boss1 : MonoBehaviour
         {
             Debug.Log("RandomBasicAttack");
 
-            int attackType = UnityEngine.Random.Range(1, 6);
-            // int attackType = 3;
+            // int attackType = UnityEngine.Random.Range(1, 6);
+            int attackType = 1;
 
             switch (attackType)
             {
@@ -406,7 +408,7 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(1.0f);
 
         if (isAggroFixed)
         {
@@ -418,31 +420,40 @@ public class Boss1 : MonoBehaviour
             aggroTarget = PlayerList[idx];
         }
 
-        transform.LookAt(aggroTarget.transform.position);
+        // 플레이어 방향으로 회전
+        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
+        targetDirection.y = 0;
 
-        Vector3 targetPosition = aggroTarget.transform.position;
-        float jumpSpeed = 5.0f;
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
 
+        Vector3 targetPosition = transform.position;
         Vector3 startPosition = transform.position;
-        float distance = Vector3.Distance(startPosition, targetPosition);
-        float totalTime = distance / jumpSpeed;
+
+        float jumpDuration = 0.8f;
         float elapsedTime = 0.0f;
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 27.0f, targetPosition, totalTime)); // 위치, 크기 조정 필요
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, targetPosition, 2.6f));
+        yield return new WaitForSeconds(1.0f);
 
-        while (elapsedTime < totalTime)
+        animator.SetTrigger("JumpAndLand"); // 2.9초
+        yield return new WaitForSeconds(0.8f);
+
+        while (elapsedTime < jumpDuration)
         {
-            float t = elapsedTime / totalTime;
-            float height = Mathf.Sin(Mathf.PI * t) * 10.0f;
-            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
             elapsedTime += Time.deltaTime;
+            float t = elapsedTime / jumpDuration;
+            float height = Mathf.Sin(Mathf.PI * t) * 5.0f;
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
             yield return null;
         }
 
-        // 최종 위치 설정
         transform.position = targetPosition;
 
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(5.0f, 0.1f, targetPosition, 2.0f));
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(4.5f, 0.1f, targetPosition, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -466,7 +477,7 @@ public class Boss1 : MonoBehaviour
 
         transform.LookAt(aggroTarget.transform.position);
 
-        // animator.SetTrigger("Shockwave"); // 두팔로 내려치기
+        animator.SetTrigger("BothArmSlam");
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 27.0f, transform.position + transform.forward * 2.0f, 3.0f)); // 위치, 크기 조정 필요
         yield return new WaitForSeconds(3.0f);
 
@@ -527,7 +538,7 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(1.0f);
 
         if (isAggroFixed)
         {
@@ -541,14 +552,12 @@ public class Boss1 : MonoBehaviour
 
         transform.LookAt(aggroTarget.transform.position);
 
-        // animator.SetTrigger("LegStomp");
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 3.0f));
+        yield return new WaitForSeconds(2.3f);
+        animator.SetTrigger("LegStomp"); // 1.87초
+        yield return new WaitForSeconds(0.7f);
 
-        // 범위 타격 + 충격파
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 27.0f, transform.position + transform.forward * 2.0f, 3.0f)); // 위치, 크기 조정 필요
-        yield return new WaitForSeconds(3.0f);
-
-        // 충격파
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(5.0f, 0.1f, transform.position + transform.forward * 2.0f, 2.0f));
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -558,7 +567,7 @@ public class Boss1 : MonoBehaviour
     {
         isExecutingAttack = true;
 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(1.0f);
 
         if (isAggroFixed)
         {
@@ -572,13 +581,11 @@ public class Boss1 : MonoBehaviour
 
         transform.LookAt(aggroTarget.transform.position);
 
-        // animator.SetTrigger("PalmStrike");
-
-        yield return new WaitForSeconds(2.0f);
-
         // 손바닥으로 내려치기 (피격 플레이어 2초 기절) [임시완] 기절 콜라이더 태그 만들어서 하면 될듯
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 3.0f)); // 위치, 크기 조정 필요
-        yield return new WaitForSeconds(3.0f);
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f)); // 위치, 크기 조정 필요
+        yield return new WaitForSeconds(2.3f);
+        animator.SetTrigger("PalmStrike"); // 1.97초
+        yield return new WaitForSeconds(0.7f);
 
         isExecutingAttack = false;
     }
