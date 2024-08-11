@@ -98,4 +98,15 @@ public class UIManager_Player : MonoBehaviour
         interactionNotice.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
         interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
     }
+
+    // Aim Changer
+    public void AimChangeForAggro()
+    {
+        aim.color = Color.red;
+    }
+
+    public void AimReturns()
+    {
+        aim.color = Color.white;
+    }
 }

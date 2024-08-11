@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
-using System;
+using JetBrains.Annotations;
 
 public class UIManagerInteraction : MonoBehaviour
 {
@@ -15,6 +15,8 @@ public class UIManagerInteraction : MonoBehaviour
     public TextMeshProUGUI inputField;
     public Button inputButton;
 
+    public GameObject SFXContainer;
+    private AudioSource[] paperSFXs;
     public GameObject[] papers;
 
     UIManager_Player uiManager;
@@ -34,6 +36,7 @@ public class UIManagerInteraction : MonoBehaviour
 
     void Start()
     {
+        paperSFXs = SFXContainer.GetComponents<AudioSource>();
         for (int i = 0; i < papers.Length; i++)
         {
             papers[i].SetActive(false);
@@ -112,13 +115,23 @@ public class UIManagerInteraction : MonoBehaviour
     //------------Paper--------------
     public void PopUpPaper(int index)
     {
-        papers[index].transform.DOScale(Vector3.one * 0.8f, 0.3f).SetEase(Ease.OutSine).OnStart(() => papers[index].SetActive(true));
+        for (int i = 0; i < paperSFXs.Length; i++)
+        {
+            int randint = Random.Range(0, paperSFXs.Length);
+            paperSFXs[randint].Play();
+        }
+        papers[index].transform.DOScale(Vector3.one * 0.8f, 0.15f).SetEase(Ease.OutSine).OnStart(() => papers[index].SetActive(true));
         // 플레이어 카메라/마우스 제한
     }
 
     public void PopDownPaper(int index)
     {
-        papers[index].transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InSine).OnComplete(() => papers[index].SetActive(false));
+        for (int i = 0; i < paperSFXs.Length; i++)
+        {
+            int randint = Random.Range(0, paperSFXs.Length);
+            paperSFXs[randint].Play();
+        }
+        papers[index].transform.DOScale(Vector3.zero, 0.15f).SetEase(Ease.InSine).OnComplete(() => papers[index].SetActive(false));
         // 플레이어 카메라/마우스 제한 해제
     }
 }
