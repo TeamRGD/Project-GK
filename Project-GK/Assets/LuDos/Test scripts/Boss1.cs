@@ -480,7 +480,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[1];
+            aggroTarget = PlayerList[0];
         }
         else
         {
@@ -518,7 +518,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[1];
+            aggroTarget = PlayerList[0];
         }
         else
         {
@@ -575,7 +575,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[1];
+            aggroTarget = PlayerList[0];
         }
         else
         {
@@ -612,7 +612,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[1];
+            aggroTarget = PlayerList[0];
         }
         else
         {
@@ -740,6 +740,7 @@ public class Boss1 : MonoBehaviour
         if (canChange1)
         {
             CipherDevice.SetActive(true);
+            UIManager_Ygg.Instance.ResetCipher();
 
             for (int i = 0; i < 4; i++)
             {
@@ -749,6 +750,7 @@ public class Boss1 : MonoBehaviour
             }
             Debug.Log(Code);
             UIManager_Ygg.Instance.patternCode = Code;
+
             canChange1 = false;
         }
         return true;
@@ -1050,6 +1052,8 @@ public class Boss1 : MonoBehaviour
         }
 
         yield return moveBackCoroutine = StartCoroutine(MoveBackToCenter());
+
+        yield return new WaitForSeconds(3.0f);
 
         // isExecutingBookAttack = false;
     }
