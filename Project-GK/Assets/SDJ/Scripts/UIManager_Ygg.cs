@@ -59,32 +59,32 @@ public class UIManager_Ygg : MonoBehaviour
         //{
         //    ActivateCipher();
         //}
-        //if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            DeactivateCipher();
+        }
+
+        //if (Input.GetKeyDown(KeyCode.N))
         //{
-        //    DeactivateCipher();
+        //    EnableAreaNum();
+        //}
+        //if (Input.GetKeyDown(KeyCode.M))
+        //{
+        //    DisableAreaNum();
         //}
 
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            EnableAreaNum();
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            DisableAreaNum();
-        }
-
-        if(Input.GetKeyDown(KeyCode.Z))
-        {
-            EnableAttackNode();
-        }
-        if(Input.GetKeyDown(KeyCode.X))
-        {
-            DisableAttackNode();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            NodeDeduction();
-        }
+        //if(Input.GetKeyDown(KeyCode.Z))
+        //{
+        //    EnableAttackNode();
+        //}
+        //if(Input.GetKeyDown(KeyCode.X))
+        //{
+        //    DisableAttackNode();
+        //}
+        //if (Input.GetKeyDown(KeyCode.C))
+        //{
+        //    NodeDeduction();
+        //}
     }
 
     //------------DEFAULT--------------
@@ -161,7 +161,7 @@ public class UIManager_Ygg : MonoBehaviour
     public void EnableAttackNode()
     {
         playerAttackCount = 0;
-        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1, 0.2f).SetEase(Ease.OutSine).OnStart(() => attackNodeContainer.SetActive(true));
+        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1, 0.5f).SetEase(Ease.OutSine).OnStart(() => attackNodeContainer.SetActive(true));
     }
 
     public void NodeDeduction()
@@ -174,6 +174,6 @@ public class UIManager_Ygg : MonoBehaviour
     public void DisableAttackNode()
     {
         playerAttackCount = 0;
-        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1, 0.2f).SetEase(Ease.OutSine).OnComplete(() => attackNodeContainer.SetActive(false));
+        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(0, 0.5f).SetEase(Ease.OutSine).OnComplete(() => attackNodeContainer.SetActive(false));
     }
 }
