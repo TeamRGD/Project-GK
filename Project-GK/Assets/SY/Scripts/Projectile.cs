@@ -30,8 +30,12 @@ public class Projectile : MonoBehaviour
             {
                 PhotonNetwork.Destroy(gameObject);
                 PV.TryGetComponent<PlayerStateManager>(out playerState);
-                playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
-                other.GetComponentInParent<Boss1>().TakeDamage(attackPower);
+                Boss1 boss1 = other.GetComponentInParent<Boss1>();
+                if (!boss1.GetIsInvincible())
+                {
+                    boss1.TakeDamage(attackPower);
+                    playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                }
             }
         }
     }

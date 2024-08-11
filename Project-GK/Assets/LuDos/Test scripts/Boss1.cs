@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using Unity.Properties;
 
-public class Boss1 : MonoBehaviour
+public class Boss1 : MonoBehaviourPunCallbacks
 {
-    public float maxHealth = 100;
+    float maxHealth = 100;
     float currentHealth;
 
     bool isFirstTimeBelow66 = true;
@@ -82,6 +85,13 @@ public class Boss1 : MonoBehaviour
     BTNode pattern1Tree;
     BTNode pattern2Tree;
     BTNode pattern3Tree;
+
+    PhotonView PV;
+
+    void Awake()
+    {
+        TryGetComponent<PhotonView>(out PV);
+    }
 
     void Start()
     {
@@ -249,36 +259,6 @@ public class Boss1 : MonoBehaviour
         }
 
         isExecutingPattern = false;
-    }
-
-    public void TakeDamage(float amount)
-    {
-        if (!isInvincible)
-        {
-            currentHealth -= amount;
-
-            if (isFirstTimeBelow66 && currentHealth <= 66 && currentHealth > 33)
-            {
-                currentHealth = 66;
-                isFirstTimeBelow66 = false;
-            }
-            else if (isFirstTimeBelow33 && currentHealth <= 33 && currentHealth > 2)
-            {
-                currentHealth = 33;
-                isFirstTimeBelow33 = false;
-            }
-            else if (isFirstTimeBelow2 && currentHealth <= 2 && currentHealth > 0)
-            {
-                currentHealth = 2;
-                isFirstTimeBelow2 = false;
-            }
-            else if (currentHealth < 0)
-            {
-                currentHealth = 0;
-            }
-
-            UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
-        }
     }
 
     bool SetGroggy()
@@ -1118,6 +1098,47 @@ public class Boss1 : MonoBehaviour
 
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+        }
+    }
+
+    // Photon Code (아커만 김수연의 영역 전개)
+    public bool GetIsInvincible()
+    {
+        return isInvincible;
+    }
+
+    public void TakeDamage(float amount)
+    {
+        PV.RPC("TakeDamageRPC", RpcTarget.All, amount);
+    }
+
+    [PunRPC]
+    void TakeDamageRPC(float amount)
+    {
+        if (!isInvincible)
+        {
+            currentHealth -= amount;
+
+            if (isFirstTimeBelow66 && currentHealth <= 66 && currentHealth > 33)
+            {
+                currentHealth = 66;
+                isFirstTimeBelow66 = false;
+            }
+            else if (isFirstTimeBelow33 && currentHealth <= 33 && currentHealth > 2)
+            {
+                currentHealth = 33;
+                isFirstTimeBelow33 = false;
+            }
+            else if (isFirstTimeBelow2 && currentHealth <= 2 && currentHealth > 0)
+            {
+                currentHealth = 2;
+                isFirstTimeBelow2 = false;
+            }
+            else if (currentHealth < 0)
+            {
+                currentHealth = 0;
+            }
+            UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
         }
     }
 
