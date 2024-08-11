@@ -5271,7 +5271,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 862587053}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -7450,6 +7450,7 @@ MonoBehaviour:
   boss: {fileID: 0}
   bossHealthBar: {fileID: 1764501976}
   hint: {fileID: 2044048447}
+  isCorrectedPrevCode: 0
   patternCode: 0
   inputCipherDisplay: {fileID: 862587053}
   inputCipherEnter: {fileID: 576336432}
@@ -11293,7 +11294,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2099090928}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
