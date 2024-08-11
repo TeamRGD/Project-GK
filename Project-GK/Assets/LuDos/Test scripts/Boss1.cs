@@ -1,11 +1,7 @@
-using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using TreeEditor;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UI;
 
 public class Boss1 : MonoBehaviour
 {
@@ -105,7 +101,7 @@ public class Boss1 : MonoBehaviour
             TakeDamage(1);
             Debug.Log("Boss Health: " + currentHealth);
         }
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKeyDown(KeyCode.M))
         {
             IsCorrect = true;
         }
