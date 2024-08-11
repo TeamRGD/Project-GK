@@ -5,8 +5,21 @@ using DG.Tweening;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager instance;
+
     public AudioSource[] stage1BGM;
 
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        } else
+        {
+            Destroy(this);
+        }
+    }
 
     void Start()
     {

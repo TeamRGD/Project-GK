@@ -294,6 +294,7 @@ public class Boss1 : MonoBehaviour
 
         StartCoroutine(GroggyTime(10.0f));
 
+        UIManager_Ygg.Instance.DisableHint();
         UIManager_Ygg.Instance.DisableAreaNum();
         UIManager_Ygg.Instance.DisableAttackNode();
 
@@ -727,6 +728,7 @@ public class Boss1 : MonoBehaviour
                 }
             }
         }
+        UIManager_Ygg.Instance.EnableHint();
         return true;
     }
 

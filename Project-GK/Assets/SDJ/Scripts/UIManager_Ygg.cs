@@ -16,6 +16,8 @@ public class UIManager_Ygg : MonoBehaviour
     public Image bossHealthBar;
 
     // Variables being used in pattern1 logic
+    public TextMeshProUGUI hint;
+
     public int patternCode;
 
     public GameObject inputCipherDisplay;
@@ -94,6 +96,17 @@ public class UIManager_Ygg : MonoBehaviour
     }
 
     //------------PATTERN 1--------------
+    public void EnableHint()
+    {
+        hint.DOFade(1f, 0.5f).SetEase(Ease.OutSine);
+    }
+
+    public void DisableHint()
+    {
+        hint.DOFade(0f, 0.5f).SetEase(Ease.OutSine);
+    }
+
+
     public void ActivateCipher()
     {
         inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
