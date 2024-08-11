@@ -5,11 +5,20 @@ public class InteractionManager : MonoBehaviour
 {
     PlayerController playerController;
     PhotonView PV;
+    int isOpen = 0;
 
     private void Start()
     {
         TryGetComponent<PhotonView>(out PV);
         playerController = GetComponentInChildren<PlayerController>();
+    }
+
+    private void Update()
+    {
+        if (isOpen != 0 && Input.GetKeyDown(KeyCode.Escape))
+        {
+            DeactiveUI(isOpen);
+        }
     }
 
     // 오픈할 UI를 찾기 위해 Tag들을 비교하는 함수.
@@ -24,12 +33,7 @@ public class InteractionManager : MonoBehaviour
             {
                 Debug.Log("Note 찾음");
                 Puzzle1Note.ActiveUI();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Debug.Log("Note 끔");
-                Puzzle1Note.DeactiveUI();
+                isOpen = 1;
             }
         }
 
@@ -50,5 +54,15 @@ public class InteractionManager : MonoBehaviour
         {
             // 이동식 발판
         }
+    }
+
+    void DeactiveUI(int index)
+    {
+        if (index == 1)
+        {
+            Puzzle1Note.DeactiveUI();
+        }
+        Debug.Log("UI 끔");
+        isOpen = 0;
     }
 }
