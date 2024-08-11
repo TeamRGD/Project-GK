@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3033492319872120706}
   m_Layer: 0
   m_Name: AttackIndicator0
-  m_TagString: Untagged
+  m_TagString: Others
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

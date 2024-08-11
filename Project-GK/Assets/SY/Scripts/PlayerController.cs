@@ -148,7 +148,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Linecast(playerPosition, cameraPosition, out hit, collisionMask))
         {
             float hitDistance = Vector3.Distance(playerPosition, hit.point);
-            if (hit.collider.CompareTag("Wall")||hit.collider.CompareTag("BookCase")) // 벽과 충돌했을 경우
+            if (hit.collider.CompareTag("Wall")||hit.collider.CompareTag("BookCase")||hit.collider.CompareTag("Others")) // 벽과 충돌했을 경우
             {
                 cameraHolder.transform.position = hit.point + Vector3.up * 1f;
             }

@@ -83,7 +83,7 @@ public class UIManager_Player : MonoBehaviour
                 inventoryOutlines[i].enabled = false;
             }
         }
-        inventorySFX.Play();
+        //inventorySFX.Play();
     }
 
     // Interaction

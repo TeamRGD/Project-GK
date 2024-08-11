@@ -897,8 +897,8 @@ MonoBehaviour:
         transform: {fileID: 0}
         weight: 0
     m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -100
-    m_MaxLimit: 100
+    m_MinLimit: -50
+    m_MaxLimit: 50
     m_AimAxis: 2
     m_UpAxis: 1
     m_WorldUpType: 0
