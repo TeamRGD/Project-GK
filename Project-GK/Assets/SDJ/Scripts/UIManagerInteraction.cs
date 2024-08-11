@@ -94,7 +94,10 @@ public class UIManagerInteraction : MonoBehaviour
 
     public void CheckCipher(int code)
     {
-        if (inputField.text == code.ToString())
+        int realCode = 0;
+        if (code == 1) realCode = 1234; 
+        else if (code == 2) realCode = 5678;
+        if (inputField.text == realCode.ToString())
         {
             Debug.Log("That's Right!");
             inputField.DOColor(Color.green, 0.2f).SetEase(Ease.OutSine);
