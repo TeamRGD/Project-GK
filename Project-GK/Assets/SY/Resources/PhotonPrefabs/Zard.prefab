@@ -6024,6 +6024,7 @@ GameObject:
   - component: {fileID: 4568800209693031333}
   - component: {fileID: 7943840140893421715}
   - component: {fileID: 8847912402696199497}
+  - component: {fileID: 1215403819406087319}
   m_Layer: 0
   m_Name: Zard
   m_TagString: PlayerZard
@@ -6321,6 +6322,18 @@ MonoBehaviour:
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
+--- !u!114 &1215403819406087319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2936555752396236712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea67400f9f43eee4b9aa369a2a61679f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3452441987048312955
 GameObject:
   m_ObjectHideFlags: 0

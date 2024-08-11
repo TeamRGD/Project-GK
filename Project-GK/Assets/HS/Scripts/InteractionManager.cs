@@ -1,10 +1,23 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class InteractionManager : MonoBehaviour
 {
+    PlayerController playerController;
+    PhotonView PV;
+
+    private void Start()
+    {
+        TryGetComponent<PhotonView>(out PV);
+        playerController = GetComponentInChildren<PlayerController>();
+    }
+
     // 오픈할 UI를 찾기 위해 Tag들을 비교하는 함수.
     public void CheckForTags(RaycastHit hitInfo)
     {
+        if (!PV.IsMine)
+            return;
+
         if (hitInfo.collider.CompareTag("Note"))
         {
             if (Input.GetKeyDown(KeyCode.T))
@@ -15,6 +28,7 @@ public class InteractionManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+                Debug.Log("Note 끔");
                 Puzzle1Note.DeactiveUI();
             }
         }
