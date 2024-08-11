@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
 
     float verticalLookRotation;
     bool grounded;
-    bool canMove;
+    bool canControl;
     Vector3 smoothMoveVelocity;
     Vector3 moveAmount;
 
@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         //UnityEngine.Debug.Log(this.gameObject);
-        canMove = true;
+        canControl = true;
         // 자신만 제어할 수 있도록
         if (!PV.IsMine)
         {
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
-        if (!PV.IsMine || !canMove)
+        if (!PV.IsMine || !canControl)
             return;
         Look();
         Move();
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         moveAmount = Vector3.zero;
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
-        SetCanMove(false);
+        SetCanControl(false);
     }
 
     public void CursorOff()
@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
     {
         playerAttack.SetCanAttack(true);
         playerToolManager.SetCanChange(true);
-        SetCanMove(true);
+        SetCanControl(true);
     }
     
     private void FixedUpdate()
@@ -205,17 +205,17 @@ public class PlayerController : MonoBehaviour
         grounded = _grounded;
     }
 
-    public void SetCanMove(bool value)
+    public void SetCanControl(bool value)
     {
         if (!PV.IsMine)
             return;
-        PV.RPC("SetCanMoveRPC", RpcTarget.AllBuffered, value);
+        PV.RPC("SetCanControlRPC", RpcTarget.AllBuffered, value);
     }
 
     [PunRPC]
-    void SetCanMoveRPC(bool value)
+    void SetCanControlRPC(bool value)
     {
-        canMove = value;
+        canControl = value;
     }
 
     void Save()

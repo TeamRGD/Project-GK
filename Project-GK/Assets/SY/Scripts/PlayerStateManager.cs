@@ -51,7 +51,7 @@ public class PlayerStateManager : MonoBehaviour
             return;
         if (Input.GetKeyDown(KeyCode.O))
         {
-            currentUltimatePower = 100;
+            TakeDamage(25);
         }
     }
 
@@ -72,28 +72,30 @@ public class PlayerStateManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            OnDeath();
+            OnGroggy();
         }
         UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
     }
 
-    void OnDeath()
+    void OnGroggy()
     {
-        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
+        animator.SetBool("isGroggy", true);
+        animator.SetTrigger("groggy");
+        PV.RPC("OnGroggyRPC", RpcTarget.AllBuffered);
     }
 
     [PunRPC]
-    void OnDeathRPC()
+    void OnGroggyRPC()
     {
         isAlive = false;
-        transform.rotation = Quaternion.Euler(0, 0, 90); // 임시로 기절 표현
-        playerController.SetCanMove(false);
+        playerController.SetCanControl(false);
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
     }
 
     public void Revive()
     {
+        animator.SetBool("isGroggy", false);
         PV.RPC("ReviveRPC", RpcTarget.AllBuffered);
     }
 
@@ -101,11 +103,10 @@ public class PlayerStateManager : MonoBehaviour
     void ReviveRPC()
     {
         isAlive = true;
-        playerController.SetCanMove(true);
+        playerController.SetCanControl(true);
         playerAttack.SetCanAttack(true);
         playerToolManager.SetCanChange(true);
         currentHealth = maxHealth;
-        transform.rotation = Quaternion.Euler(0, 0, 0); // 임시로 부활 표현
     }
 
     [PunRPC]

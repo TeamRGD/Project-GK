@@ -70,6 +70,8 @@ MonoBehaviour:
   - SetTargetPosition
   - UltimateAttackRPC
   - SaveRPC
+  - SetCanControlRPC
+  - OnGroggyRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

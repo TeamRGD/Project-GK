@@ -5143,7 +5143,7 @@ GameObject:
   - component: {fileID: -6139773246994478324}
   m_Layer: 0
   m_Name: Wi
-  m_TagString: Player
+  m_TagString: PlayerWi
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5161,6 +5161,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3431846509754168344}
   - {fileID: 3012074748258660536}
   - {fileID: 6430927473172431467}
   - {fileID: 1901472125540140474}
@@ -5435,6 +5436,21 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 1
     Name: isUltimate
+  - Type: 9
+    SynchronizeType: 1
+    Name: getHit
+  - Type: 4
+    SynchronizeType: 1
+    Name: rescue
+  - Type: 4
+    SynchronizeType: 1
+    Name: isGroggy
+  - Type: 9
+    SynchronizeType: 1
+    Name: groggy
+  - Type: 4
+    SynchronizeType: 1
+    Name: isRescuing
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -5720,8 +5736,8 @@ MonoBehaviour:
         transform: {fileID: 0}
         weight: 0
     m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -100
-    m_MaxLimit: 100
+    m_MinLimit: -50
+    m_MaxLimit: 50
     m_AimAxis: 2
     m_UpAxis: 1
     m_WorldUpType: 0
@@ -6399,7 +6415,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1206659165108730510}
-  - {fileID: 3431846509754168344}
   m_Father: {fileID: 4206003009559597356}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4762681712034648983
@@ -6940,12 +6955,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5735288074427815374}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000000059595887, y: 1.0000001, z: -0.000000004449248}
+  m_LocalRotation: {x: -0.49999958, y: 0.5000002, z: 0.50000113, w: -0.4999992}
+  m_LocalPosition: {x: 0, y: 0.419566, z: 1.003793}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5318971676774510568}
+  m_Father: {fileID: 6478719530023134538}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4096503292156994938
 MonoBehaviour:
