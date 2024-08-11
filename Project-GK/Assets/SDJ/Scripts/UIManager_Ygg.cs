@@ -189,4 +189,14 @@ public class UIManager_Ygg : MonoBehaviour
         playerAttackCount = 0;
         attackNodeContainer.GetComponent<CanvasGroup>().DOFade(0, 0.5f).SetEase(Ease.OutSine).OnComplete(() => attackNodeContainer.SetActive(false));
     }
+
+    public void ResetAttackNode()
+    {
+        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(0, 0.25f).SetEase(Ease.OutSine);
+        for (int i = 0; i < 7; i++) 
+        {
+            attackNodeContainer.transform.GetChild(i).GetComponent<Image>().DOFade(1f, 0.01f).SetDelay(0.25f);
+        }
+        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(0, 0.25f).SetEase(Ease.OutSine).SetDelay(0.5f);
+    }
 }

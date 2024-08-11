@@ -1040,6 +1040,7 @@ public class Boss1 : MonoBehaviour
         }
         else
         {
+            UIManager_Ygg.Instance.ResetAttackNode();
             animator.SetTrigger("CrashAtBookCase");
             isWrongBookCase = true;
         }
