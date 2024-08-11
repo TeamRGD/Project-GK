@@ -71,7 +71,7 @@ public class UIManagerInteraction : MonoBehaviour
     {
         inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
-        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
+        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(120f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
 
         uiManager.interactionNotice.gameObject.SetActive(false);
