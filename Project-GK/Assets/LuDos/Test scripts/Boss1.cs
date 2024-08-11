@@ -5,6 +5,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using Unity.Properties;
+using TMPro;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
@@ -860,6 +861,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
         }
 
+        Vector3 targetPosition = Areas[untouchedArea].transform.position;
+        Vector3 targetDirection = transform.position - targetPosition;
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
+
         yield return new WaitForSeconds(3.0f);
 
         animator.SetTrigger("BothArmSlam"); // 1.08��
@@ -1030,6 +1041,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             Debug.Log("Correct Collision");
             animator.SetTrigger("CrashAtBookCase");
+            yield return new WaitForSeconds(1.0f);
             UIManager_Ygg.Instance.NodeDeduction();
             collisionCount++;
         }
@@ -1037,6 +1049,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             UIManager_Ygg.Instance.ResetAttackNode();
             animator.SetTrigger("CrashAtBookCase");
+            yield return new WaitForSeconds(1.0f);
             isWrongBookCase = true;
         }
 
