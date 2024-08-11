@@ -139,7 +139,7 @@ public class PlayerAttack : MonoBehaviour
         projectile.TryGetComponent<Projectile>(out projScript);
         if (projScript != null)
         {
-            projScript.SetAttackPower((count < 2) ? 0.2f : 0.3f);
+            projScript.SetAttackPower((count < 2) ? 2f : 3f);
             projScript.SetOwner(PV.ViewID);
         }
 
