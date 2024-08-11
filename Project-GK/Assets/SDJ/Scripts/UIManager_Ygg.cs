@@ -215,6 +215,6 @@ public class UIManager_Ygg : MonoBehaviour
         {
             attackNodeContainer.transform.GetChild(i).GetComponent<Image>().DOFade(1f, 0.01f).SetDelay(0.25f);
         }
-        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(0, 0.25f).SetEase(Ease.OutSine).SetDelay(0.5f);
+        attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1f, 0.25f).SetEase(Ease.OutSine).SetDelay(0.5f);
     }
 }
