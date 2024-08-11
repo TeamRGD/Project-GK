@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        this.transform.rotation = Quaternion.Euler(0, 270, 0);
         // 자신만 제어할 수 있도록
         if (!PV.IsMine)
         {

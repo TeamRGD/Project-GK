@@ -8,8 +8,8 @@ using System.Numerics;
 public class PlayerManager : MonoBehaviour
 {
     PhotonView PV;
-    private UnityEngine.Vector3 startPositionWi = UnityEngine.Vector3.zero;
-    private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(5, 0, 0);
+    private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(13, 1, -1);
+    private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(13, 1, 1);
 
 
     void Awake()
