@@ -444,6 +444,7 @@ public class Boss1 : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
 
         Vector3 targetPosition = transform.position;
+        targetPosition.y = 0.0f;
         Vector3 startPosition = transform.position;
 
         float jumpDuration = 0.8f;
@@ -816,6 +817,7 @@ public class Boss1 : MonoBehaviour
     IEnumerator JumpToCenter()
     {
         Vector3 targetPosition = transform.position;
+        targetPosition.y = 0.0f;
         Vector3 startPosition = transform.position;
 
         float jumpDuration = 0.8f;
@@ -939,6 +941,8 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // 최대 반지름, 초기 크기, 생성 위치, 확장 속도
     {
+        position.y = 0.0f;
+
         currentShockwave = Instantiate(ShockWave, position, Quaternion.identity);
 
         float currentScale = startScale;
