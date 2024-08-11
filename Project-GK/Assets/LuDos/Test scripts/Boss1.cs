@@ -66,6 +66,7 @@ public class Boss1 : MonoBehaviour
 
     public Material GreenMaterial;
     public Material RedMaterial;
+    public Material Temporary; // 임시완
     public GameObject CipherDevice;
     private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
     private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
@@ -165,9 +166,9 @@ public class Boss1 : MonoBehaviour
                         {
                             StopRandomBasicAttack();
                         }
-
+                        animator.SetTrigger("Exit");
                         MakeInvincible();
-                        Scream();
+                        yield return StartCoroutine(Roar());
                         hasExecutedInitialActions3 = true;
                     }
 
@@ -452,7 +453,7 @@ public class Boss1 : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
-        Vector3 targetPosition = transform.position; // 타겟 지정
+        Vector3 targetPosition = transform.position;
         Vector3 startPosition = transform.position;
 
         float jumpDuration = 0.8f;
@@ -512,7 +513,6 @@ public class Boss1 : MonoBehaviour
         animator.SetTrigger("BothArmSlam"); // 1.08초
         yield return new WaitForSeconds(0.8f);
 
-        // 충격파
         yield return new WaitForSeconds(0.5f);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 8.0f, 2.0f));
         yield return new WaitForSeconds(2.0f);
@@ -641,7 +641,7 @@ public class Boss1 : MonoBehaviour
         }
 
         // 손바닥으로 내려치기 (피격 플레이어 2초 기절) [임시완] 기절 콜라이더 태그 만들어서 하면 될듯
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f)); // 위치, 크기 조정 필요
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
         yield return new WaitForSeconds(2.3f);
         animator.SetTrigger("PalmStrike"); // 1.97초
         yield return new WaitForSeconds(0.7f);
@@ -836,7 +836,7 @@ public class Boss1 : MonoBehaviour
     // 패턴 2
     IEnumerator JumpToCenter()
     {
-        Vector3 targetPosition = transform.position; // 중앙
+        Vector3 targetPosition = transform.position;
         Vector3 startPosition = transform.position;
 
         float jumpDuration = 0.8f;
@@ -964,7 +964,7 @@ public class Boss1 : MonoBehaviour
         CipherDevice.SetActive(true);
     }
 
-    IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // 최대 반지름, 초기 크기, 확장 속도
+    IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // 최대 반지름, 초기 크기, 생성 위치, 확장 속도
     {
         currentShockwave = Instantiate(ShockWave, position, Quaternion.identity);
 
@@ -983,16 +983,16 @@ public class Boss1 : MonoBehaviour
     }
 
     // 패턴 3
-    void Scream()
+    IEnumerator Roar()
     {
-        Debug.Log("Scream");
-        // animator.SetTrigger("Scream");
+        Debug.Log("Roar");
+        animator.SetTrigger("Roar");
+        yield return new WaitForSeconds(4.0f);
     }
     bool DisplayBookCaseOrder()
     {
         if (canDisplay)
         {
-            // UI에 책장의 개수만큼 원 띄우기
             UIManager_Ygg.Instance.EnableAttackNode();
             Debug.Log("DisplayBookCaseOrder");
 
@@ -1017,14 +1017,23 @@ public class Boss1 : MonoBehaviour
         selectedBookCaseIndex = Random.Range(0, 7);
         Debug.Log("Book Case Index: " + selectedBookCaseIndex);
 
-        // BookCase의 Light ON [임시완]
-        // BookCaseCollisions[selectedBookCaseIndex].SetActive(true);
+        // BookCase의 Light ON
+        Renderer bookCaseRenderer = BookCaseCollisions[selectedBookCaseIndex].GetComponent<Renderer>();
 
-        yield return new WaitForSeconds(5.0f); // 불 켜는 시간
+        if (bookCaseRenderer != null)
+        {
+            bookCaseRenderer.material = GreenMaterial;
+        }
 
-        // Player 방향으로 돌진
-        Debug.Log("Attack BookCase");
-        // animator.SetTrigger("AttackBookCase");
+        yield return new WaitForSeconds(5.0f); // 불 켜는 시간 & 돌진 전 대기 시간
+
+        if (bookCaseRenderer != null)
+        {
+            // bookCaseRenderer.material = null;
+            bookCaseRenderer.material = Temporary; // 임시완
+        }
+
+        animator.SetTrigger("InvincibletoDash");
 
         Vector3 targetPosition;
 
@@ -1052,32 +1061,40 @@ public class Boss1 : MonoBehaviour
 
         while (!hasCollidedWithBookCase)
         {
-            transform.position += targetDirection * Time.deltaTime * 10.0f;
+            transform.position += targetDirection * Time.deltaTime * 0.4f;
             yield return null;
         }
+
+        // yield return new WaitForSeconds(0.1f);
 
         if (collidedBookCaseIndex == selectedBookCaseIndex)
         {
             Debug.Log("Correct Collision");
+            animator.SetTrigger("CrashAtBookCase");
             UIManager_Ygg.Instance.NodeDeduction();
             collisionCount++;
         }
         else
         {
+            animator.SetTrigger("CrashAtBookCase");
             isWrongBookCase = true;
         }
 
         yield return moveBackCoroutine = StartCoroutine(MoveBackToCenter());
 
-        isExecutingBookAttack = false;
+        // isExecutingBookAttack = false;
     }
 
     IEnumerator MoveBackToCenter()
     {
         Debug.Log("MoveBackToCenter");
 
+        yield return new WaitForSeconds(3.0f);
+
+        animator.SetTrigger("StaggeringBack");
+
         Vector3 startPosition = transform.position;
-        Vector3 centerPosition = new Vector3(0.0f, 0.0f, 0.0f); // [임시완]
+        Vector3 centerPosition = new Vector3(0.0f, 0.0f, 0.0f);
         float moveDuration = 5.0f;
         float elapsedTime = 0.0f;
 
@@ -1089,6 +1106,10 @@ public class Boss1 : MonoBehaviour
         }
 
         transform.position = centerPosition;
+
+        animator.SetTrigger("Invincible");
+
+        isExecutingBookAttack = false;
     }
 
     bool DamageAllMap()
@@ -1115,12 +1136,12 @@ public class Boss1 : MonoBehaviour
         }
         return -1;
     }
-    void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("BookCase"))
+        if (other.gameObject.CompareTag("BookCase"))
         {
             hasCollidedWithBookCase = true;
-            collidedBookCaseIndex = GetCollidedBookCaseIndex(collision.gameObject);
+            collidedBookCaseIndex = GetCollidedBookCaseIndex(other.gameObject);
 
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
