@@ -9,12 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Launcher.unity
     guid: 3db775f9af3121e4db09a8bb584df78a
   - enabled: 1
-    path: Assets/Scenes/S2_Library_03.unity
-    guid: 52b59cf7e15490a47b98461b5ec11179
-  - enabled: 1
-    path: Assets/HS/Scenes/CuriHuS.unity
-    guid: d39c361df8d1a974eba335b795b8c644
-  - enabled: 1
     path: Assets/Scenes/Yggdrasil.unity
     guid: 96f16aa820d92bc4d9634a78a043af32
   m_configObjects: {}
