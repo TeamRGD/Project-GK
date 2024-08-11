@@ -21,7 +21,7 @@ public class CipherDevice : MonoBehaviour
                     playerController.CursorOn();
                     UIManager_Ygg.Instance.ActivateCipher();
                 }
-                if (Input.GetKeyDown(KeyCode.Y))
+                if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     playerController.CursorOff();
                     UIManager_Ygg.Instance.DeactivateCipher();
