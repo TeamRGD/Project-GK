@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using Unity.Properties;
 using TMPro;
+using UnityEngine.Animations;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
@@ -811,7 +812,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(2.0f);
 
-        animator.SetTrigger("JumpAndLand"); // 2.9��
+        animator.SetTrigger("JumpAndLand"); // 2.9s
         yield return new WaitForSeconds(0.8f);
 
         while (elapsedTime < jumpDuration)
@@ -843,6 +844,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
         int untouchedArea = Random.Range(0, 8);
         attackedAreas.Add(untouchedArea);
 
+        Vector3 targetPosition = BookCaseCollisions[untouchedArea].transform.position; // Area position (0,0,0)
+        Vector3 targetDirection = transform.position - targetPosition;
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
+
         for (int i = 0; i < Areas.Count; i++)
         {
             if (i != untouchedArea)
@@ -861,20 +872,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
         }
 
-        Vector3 targetPosition = Areas[untouchedArea].transform.position;
-        Vector3 targetDirection = transform.position - targetPosition;
-        targetDirection.y = 0;
-
-        if (targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-            transform.rotation = targetRotation;
-        }
-
         yield return new WaitForSeconds(3.0f);
 
-        animator.SetTrigger("BothArmSlam"); // 1.08��
-        yield return new WaitForSeconds(2.0f);
+        animator.SetTrigger("BothArmSlam"); // 1.08s
+        yield return new WaitForSeconds(4.0f);
 
         foreach (var entry in originalAreaMaterials)
         {
@@ -1056,8 +1057,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return moveBackCoroutine = StartCoroutine(MoveBackToCenter());
 
         yield return new WaitForSeconds(3.0f);
-
-        // isExecutingBookAttack = false;
     }
 
     IEnumerator MoveBackToCenter()
@@ -1085,7 +1084,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DamageAllMap()
     {
-        // �� ���� ������ [�ӽÿ�]
         Debug.Log("DamageAllMap");
 
         canDisplay = true;
@@ -1095,7 +1093,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    // �� ��
+    // Else Function
     int GetCollidedBookCaseIndex(GameObject collisionObject)
     {
         for (int i = 0; i < BookCaseCollisions.Count; i++)
@@ -1119,7 +1117,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-    // Photon Code (��Ŀ�� ������� ���� ����)
+    // Photon Code
     public bool GetIsInvincible()
     {
         return isInvincible;
