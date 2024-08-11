@@ -6,6 +6,9 @@ using DG.Tweening;
 
 public class TitleMenu : MonoBehaviour
 {
+    public AudioSource initSFX;
+
+    public AudioSource hoverEnterSFX;
     public RectTransform buttonContainer;
 
     // Start is called before the first frame update
@@ -21,6 +24,12 @@ public class TitleMenu : MonoBehaviour
 
     void OnEnable()
     {
+        initSFX.Play();
         buttonContainer.DOAnchorPosY(0f, 0.5f).SetEase(Ease.OutBack);
+    }
+
+    public void OnHoverEnter()
+    {
+        hoverEnterSFX.Play();
     }
 }

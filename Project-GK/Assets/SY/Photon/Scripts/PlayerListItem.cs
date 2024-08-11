@@ -12,6 +12,9 @@ public class PlayerListItem : MonoBehaviourPunCallbacks
     public Sprite wiImage;
     public Sprite zardImage;
 
+    public AudioSource enterSFX;
+    public AudioSource exitSFX;
+
     [SerializeField] Image character;
     [SerializeField] TMP_Text text;
     [SerializeField] TMP_Text role;
@@ -28,7 +31,7 @@ public class PlayerListItem : MonoBehaviourPunCallbacks
         if (_player.IsMasterClient)
         {
             character.sprite = wiImage;
-            if (!isPoping) character.rectTransform.DOScale(Vector3.one * 0.5f, 0.5f).SetEase(Ease.OutBack).SetDelay(0.3f);
+            if (!isPoping) character.rectTransform.DOScale(Vector3.one * 0.5f, 0.5f).SetEase(Ease.OutBack).SetDelay(0.3f).OnStart(() => enterSFX.Play());
             role.text = value;
         }
         else
@@ -43,6 +46,7 @@ public class PlayerListItem : MonoBehaviourPunCallbacks
     {
         if(player == otherPlayer)
         {
+            exitSFX.Play();
             Destroy(gameObject);
         }
     }
