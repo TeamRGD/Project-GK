@@ -54,8 +54,8 @@ public class Boss1 : MonoBehaviour
     public List<GameObject> AttackFills;
 
     List<int> bookcaseIndices = new List<int>();
-    List<int> numberOfBooks = new List<int>();
     List<int> attackedAreas = new List<int>();
+    List<int> numBooksOfBookCase = new List<int>();
     public List<GameObject> BookCases;
     public List<GameObject> BookCaseCollisions;
     public List<GameObject> Areas;
@@ -668,26 +668,28 @@ public class Boss1 : MonoBehaviour
                 }
             }
 
+            List<int> numberOfBooks = new List<int>();
+
             // 각 책장에서 몇 개의 책을 선택할건지 정함
             for (int i = 0; i < 4; i++)
             {
                 int bookcaseIndex = bookcaseIndices[i];
                 int childCount = BookCases[bookcaseIndex].transform.childCount;
-                int numBooks = Random.Range(1, childCount + 1);
-                numberOfBooks.Add(numBooks);
+                numberOfBooks.Add(Random.Range(1, childCount + 1));
             }
 
             for (int i = 0; i < bookcaseIndices.Count; i++)
             {
                 int bookcaseIndex = bookcaseIndices[i];
-                int numBooks = numberOfBooks[i];
 
                 // 각 책장에서 책 선택
                 int numRange = Random.Range(1, 7);
+                numBooksOfBookCase.Add(numRange);
+
                 List<int> bookIndices = new List<int>();
                 while (bookIndices.Count < numRange)
                 {
-                    int bookIndex = Random.Range(0, numBooks);
+                    int bookIndex = Random.Range(0, numberOfBooks[i]);
                     if (!bookIndices.Contains(bookIndex))
                     {
                         bookIndices.Add(bookIndex);
@@ -705,7 +707,6 @@ public class Boss1 : MonoBehaviour
                         {
                             originalMaterials.Add(book, bookRenderer.material);
                         }
-
                         bookRenderer.material = GreenMaterial;
                     }
                 }
@@ -742,8 +743,11 @@ public class Boss1 : MonoBehaviour
 
             for (int i = 0; i < 4; i++)
             {
-                Code += (bookcaseIndices[i] + 1) * numberOfBooks[i];
+                Code += (bookcaseIndices[i] + 1) * numBooksOfBookCase[i];
+                Debug.Log("Index: " + string.Join(", ", bookcaseIndices[i] + 1));
+                Debug.Log("Index: " + string.Join(", ", numBooksOfBookCase[i]));
             }
+            Debug.Log(Code);
             UIManager_Ygg.Instance.patternCode = Code;
             canChange1 = false;
         }
