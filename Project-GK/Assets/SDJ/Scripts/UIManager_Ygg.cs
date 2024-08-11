@@ -152,6 +152,7 @@ public class UIManager_Ygg : MonoBehaviour
     public void ResetCipher()
     {
         inputField.text = "";
+        inputField.color = Color.white;
     }
 
     //------------PATTERN 2--------------
