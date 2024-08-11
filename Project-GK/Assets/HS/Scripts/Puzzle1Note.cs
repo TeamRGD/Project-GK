@@ -20,7 +20,7 @@ public class Puzzle1Note : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
             PlayerController playerController;
             PhotonView PV;
@@ -39,7 +39,7 @@ public class Puzzle1Note : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
             PlayerController playerController;
             PhotonView PV;

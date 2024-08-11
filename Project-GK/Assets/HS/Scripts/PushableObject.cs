@@ -6,7 +6,7 @@ public class PushableObject : MonoBehaviour
 {
     public float interactionRange = 2f;   // 상호작용 가능한 거리
     public LayerMask playerLayer;         // 플레이어 레이어 설정
-    public float moveSpeed = 100f;          // 오브젝트를 움직일 때 속도
+    public float moveSpeed = 2f;          // 오브젝트를 움직일 때 속도
 
     [SerializeField] private bool isPlayerNearby = false;
     [SerializeField] private bool isPushing = false;       // 오브젝트를 밀고 있는지 여부
@@ -36,7 +36,7 @@ public class PushableObject : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
 
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
             PlayerController playerController;
             PhotonView PV;
@@ -57,7 +57,7 @@ public class PushableObject : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
             PlayerController playerController;
             PhotonView PV;
