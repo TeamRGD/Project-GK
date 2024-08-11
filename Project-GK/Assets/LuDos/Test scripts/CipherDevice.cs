@@ -30,6 +30,20 @@ public class CipherDevice : MonoBehaviour
         }
     }
 
+    public void InActive()
+    {
+        List<PlayerController> players_ = new List<PlayerController>(players.Keys);
+        foreach (PlayerController playerController in players_) // 상호작용 하고 있는 모든 플레이어의 입력을 각각 처리할 수 있도록 함.
+        {
+            PhotonView PV = players[playerController];
+            if (PV != null && PV.IsMine)
+            {
+                playerController.CursorOff();
+                UIManager_Ygg.Instance.DeactivateCipher();
+            }
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))

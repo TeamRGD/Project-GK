@@ -65,7 +65,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     public Material GreenMaterial;
     public Material RedMaterial;
-    public Material Temporary; // ÀÓ½Ã¿Ï
+    public Material Temporary; // ï¿½Ó½Ã¿ï¿½
     public GameObject CipherDevice;
     private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
     private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
@@ -306,7 +306,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator ShowIndicator(int idx, float maxLength, Vector3 position, float duration)
     {
-        position.y = 0.15f; // ÀÓ½Ã¿Ï
+        position.y = 0.15f; // ï¿½Ó½Ã¿ï¿½
 
         if (idx == 0)
         {
@@ -434,7 +434,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, targetPosition, 2.6f));
         yield return new WaitForSeconds(1.0f);
 
-        animator.SetTrigger("JumpAndLand"); // 2.9ÃÊ
+        animator.SetTrigger("JumpAndLand"); // 2.9ï¿½ï¿½
         yield return new WaitForSeconds(0.8f);
 
         while (elapsedTime < jumpDuration)
@@ -470,7 +470,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             aggroTarget = PlayerList[idx];
         }
 
-        // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î È¸Àü
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
         Vector3 targetDirection = aggroTarget.transform.position - transform.position;
         targetDirection.y = 0;
 
@@ -482,7 +482,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 8.0f, 3.0f));
         yield return new WaitForSeconds(2.2f);
-        animator.SetTrigger("BothArmSlam"); // 1.08ÃÊ
+        animator.SetTrigger("BothArmSlam"); // 1.08ï¿½ï¿½
         yield return new WaitForSeconds(0.8f);
 
         yield return new WaitForSeconds(0.5f);
@@ -508,12 +508,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
             aggroTarget = PlayerList[idx];
         }
 
-        animator.SetTrigger("IdletoSit"); // 0.32ÃÊ
+        animator.SetTrigger("IdletoSit"); // 0.32ï¿½ï¿½
         yield return new WaitForSeconds(1.0f);
 
         for (int i = 0; i < 5; i++)
         {
-            // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î È¸Àü
+            // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
             Vector3 targetDirection = aggroTarget.transform.position - transform.position;
             targetDirection.y = 0;
 
@@ -527,21 +527,21 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 8.0f - transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                animator.SetTrigger("LeftArmHardSlam"); // 1.03ÃÊ
+                animator.SetTrigger("LeftArmHardSlam"); // 1.03ï¿½ï¿½
                 yield return new WaitForSeconds(3.0f);
             }
             else if (i == 0 || i == 2)
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f - transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                animator.SetTrigger("LeftArmSlam"); // 1.03ÃÊ
+                animator.SetTrigger("LeftArmSlam"); // 1.03ï¿½ï¿½
                 yield return new WaitForSeconds(3.0f);
             }
             else
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f + transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                animator.SetTrigger("RightArmSlam"); // 1.03ÃÊ
+                animator.SetTrigger("RightArmSlam"); // 1.03ï¿½ï¿½
                 yield return new WaitForSeconds(3.0f);
             }
         }
@@ -565,7 +565,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             aggroTarget = PlayerList[idx];
         }
 
-        // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î È¸Àü
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
         Vector3 targetDirection = aggroTarget.transform.position - transform.position;
         targetDirection.y = 0;
 
@@ -577,7 +577,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 3.0f));
         yield return new WaitForSeconds(2.3f);
-        animator.SetTrigger("LegStomp"); // 1.87ÃÊ
+        animator.SetTrigger("LegStomp"); // 1.87ï¿½ï¿½
         yield return new WaitForSeconds(0.7f);
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 2.0f));
@@ -602,7 +602,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             aggroTarget = PlayerList[idx];
         }
 
-        // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î È¸Àü
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
         Vector3 targetDirection = aggroTarget.transform.position - transform.position;
         targetDirection.y = 0;
 
@@ -612,10 +612,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
             transform.rotation = targetRotation;
         }
 
-        // ¼Õ¹Ù´ÚÀ¸·Î ³»·ÁÄ¡±â (ÇÇ°Ý ÇÃ·¹ÀÌ¾î 2ÃÊ ±âÀý) [ÀÓ½Ã¿Ï] ±âÀý ÄÝ¶óÀÌ´õ ÅÂ±× ¸¸µé¾î¼­ ÇÏ¸é µÉµí
+        // ï¿½Õ¹Ù´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ (ï¿½Ç°ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ 2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) [ï¿½Ó½Ã¿ï¿½] ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¶ï¿½ï¿½Ì´ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½î¼­ ï¿½Ï¸ï¿½ ï¿½Éµï¿½
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
         yield return new WaitForSeconds(2.3f);
-        animator.SetTrigger("PalmStrike"); // 1.97ÃÊ
+        animator.SetTrigger("PalmStrike"); // 1.97ï¿½ï¿½
         yield return new WaitForSeconds(0.7f);
 
         yield return new WaitForSeconds(3.0f);
@@ -623,7 +623,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         isExecutingAttack = false;
     }
 
-    // ÆÐÅÏ 1
+    // ï¿½ï¿½ï¿½ï¿½ 1
     void MakeInvincible()
     {
         animator.SetTrigger("Invincible");
@@ -633,7 +633,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator ArmSlamAndGetEnergy()
     {
-        animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65ÃÊ
+        animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65ï¿½ï¿½
 
         yield return new WaitForSeconds(8.0f);
     }
@@ -642,7 +642,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (canChange1)
         {
-            // 7°³ÀÇ Ã¥Àå Áß¿¡¼­ ·£´ýÇÏ°Ô 4°³ÀÇ Ã¥Àå ¼±ÅÃ
+            // 7ï¿½ï¿½ï¿½ï¿½ Ã¥ï¿½ï¿½ ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ 4ï¿½ï¿½ï¿½ï¿½ Ã¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             while (bookcaseIndices.Count < 4)
             {
                 int index = Random.Range(0, 7);
@@ -654,7 +654,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             List<int> numberOfBooks = new List<int>();
 
-            // °¢ Ã¥Àå¿¡¼­ ¸î °³ÀÇ Ã¥À» ¼±ÅÃÇÒ°ÇÁö Á¤ÇÔ
+            // ï¿½ï¿½ Ã¥ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             for (int i = 0; i < 4; i++)
             {
                 int bookcaseIndex = bookcaseIndices[i];
@@ -666,7 +666,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 int bookcaseIndex = bookcaseIndices[i];
 
-                // °¢ Ã¥Àå¿¡¼­ Ã¥ ¼±ÅÃ
+                // ï¿½ï¿½ Ã¥ï¿½å¿¡ï¿½ï¿½ Ã¥ ï¿½ï¿½ï¿½ï¿½
                 int numRange = Random.Range(1, 7);
                 numBooksOfBookCase.Add(numRange);
 
@@ -680,7 +680,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     }
                 }
 
-                // Ã¥À» ÃÊ·Ï»öÀ¸·Î ¹Ù²Þ
+                // Ã¥ï¿½ï¿½ ï¿½Ê·Ï»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½
                 foreach (int bookIndex in bookIndices)
                 {
                     Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex).GetChild(0);
@@ -711,7 +711,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DisplayAggroTarget()
     {
-        // ¾î±×·Î ¾Æ´Ñ ÇÃ·¹ÀÌ¾î UI¿¡ ¶ç¿ì±â
+        // ï¿½ï¿½×·ï¿½ ï¿½Æ´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ UIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (canChange1)
         {
             UIManager_Ygg.Instance.WhosAggro();
@@ -791,13 +791,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (CipherDevice != null && CipherDevice.activeSelf)
         {
+            CipherDevice.GetComponent<CipherDevice>().InActive();
             CipherDevice.SetActive(false);
         }
 
         return SetGroggy();
     }
 
-    // ÆÐÅÏ 2
+    // ï¿½ï¿½ï¿½ï¿½ 2
     IEnumerator JumpToCenter()
     {
         Vector3 targetPosition = transform.position;
@@ -809,7 +810,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(2.0f);
 
-        animator.SetTrigger("JumpAndLand"); // 2.9ÃÊ
+        animator.SetTrigger("JumpAndLand"); // 2.9ï¿½ï¿½
         yield return new WaitForSeconds(0.8f);
 
         while (elapsedTime < jumpDuration)
@@ -861,7 +862,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(3.0f);
 
-        animator.SetTrigger("BothArmSlam"); // 1.08ÃÊ
+        animator.SetTrigger("BothArmSlam"); // 1.08ï¿½ï¿½
         yield return new WaitForSeconds(2.0f);
 
         foreach (var entry in originalAreaMaterials)
@@ -911,7 +912,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(2.0f);
 
-        animator.SetTrigger("ChargeAndShockWave"); // 10ÃÊ
+        animator.SetTrigger("ChargeAndShockWave"); // 10ï¿½ï¿½
 
         yield return new WaitForSeconds(9.0f);
 
@@ -923,7 +924,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         CipherDevice.SetActive(true);
     }
 
-    IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // ÃÖ´ë ¹ÝÁö¸§, ÃÊ±â Å©±â, »ý¼º À§Ä¡, È®Àå ¼Óµµ
+    IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Ê±ï¿½ Å©ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡, È®ï¿½ï¿½ ï¿½Óµï¿½
     {
         position.y = 0.15f;
 
@@ -943,7 +944,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         currentShockwave = null;
     }
 
-    // ÆÐÅÏ 3
+    // ï¿½ï¿½ï¿½ï¿½ 3
     IEnumerator Roar()
     {
         animator.SetTrigger("Roar");
@@ -972,10 +973,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         isExecutingBookAttack = true;
 
-        // ·£´ýÇÏ°Ô Ã¥Àå ¼±ÅÃ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ Ã¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         selectedBookCaseIndex = Random.Range(0, 7);
 
-        // BookCaseÀÇ Light ON
+        // BookCaseï¿½ï¿½ Light ON
         Renderer bookCaseRenderer = BookCaseCollisions[selectedBookCaseIndex].GetComponent<Renderer>();
 
         if (bookCaseRenderer != null)
@@ -983,12 +984,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
             bookCaseRenderer.material = GreenMaterial;
         }
 
-        yield return new WaitForSeconds(5.0f); // ºÒ ÄÑ´Â ½Ã°£ & µ¹Áø Àü ´ë±â ½Ã°£
+        yield return new WaitForSeconds(5.0f); // ï¿½ï¿½ ï¿½Ñ´ï¿½ ï¿½Ã°ï¿½ & ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
 
         if (bookCaseRenderer != null)
         {
             // bookCaseRenderer.material = null;
-            bookCaseRenderer.material = Temporary; // ÀÓ½Ã¿Ï
+            bookCaseRenderer.material = Temporary; // ï¿½Ó½Ã¿ï¿½
         }
 
         animator.SetTrigger("InvincibletoDash");
@@ -1004,7 +1005,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             targetPosition = PlayerList[playerIdx--].transform.position;
         }
 
-        // ÇÃ·¹ÀÌ¾î ¹æÇâÀ¸·Î È¸Àü
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
         Vector3 targetDirection = targetPosition - transform.position;
         targetDirection.y = 0;
 
@@ -1071,7 +1072,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DamageAllMap()
     {
-        // ¸Ê Àü¿ª µ¥¹ÌÁö [ÀÓ½Ã¿Ï]
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [ï¿½Ó½Ã¿ï¿½]
         Debug.Log("DamageAllMap");
 
         canDisplay = true;
@@ -1081,7 +1082,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    // ±× ¿Ü
+    // ï¿½ï¿½ ï¿½ï¿½
     int GetCollidedBookCaseIndex(GameObject collisionObject)
     {
         for (int i = 0; i < BookCaseCollisions.Count; i++)
@@ -1105,7 +1106,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-    // Photon Code (¾ÆÄ¿¸¸ ±è¼ö¿¬ÀÇ ¿µ¿ª Àü°³)
+    // Photon Code (ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     public bool GetIsInvincible()
     {
         return isInvincible;
