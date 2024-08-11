@@ -15,9 +15,13 @@ public class UIManager_Player : MonoBehaviour
     // for Inventory
     public Image[] inventoryOutlines;
     public Image aim;
+    public AudioSource inventorySFX;
 
     // for Interaction
     public GameObject interactionNotice;
+
+    // SFX
+
 
     // set Singleton
     void Awake()
@@ -79,6 +83,7 @@ public class UIManager_Player : MonoBehaviour
                 inventoryOutlines[i].enabled = false;
             }
         }
+        inventorySFX.Play();
     }
 
     // Interaction
