@@ -269,6 +269,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         StartCoroutine(GroggyTime(10.0f));
 
+        UIManager_Ygg.Instance.AggroEnd();
         UIManager_Ygg.Instance.DisableHint();
         UIManager_Ygg.Instance.DisableAreaNum();
         UIManager_Ygg.Instance.DisableAttackNode();
@@ -713,7 +714,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         // 어그로 아닌 플레이어 UI에 띄우기
         if (canChange1)
         {
-            
+            UIManager_Ygg.Instance.WhosAggro();
         }
         return true;
     }
@@ -766,6 +767,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         canChange1 = true;
         IsCorrect = false;
         successCount++;
+        UIManager_Ygg.Instance.AggroEnd();
 
         return true;
     }

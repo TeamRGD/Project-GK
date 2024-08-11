@@ -18,6 +18,7 @@ public class UIManager_Ygg : MonoBehaviour
     // Variables being used in pattern1 logic
     public TextMeshProUGUI hint;
     public bool isCorrectedPrevCode;
+    public TextMeshProUGUI aggroText;
     public int patternCode;
 
     public GameObject inputCipherDisplay;
@@ -107,6 +108,15 @@ public class UIManager_Ygg : MonoBehaviour
         hint.DOFade(0f, 0.5f).SetEase(Ease.OutSine);
     }
 
+    public void WhosAggro()
+    {
+        aggroText.DOFade(1f, 0.25f).SetEase(Ease.OutSine);
+    }
+
+    public void AggroEnd()
+    {
+        aggroText.DOFade(0f, 0.25f).SetEase(Ease.OutSine);
+    }
 
     public void ActivateCipher()
     {
