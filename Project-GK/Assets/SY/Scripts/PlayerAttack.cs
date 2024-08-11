@@ -123,7 +123,6 @@ public class PlayerAttack : MonoBehaviour
 
             // 투사체 생성
             GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));
-
             PV.RPC("SetProjectileRPC", RpcTarget.AllBuffered, projectile.GetComponent<PhotonView>().ViewID, direction, (attackCount-1+3)%3);
         }
     }
@@ -140,7 +139,7 @@ public class PlayerAttack : MonoBehaviour
         projectile.TryGetComponent<Projectile>(out projScript);
         if (projScript != null)
         {
-            projScript.attackPower = (count < 2) ? 20 : 30;
+            projScript.SetAttackPower((count < 2) ? 0.2f : 0.3f);
             projScript.SetOwner(PV.ViewID);
         }
 

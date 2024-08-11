@@ -1,5 +1,6 @@
 using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] GameObject cameraHolder; // should be edit
+    [SerializeField] GameObject cameraHolder;
 
     [SerializeField] float mouseSensitivity, sprintSpeed, walkSpeed, jumpForce, smoothTime;
     [SerializeField] Transform playerBody;
@@ -18,7 +19,8 @@ public class PlayerController : MonoBehaviour
 
     float verticalLookRotation;
     bool grounded;
-    bool canControl;
+    bool canControl = true;
+    bool canMove = true;
     Vector3 smoothMoveVelocity;
     Vector3 moveAmount;
 
@@ -42,8 +44,6 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        //UnityEngine.Debug.Log(this.gameObject);
-        canControl = true;
         // 자신만 제어할 수 있도록
         if (!PV.IsMine)
         {
@@ -64,8 +64,16 @@ public class PlayerController : MonoBehaviour
             return;
         Look();
         Move();
-        Jump();
         Save();
+    }
+
+    void Move()
+    {
+        if (canMove)
+        {
+            Movement();
+            Jump();
+        }
     }
 
     public void CursorOn()
@@ -138,7 +146,6 @@ public class PlayerController : MonoBehaviour
         // 벽 뚫기 방지
         if (Physics.Linecast(playerPosition, cameraPosition, out hit, collisionMask))
         {
-            UnityEngine.Debug.DrawLine(playerPosition, cameraPosition, Color.red);
             float hitDistance = Vector3.Distance(playerPosition, hit.point);
             if (hit.collider.CompareTag("Wall")||hit.collider.CompareTag("BookCase")) // 벽과 충돌했을 경우
             {
@@ -164,14 +171,14 @@ public class PlayerController : MonoBehaviour
         aim.position = Vector3.Lerp(aim.position, desiredPosition, smoothTime);
     }
 
-    void Move()
+    void Movement()
     {
         Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-         if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift)) // Run
         {
             Run(moveDir);
         }
-        else
+        else // Walk
         {
             Walk(moveDir);
         }

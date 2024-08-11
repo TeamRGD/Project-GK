@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public int attackPower = 20;
+    public float attackPower = 0.2f;
     private int ownerPhotonViewId;
     private WaitForSeconds seconds = new WaitForSeconds(10f);
     PlayerStateManager playerState;
@@ -59,6 +59,11 @@ public class Projectile : MonoBehaviour
         {
             myPV.RPC("SetTag", RpcTarget.AllBuffered, "Projectile_Zard");
         }
+    }
+
+    public void SetAttackPower(float _attackPower)
+    {
+        attackPower = _attackPower;
     }
 
     [PunRPC]
