@@ -17,6 +17,10 @@ TagManager:
   - Ground
   - Rope
   - Stair
+  - Note2
+  - BookPage2
+  - Book2
+  - Note3
   layers:
   - Default
   - TransparentFX

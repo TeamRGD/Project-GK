@@ -6,7 +6,6 @@ public class PlayerRaycast : MonoBehaviour
 {
     public float interactionRange = 10f; // 상호작용 가능한 거리
     public LayerMask interactableLayer; // 상호작용 가능한 레이어
-    Camera playerController;
     PhotonView PV;
 
     [SerializeField]
@@ -57,7 +56,7 @@ public class PlayerRaycast : MonoBehaviour
                 currentOutline = outline; // 현재 활성화된 Outline 참조 저장
                 canInteract = true;
 
-                if (Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.T))
                 {
                     interactionManager.CheckForTags(hitInfo);
                 }

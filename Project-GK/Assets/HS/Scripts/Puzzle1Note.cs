@@ -8,7 +8,14 @@ public class Puzzle1Note : MonoBehaviour
 
     public static void ActiveUI() // InteractionManager로부터 명령받아 UI 명령을 진행하는 함수.
     {
-        // UIManager_Ygg.Instance 처럼 사용하면 될 듯.
+        Debug.Log("UI 켜짐");
+        UIManagerInteraction.Instance.PopUpPaper(0);
+    }
+
+    public static void DeactiveUI()
+    {
+        Debug.Log("UI 꺼짐");
+        UIManagerInteraction.Instance.PopDownPaper(0);
     }
 
     void OnTriggerEnter(Collider other)
