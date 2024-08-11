@@ -16,7 +16,7 @@ public class PushableObject : MonoBehaviour
 
     private void Update()
     {
-        if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
+        if (isPlayerNearby && Input.GetKeyDown(KeyCode.T))
         {
             if (isPushing)
             {

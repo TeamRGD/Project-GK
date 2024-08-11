@@ -9,7 +9,13 @@ public class Puzzle3Note : MonoBehaviour
     public static void ActiveUI() // InteractionManager로부터 명령받아 UI 명령을 진행하는 함수.
     {
         Debug.Log("퍼즐3 쪽지 열기");
-        // UIManager_Ygg.Instance 처럼 사용하면 될 듯.
+        UIManagerInteraction.Instance.PopUpPaper(6);
+    }
+
+    public static void DeactiveUI()
+    {
+        Debug.Log("UI 꺼짐");
+        UIManagerInteraction.Instance.PopDownPaper(6);
     }
 
     void OnTriggerEnter(Collider other)

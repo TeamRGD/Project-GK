@@ -5,7 +5,7 @@ public class InteractionManager : MonoBehaviour
 {
     PlayerController playerController;
     PhotonView PV;
-    int isOpen = 0;
+    [SerializeField] int isOpen = 0;
 
     private void Start()
     {
@@ -37,20 +37,62 @@ public class InteractionManager : MonoBehaviour
             }
         }
 
-        if (hitInfo.collider.CompareTag("Note3"))
+        else if (hitInfo.collider.CompareTag("BookPage2"))
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Puzzle2BookPage1.ActiveUI();
+                isOpen = 2;
+            }
+        }
+
+        else if (hitInfo.collider.CompareTag("BookPage2_2"))
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Puzzle2BookPage2.ActiveUI();
+                isOpen = 3;
+            }
+        }
+        
+        else if (hitInfo.collider.CompareTag("BookPage2_3"))
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Puzzle2BookPage3.ActiveUI();
+                isOpen = 4;
+            }
+        }
+
+        else if (hitInfo.collider.CompareTag("Book2"))
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Puzzle2Book.ActiveUI();
+                isOpen = 5;
+            }
+        }
+
+        else if (hitInfo.collider.CompareTag("Note2"))
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Debug.Log("Note 찾음");
+                Puzzle2Note.ActiveUI();
+                isOpen = 6;
+            }
+        }
+
+        else if (hitInfo.collider.CompareTag("Note3"))
         {
             if (Input.GetKeyDown(KeyCode.T))
             {
                 Puzzle3Note.ActiveUI();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                
+                isOpen = 7;
             }
         }
 
-        if (hitInfo.collider.CompareTag("Stair"))
+        else if (hitInfo.collider.CompareTag("Stair"))
         {
             // 이동식 발판
         }
@@ -62,6 +104,31 @@ public class InteractionManager : MonoBehaviour
         {
             Puzzle1Note.DeactiveUI();
         }
+        else if (index == 2)
+        {
+            Puzzle2BookPage1.DeactiveUI();
+        }
+        else if (index == 3)
+        {
+            Puzzle2BookPage2.DeactiveUI();
+        }
+        else if (index==4)
+        {
+            Puzzle2BookPage3.DeactiveUI();
+        }
+        else if (index==5)
+        {
+            Puzzle2Book.DeactiveUI();
+        }
+        else if (index==6)
+        {
+            Puzzle2Note.DeactiveUI();
+        }
+        else if (index ==7)
+        {
+            Puzzle3Note.DeactiveUI();
+        }
+
         Debug.Log("UI 끔");
         isOpen = 0;
     }
