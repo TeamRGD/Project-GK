@@ -31,7 +31,6 @@ public class InteractionManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.T))
             {
-                Debug.Log("Note 찾음");
                 Puzzle1Note.ActiveUI();
                 isOpen = 1;
             }
@@ -77,7 +76,6 @@ public class InteractionManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.T))
             {
-                Debug.Log("Note 찾음");
                 Puzzle2Note.ActiveUI();
                 isOpen = 6;
             }
@@ -129,7 +127,6 @@ public class InteractionManager : MonoBehaviour
             Puzzle3Note.DeactiveUI();
         }
 
-        Debug.Log("UI 끔");
         isOpen = 0;
     }
 }

@@ -11,13 +11,11 @@ public class Puzzle2Book : MonoBehaviour
 
     public static void ActiveUI() // InteractionManager로부터 명령받아 UI 명령을 진행하는 함수.
     {
-        Debug.Log("UI 켜짐");
         UIManagerInteraction.Instance.PopUpPaper(4);
     }
 
     public static void DeactiveUI()
     {
-        Debug.Log("UI 꺼짐");
         UIManagerInteraction.Instance.PopDownPaper(4);
     }
 
