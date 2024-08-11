@@ -21,6 +21,7 @@ TagManager:
   - BookPage2
   - Book2
   - Note3
+  - Others
   layers:
   - Default
   - TransparentFX
