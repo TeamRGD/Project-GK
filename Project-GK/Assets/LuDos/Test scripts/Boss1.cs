@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Boss1 : MonoBehaviour
 {
-    public int maxHealth = 100;
-    int currentHealth;
+    public float maxHealth = 100;
+    float currentHealth;
 
     bool isFirstTimeBelow66 = true;
     bool isFirstTimeBelow33 = true;
@@ -251,7 +251,7 @@ public class Boss1 : MonoBehaviour
         isExecutingPattern = false;
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         if (!isInvincible)
         {
@@ -480,7 +480,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[0];
+            aggroTarget = PlayerList[1];
         }
         else
         {
@@ -518,7 +518,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[0];
+            aggroTarget = PlayerList[1];
         }
         else
         {
@@ -575,7 +575,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[0];
+            aggroTarget = PlayerList[1];
         }
         else
         {
@@ -612,7 +612,7 @@ public class Boss1 : MonoBehaviour
 
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[0];
+            aggroTarget = PlayerList[1];
         }
         else
         {
@@ -1109,4 +1109,5 @@ public class Boss1 : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
     }
+
 }
