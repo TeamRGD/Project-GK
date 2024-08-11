@@ -921,7 +921,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // 최대 반지름, 초기 크기, 생성 위치, 확장 속도
     {
-        position.y = 0.0f;
+        position.y = 0.15f;
 
         currentShockwave = Instantiate(ShockWave, position, Quaternion.identity);
 
