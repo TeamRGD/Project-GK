@@ -17,11 +17,13 @@ public class Drawer : MonoBehaviour
             {
                 if (isOpen)
                 {
-                    transform.Translate(new Vector3(1,0,0));
+                    transform.Translate(new Vector3(-3, 0, 0), Space.Self);
+                    isOpen = false;
                 }
                 else
                 {
-                    transform.Translate(new Vector3(-1, 0, 0));
+                    transform.Translate(new Vector3(3, 0, 0), Space.Self);
+                    isOpen = true;
                 }
 
                 // Projectile 오브젝트 삭제
