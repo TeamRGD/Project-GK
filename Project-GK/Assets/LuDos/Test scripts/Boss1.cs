@@ -1064,8 +1064,6 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator MoveBackToCenter()
     {
-        yield return new WaitForSeconds(3.0f);
-
         animator.SetTrigger("StaggeringBack");
 
         Vector3 startPosition = transform.position;
