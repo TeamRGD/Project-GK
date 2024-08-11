@@ -17,7 +17,7 @@ public class UIManager_Ygg : MonoBehaviour
 
     // Variables being used in pattern1 logic
     public TextMeshProUGUI hint;
-
+    public bool isCorrectedPrevCode;
     public int patternCode;
 
     public GameObject inputCipherDisplay;
@@ -53,6 +53,7 @@ public class UIManager_Ygg : MonoBehaviour
     {
         uiManager = FindObjectOfType<UIManager_Player>();
         patternCode = 1234;
+        isCorrectedPrevCode = false;
     }
 
     void Update()
@@ -109,6 +110,12 @@ public class UIManager_Ygg : MonoBehaviour
 
     public void ActivateCipher()
     {
+        if (isCorrectedPrevCode)
+        {
+            ResetCipher();
+            isCorrectedPrevCode = true;
+        }
+
         inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));

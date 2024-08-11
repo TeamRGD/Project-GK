@@ -740,7 +740,7 @@ public class Boss1 : MonoBehaviour
         if (canChange1)
         {
             CipherDevice.SetActive(true);
-            UIManager_Ygg.Instance.ResetCipher();
+            UIManager_Ygg.Instance.isCorrectedPrevCode = true;
 
             for (int i = 0; i < 4; i++)
             {
