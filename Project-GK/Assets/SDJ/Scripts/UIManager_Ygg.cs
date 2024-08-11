@@ -61,10 +61,10 @@ public class UIManager_Ygg : MonoBehaviour
         //{
         //    ActivateCipher();
         //}
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            DeactivateCipher();
-        }
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    DeactivateCipher();
+        //}
 
         //if (Input.GetKeyDown(KeyCode.N))
         //{

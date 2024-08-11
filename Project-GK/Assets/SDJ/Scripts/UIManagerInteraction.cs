@@ -46,24 +46,24 @@ public class UIManagerInteraction : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            PopUpPaper(4);
-        }
-        if (Input.GetKeyUp(KeyCode.G))
-        {
-            PopDownPaper(4);
-        }
+        //if (Input.GetKeyDown(KeyCode.G))
+        //{
+        //    PopUpPaper(4);
+        //}
+        //if (Input.GetKeyUp(KeyCode.G))
+        //{
+        //    PopDownPaper(4);
+        //}
 
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            ActivateCipher();
-        }
+        //if (Input.GetKeyDown(KeyCode.Y))
+        //{
+        //    ActivateCipher();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            DeactivateCipher();
-        }
+        //if (Input.GetKeyDown(KeyCode.T))
+        //{
+        //    DeactivateCipher();
+        //}
     }
 
     //------------Cipher--------------
@@ -74,7 +74,7 @@ public class UIManagerInteraction : MonoBehaviour
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(150f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
 
-        //uiManager.interactionNotice.gameObject.SetActive(false);
+        uiManager.interactionNotice.gameObject.SetActive(false);
     }
 
     public void DeactivateCipher()
@@ -84,7 +84,7 @@ public class UIManagerInteraction : MonoBehaviour
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherDisplay.gameObject.SetActive(false));
         inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.15f).SetEase(Ease.OutSine).OnComplete(() => inputCipherEnter.gameObject.SetActive(false));
 
-        //uiManager.interactionNotice.gameObject.SetActive(true);
+        uiManager.interactionNotice.gameObject.SetActive(true);
     }
 
     public void InputNumber(int num)
