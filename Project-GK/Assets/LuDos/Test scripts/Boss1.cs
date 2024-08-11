@@ -283,8 +283,6 @@ public class Boss1 : MonoBehaviour
 
     bool SetGroggy()
     {
-        Debug.Log("Groggy");
-
         isGroggy = true;
 
         animator.SetTrigger("Groggy");
@@ -311,8 +309,6 @@ public class Boss1 : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Die");
-
         isInvincible = true;
 
         AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
@@ -416,8 +412,6 @@ public class Boss1 : MonoBehaviour
     {
         if (!isExecutingAttack)
         {
-            Debug.Log("RandomBasicAttack");
-
             int attackType = UnityEngine.Random.Range(1, 6);
             // int attackType = 3;
 
@@ -648,8 +642,6 @@ public class Boss1 : MonoBehaviour
     // 패턴 1
     void MakeInvincible()
     {
-        Debug.Log("MakeInvincible");
-
         animator.SetTrigger("Invincible");
 
         isInvincible = true;
@@ -657,8 +649,6 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator ArmSlamAndGetEnergy()
     {
-        Debug.Log("ArmSlamAndGetEnergy");
-
         animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65초
 
         yield return new WaitForSeconds(8.0f);
@@ -668,8 +658,6 @@ public class Boss1 : MonoBehaviour
     {
         if (canChange1)
         {
-            Debug.Log("ChangeBooksToGreen");
-
             // 7개의 책장 중에서 랜덤하게 4개의 책장 선택
             while (bookcaseIndices.Count < 4)
             {
@@ -720,7 +708,6 @@ public class Boss1 : MonoBehaviour
 
                         bookRenderer.material = GreenMaterial;
                     }
-                    Debug.Log("Bookcase " + bookcaseIndex + ": Book " + bookIndex + " light turned on.");
                 }
             }
         }
@@ -732,8 +719,6 @@ public class Boss1 : MonoBehaviour
     {
         if (canChange1)
         {
-            Debug.Log("SelectAggroTarget");
-
             isAggroFixed = true;
         }
         return true;
@@ -744,8 +729,6 @@ public class Boss1 : MonoBehaviour
         // 어그로 아닌 플레이어 UI에 띄우기
         if (canChange1)
         {
-            Debug.Log("DisplayAggroTarget");
-
             
         }
         return true;
@@ -755,8 +738,6 @@ public class Boss1 : MonoBehaviour
     {
         if (canChange1)
         {
-            Debug.Log("ActivateCipherDevice1");
-
             CipherDevice.SetActive(true);
 
             for (int i = 0; i < 4; i++)
@@ -783,8 +764,6 @@ public class Boss1 : MonoBehaviour
 
     bool ResetBookLightsAndAggro()
     {
-        Debug.Log("ResetBookLightsAndAggro");
-
         foreach (var entry in originalMaterials)
         {
             Renderer bookRenderer = entry.Key.GetComponent<Renderer>();
@@ -804,8 +783,6 @@ public class Boss1 : MonoBehaviour
 
     bool ReleaseInvincibilityAndGroggy()
     {
-        Debug.Log("ReleaseInvincibilityAndGroggy");
-
         isInvincible = false;
 
         if (randomBasicAttackCoroutine != null)
@@ -861,9 +838,6 @@ public class Boss1 : MonoBehaviour
     {
         if (isExecutingAreaAttack) return false;
 
-        Debug.Log("AttackAreas");
-        Debug.Log("attackCount: " + attackCount);
-
         StartCoroutine(AttackAreasCoroutine());
         return true;
     }
@@ -874,8 +848,6 @@ public class Boss1 : MonoBehaviour
 
         int untouchedArea = Random.Range(0, 8);
         attackedAreas.Add(untouchedArea);
-        Debug.Log("Untouched Area: " + untouchedArea);
-
 
         for (int i = 0; i < Areas.Count; i++)
         {
@@ -917,7 +889,6 @@ public class Boss1 : MonoBehaviour
             CipherDevice.SetActive(true);
             Code = ConvertListToInt(attackedAreas);
             Debug.Log("Code: " + Code);
-            Debug.Log("Attacked Areas: " + string.Join(", ", attackedAreas));
             UIManager_Ygg.Instance.patternCode = Code;
         }
         return true;
@@ -981,7 +952,6 @@ public class Boss1 : MonoBehaviour
     // 패턴 3
     IEnumerator Roar()
     {
-        Debug.Log("Roar");
         animator.SetTrigger("Roar");
         yield return new WaitForSeconds(4.0f);
     }
@@ -990,7 +960,6 @@ public class Boss1 : MonoBehaviour
         if (canDisplay)
         {
             UIManager_Ygg.Instance.EnableAttackNode();
-            Debug.Log("DisplayBookCaseOrder");
 
             canDisplay = false;
         }
@@ -1011,7 +980,6 @@ public class Boss1 : MonoBehaviour
 
         // 랜덤하게 책장 선택
         selectedBookCaseIndex = Random.Range(0, 7);
-        Debug.Log("Book Case Index: " + selectedBookCaseIndex);
 
         // BookCase의 Light ON
         Renderer bookCaseRenderer = BookCaseCollisions[selectedBookCaseIndex].GetComponent<Renderer>();
@@ -1083,8 +1051,6 @@ public class Boss1 : MonoBehaviour
 
     IEnumerator MoveBackToCenter()
     {
-        Debug.Log("MoveBackToCenter");
-
         yield return new WaitForSeconds(3.0f);
 
         animator.SetTrigger("StaggeringBack");
