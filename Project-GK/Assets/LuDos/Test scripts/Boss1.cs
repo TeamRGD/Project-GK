@@ -610,7 +610,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         LookAtTarget(aggroTarget.transform.position - transform.position);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
         yield return new WaitForSeconds(2.3f);
         animator.SetTrigger("PalmStrike"); // 1.97s
         yield return new WaitForSeconds(0.7f);
