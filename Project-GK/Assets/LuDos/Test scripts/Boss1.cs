@@ -67,7 +67,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     public Material GreenMaterial;
     public Material RedMaterial;
-    public Material Temporary; // �ӽÿ�
+    public Material Temporary; // 임시완
     public GameObject CipherDevice;
     private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
     private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
@@ -207,7 +207,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         return new Sequence(
             new ActionNode(ChangeBooksToGreen),
-            new ActionNode(SelectAggroTarget),
+            new ActionNode(FixAggroTarget),
             new ActionNode(DisplayAggroTarget),
             new ActionNode(ActivateCipherDevice1),
             new ActionNode(RandomBasicAttack),
@@ -308,7 +308,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator ShowIndicator(int idx, float maxLength, Vector3 position, float duration)
     {
-        position.y = 0.15f; // �ӽÿ�
+        position.y = 0.15f; // 임시완
 
         if (idx == 0)
         {
@@ -391,12 +391,35 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
+    void LookAtTarget(Vector3 targetDirection)
+    {
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
+    }
+
+    void SelectAggroTarget()
+    {
+        if (isAggroFixed)
+        {
+            aggroTarget = PlayerList[0];
+        }
+        else
+        {
+            int idx = Random.Range(0, PlayerList.Count);
+            aggroTarget = PlayerList[idx];
+        }
+    }
+
     bool RandomBasicAttack()
     {
         if (!isExecutingAttack)
         {
             int attackType = UnityEngine.Random.Range(1, 6);
-            // int attackType = 3;
 
             switch (attackType)
             {
@@ -436,7 +459,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, targetPosition, 2.6f));
         yield return new WaitForSeconds(1.0f);
 
-        animator.SetTrigger("JumpAndLand"); // 2.9��
+        animator.SetTrigger("JumpAndLand"); // 2.9s
         yield return new WaitForSeconds(0.8f);
 
         while (elapsedTime < jumpDuration)
@@ -462,29 +485,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        if (isAggroFixed)
-        {
-            aggroTarget = PlayerList[0];
-        }
-        else
-        {
-            int idx = Random.Range(0, PlayerList.Count);
-            aggroTarget = PlayerList[idx];
-        }
+        SelectAggroTarget();
 
-        // �÷��̾� �������� ȸ��
-        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
-        targetDirection.y = 0;
-
-        if (targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-            transform.rotation = targetRotation;
-        }
+        LookAtTarget(aggroTarget.transform.position - transform.position);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 8.0f, 3.0f));
         yield return new WaitForSeconds(2.2f);
-        animator.SetTrigger("BothArmSlam"); // 1.08��
+        animator.SetTrigger("BothArmSlam"); // 1.08s
         yield return new WaitForSeconds(0.8f);
 
         yield return new WaitForSeconds(0.5f);
@@ -500,50 +507,34 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        if (isAggroFixed)
-        {
-            aggroTarget = PlayerList[0];
-        }
-        else
-        {
-            int idx = Random.Range(0, PlayerList.Count);
-            aggroTarget = PlayerList[idx];
-        }
+        SelectAggroTarget();
 
-        animator.SetTrigger("IdletoSit"); // 0.32��
+        animator.SetTrigger("IdletoSit"); // 0.32s
         yield return new WaitForSeconds(1.0f);
 
         for (int i = 0; i < 5; i++)
         {
-            // �÷��̾� �������� ȸ��
-            Vector3 targetDirection = aggroTarget.transform.position - transform.position;
-            targetDirection.y = 0;
-
-            if (targetDirection != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-                transform.rotation = targetRotation;
-            }
+            LookAtTarget(aggroTarget.transform.position - transform.position);
 
             if (i == 4)
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 8.0f - transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                animator.SetTrigger("LeftArmHardSlam"); // 1.03��
+                animator.SetTrigger("LeftArmHardSlam"); // 1.03s
                 yield return new WaitForSeconds(3.0f);
             }
             else if (i == 0 || i == 2)
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f - transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                animator.SetTrigger("LeftArmSlam"); // 1.03��
+                animator.SetTrigger("LeftArmSlam"); // 1.03s
                 yield return new WaitForSeconds(3.0f);
             }
             else
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f + transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                animator.SetTrigger("RightArmSlam"); // 1.03��
+                animator.SetTrigger("RightArmSlam"); // 1.03s
                 yield return new WaitForSeconds(3.0f);
             }
         }
@@ -557,29 +548,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        if (isAggroFixed)
-        {
-            aggroTarget = PlayerList[0];
-        }
-        else
-        {
-            int idx = Random.Range(0, PlayerList.Count);
-            aggroTarget = PlayerList[idx];
-        }
+        SelectAggroTarget();
 
-        // �÷��̾� �������� ȸ��
-        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
-        targetDirection.y = 0;
-
-        if (targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-            transform.rotation = targetRotation;
-        }
+        LookAtTarget(aggroTarget.transform.position - transform.position);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 3.0f));
         yield return new WaitForSeconds(2.3f);
-        animator.SetTrigger("LegStomp"); // 1.87��
+        animator.SetTrigger("LegStomp"); // 1.87s
         yield return new WaitForSeconds(0.7f);
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 2.0f));
@@ -594,30 +569,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        if (isAggroFixed)
-        {
-            aggroTarget = PlayerList[0];
-        }
-        else
-        {
-            int idx = Random.Range(0, PlayerList.Count);
-            aggroTarget = PlayerList[idx];
-        }
+        SelectAggroTarget();
 
-        // �÷��̾� �������� ȸ��
-        Vector3 targetDirection = aggroTarget.transform.position - transform.position;
-        targetDirection.y = 0;
+        LookAtTarget(aggroTarget.transform.position - transform.position);
 
-        if (targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-            transform.rotation = targetRotation;
-        }
-
-        // �չٴ����� ����ġ�� (�ǰ� �÷��̾� 2�� ����) [�ӽÿ�] ���� �ݶ��̴� �±� ���� �ϸ� �ɵ�
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
         yield return new WaitForSeconds(2.3f);
-        animator.SetTrigger("PalmStrike"); // 1.97��
+        animator.SetTrigger("PalmStrike"); // 1.97s
         yield return new WaitForSeconds(0.7f);
 
         yield return new WaitForSeconds(3.0f);
@@ -625,7 +583,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         isExecutingAttack = false;
     }
 
-    // ���� 1
+    // Pattern 1
     void MakeInvincible()
     {
         animator.SetTrigger("Invincible");
@@ -635,7 +593,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator ArmSlamAndGetEnergy()
     {
-        animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65��
+        animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65s
 
         yield return new WaitForSeconds(8.0f);
     }
@@ -644,7 +602,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (canChange1)
         {
-            // 7���� å�� �߿��� �����ϰ� 4���� å�� ����
+            // Select 4 BookCase
             while (bookcaseIndices.Count < 4)
             {
                 int index = Random.Range(0, 7);
@@ -656,7 +614,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             List<int> numberOfBooks = new List<int>();
 
-            // �� å�忡�� �� ���� å�� �����Ұ��� ����
+            // How many books to select in each bookcases
             for (int i = 0; i < 4; i++)
             {
                 int bookcaseIndex = bookcaseIndices[i];
@@ -668,7 +626,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 int bookcaseIndex = bookcaseIndices[i];
 
-                // �� å�忡�� å ����
                 int numRange = Random.Range(1, 7);
                 numBooksOfBookCase.Add(numRange);
 
@@ -682,7 +639,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     }
                 }
 
-                // å�� �ʷϻ����� �ٲ�
+                // Light ON
                 foreach (int bookIndex in bookIndices)
                 {
                     Transform book = BookCases[bookcaseIndex].transform.GetChild(bookIndex).GetChild(0);
@@ -702,7 +659,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    bool SelectAggroTarget()
+    bool FixAggroTarget()
     {
         if (canChange1)
         {
@@ -713,7 +670,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DisplayAggroTarget()
     {
-        // ��׷� �ƴ� �÷��̾� UI�� ����
         if (canChange1)
         {
             UIManager_Ygg.Instance.WhosAggro();
@@ -800,7 +756,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return SetGroggy();
     }
 
-    // ���� 2
+    // Pattern 2
     IEnumerator JumpToCenter()
     {
         Vector3 targetPosition = transform.position;
@@ -924,7 +880,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(2.0f);
 
-        animator.SetTrigger("ChargeAndShockWave"); // 10��
+        animator.SetTrigger("ChargeAndShockWave"); // 10s
 
         yield return new WaitForSeconds(9.0f);
 
@@ -936,9 +892,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         CipherDevice.SetActive(true);
     }
 
-    IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed) // �ִ� ������, �ʱ� ũ��, ���� ��ġ, Ȯ�� �ӵ�
+    IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed)
     {
-        position.y = 0.15f;
+        position.y = 0.15f; // 임시완
 
         currentShockwave = Instantiate(ShockWave, position, Quaternion.identity);
 
@@ -956,7 +912,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         currentShockwave = null;
     }
 
-    // ���� 3
+    // Pattern 3
     IEnumerator Roar()
     {
         animator.SetTrigger("Roar");
@@ -985,10 +941,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         isExecutingBookAttack = true;
 
-        // �����ϰ� å�� ����
         selectedBookCaseIndex = Random.Range(0, 7);
 
-        // BookCase�� Light ON
+        // Light ON
         Renderer bookCaseRenderer = BookCaseCollisions[selectedBookCaseIndex].GetComponent<Renderer>();
 
         if (bookCaseRenderer != null)
@@ -996,12 +951,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
             bookCaseRenderer.material = GreenMaterial;
         }
 
-        yield return new WaitForSeconds(5.0f); // �� �Ѵ� �ð� & ���� �� ��� �ð�
+        yield return new WaitForSeconds(5.0f);
 
         if (bookCaseRenderer != null)
         {
             // bookCaseRenderer.material = null;
-            bookCaseRenderer.material = Temporary; // �ӽÿ�
+            bookCaseRenderer.material = Temporary; // 임시완
         }
 
         animator.SetTrigger("InvincibletoDash");
@@ -1017,15 +972,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             targetPosition = PlayerList[playerIdx--].transform.position;
         }
 
-        // �÷��̾� �������� ȸ��
         Vector3 targetDirection = targetPosition - transform.position;
-        targetDirection.y = 0;
-
-        if (targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-            transform.rotation = targetRotation;
-        }
+        LookAtTarget(targetDirection);
 
         hasCollidedWithBookCase = false;
         collidedBookCaseIndex = -1;
@@ -1035,8 +983,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
             transform.position += targetDirection * Time.deltaTime * 0.4f;
             yield return null;
         }
-
-        // yield return new WaitForSeconds(0.1f);
 
         if (collidedBookCaseIndex == selectedBookCaseIndex)
         {
@@ -1084,7 +1030,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DamageAllMap()
     {
-        Debug.Log("DamageAllMap");
+        Debug.Log("DamageAllMap"); // 임시완
 
         canDisplay = true;
         collisionCount = 0;
@@ -1157,5 +1103,4 @@ public class Boss1 : MonoBehaviourPunCallbacks
             UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
         }
     }
-
 }
