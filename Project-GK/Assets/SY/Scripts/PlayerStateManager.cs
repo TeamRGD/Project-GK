@@ -49,17 +49,23 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
+        if (isAlive)
         {
-            TakeDamage(10);
-            if (!PV.IsMine)
-                return;
-            animator.SetTrigger("getHit");
-        }
-        else if (other.gameObject.CompareTag("ShockDamageCollider"))
-        {
-            TakeDamage(10);
-            OnGroggy();
+            if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
+            {
+                TakeDamage(3);
+                if (!PV.IsMine)
+                    return;
+                animator.SetTrigger("getHit");
+            }
+            else if (other.gameObject.CompareTag("ShockDamageCollider"))
+            {
+                TakeDamage(10);
+                if (isAlive)
+                {
+                    OnGroggy();
+                }
+            }
         }
     }
 
