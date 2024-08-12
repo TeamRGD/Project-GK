@@ -224,6 +224,12 @@ public class PlayerController : MonoBehaviour
     void SetCanControlRPC(bool value)
     {
         canControl = value;
+        if (!canControl)
+        {
+            moveAmount = Vector3.zero;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     void Save()
@@ -256,18 +262,6 @@ public class PlayerController : MonoBehaviour
     void SaveRPC(PlayerStateManager targetPlayerState)
     {
         targetPlayerState.Revive();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
-        {
-            // 데미지 입기
-        }
-        else if (other.gameObject.CompareTag("ShockDamageCollider"))
-        {
-            // 데미지 입기 + 잠깐 스턴
-        }
     }
 
     // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정

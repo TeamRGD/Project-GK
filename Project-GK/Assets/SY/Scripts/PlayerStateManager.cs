@@ -8,6 +8,8 @@ public class PlayerStateManager : MonoBehaviour
 {
     PhotonView PV;
     
+    bool isGroggy = false;
+    
     // HP
     private int maxHealth = 100;
     public int currentHealth; // (test) should be private.
@@ -45,21 +47,24 @@ public class PlayerStateManager : MonoBehaviour
         StartCoroutine(RecoverPower());
     }
 
-    private void Update()
+    void OnTriggerEnter(Collider other)
     {
-        if (!PV.IsMine)
-            return;
-        if (Input.GetKeyDown(KeyCode.O))
+        if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
         {
-            TakeDamage(25);
+            TakeDamage(10);
+            if (!PV.IsMine)
+                return;
+            animator.SetTrigger("getHit");
+        }
+        else if (other.gameObject.CompareTag("ShockDamageCollider"))
+        {
+            TakeDamage(10);
+            OnGroggy();
         }
     }
 
     public void TakeDamage(int damage)
     {
-        if (!PV.IsMine)
-            return;
-        animator.SetTrigger("getHit");
         PV.RPC("TakeDamageRPC", RpcTarget.AllBuffered, damage);
     }
     
@@ -72,7 +77,7 @@ public class PlayerStateManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            OnGroggy();
+            OnDeath();
         }
         UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
     }
@@ -82,10 +87,47 @@ public class PlayerStateManager : MonoBehaviour
         animator.SetBool("isGroggy", true);
         animator.SetTrigger("groggy");
         PV.RPC("OnGroggyRPC", RpcTarget.AllBuffered);
+        StartCoroutine(GroggyTime(2));
     }
 
     [PunRPC]
     void OnGroggyRPC()
+    {
+        isGroggy = true;
+        playerController.SetCanControl(false);
+        playerAttack.SetCanAttack(false);
+        playerToolManager.SetCanChange(false);
+    }
+    void OnNotGroggy()
+    {
+        PV.RPC("OnNotGroggyRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void OnNotGroggyRPC()
+    {
+        isGroggy = false;
+        playerController.SetCanControl(true);
+        playerAttack.SetCanAttack(true);
+        playerToolManager.SetCanChange(true);
+    }
+
+    IEnumerator GroggyTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.SetBool("isGroggy", false);
+        OnNotGroggy();
+    }
+
+    void OnDeath()
+    {
+        animator.SetBool("isGroggy", true);
+        animator.SetTrigger("groggy");
+        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void OnDeathRPC()
     {
         isAlive = false;
         playerController.SetCanControl(false);
