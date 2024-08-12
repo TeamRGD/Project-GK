@@ -57,6 +57,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     public List<GameObject> AttackIndicators;
     public List<GameObject> AttackFills;
+    public List<GameObject> DamageColliders;
 
     List<int> bookcaseIndices = new List<int>();
     List<int> attackedAreas = new List<int>();
@@ -83,6 +84,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     GameObject currentIndicator;
     GameObject currentFill;
     GameObject currentShockwave;
+    GameObject currentDamageCollider;
 
     BTNode pattern1Tree;
     BTNode pattern2Tree;
@@ -108,19 +110,19 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            TakeDamage(1);
-            Debug.Log("Boss Health: " + currentHealth);
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            IsCorrect = true;
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            collisionCount++;
-        }
+        //if (Input.GetKeyDown(KeyCode.F))
+        //{
+        //    TakeDamage(1);
+        //    Debug.Log("Boss Health: " + currentHealth);
+        //}
+        //if (Input.GetKeyDown(KeyCode.M))
+        //{
+        //    IsCorrect = true;
+        //}
+        //if (Input.GetKeyDown(KeyCode.C))
+        //{
+        //    collisionCount++;
+        //}
     }
 
     IEnumerator ExecuteBehaviorTree()
@@ -207,8 +209,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         return new Sequence(
             new ActionNode(ChangeBooksToGreen),
-            new ActionNode(FixAggroTarget),
-            new ActionNode(DisplayAggroTarget),
+            new ActionNode(FixAggroTargetAndDisplay),
             new ActionNode(ActivateCipherDevice1),
             new ActionNode(RandomBasicAttack),
             new WhileNode(() => successCount < 3,
@@ -306,6 +307,33 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
+    IEnumerator MakeDamageCollider(int idx, float maxLength, Vector3 position)
+    {
+        if (idx == 0)
+        {
+            currentDamageCollider = Instantiate(DamageColliders[idx], position, Quaternion.LookRotation(transform.forward));
+
+            float width = 0.5f;
+            currentDamageCollider.transform.localScale = new Vector3(width, currentDamageCollider.transform.localScale.y, maxLength);
+
+            yield return new WaitForSeconds(0.1f);
+
+            Destroy(currentDamageCollider);
+            currentDamageCollider = null;
+        }
+        else
+        {
+            currentDamageCollider = Instantiate(DamageColliders[idx], position, Quaternion.LookRotation(transform.forward));
+
+            currentDamageCollider.transform.localScale = new Vector3(maxLength, currentDamageCollider.transform.localScale.y, maxLength);
+
+            yield return new WaitForSeconds(0.1f);
+
+            Destroy(currentDamageCollider);
+            currentDamageCollider = null;
+        }
+    }
+
     IEnumerator ShowIndicator(int idx, float maxLength, Vector3 position, float duration)
     {
         position.y = 0.15f; // 임시완
@@ -335,6 +363,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             Destroy(currentFill);
             currentIndicator = null;
             currentFill = null;
+
+            StartCoroutine(MakeDamageCollider(idx, maxLength, position));
         }
         else
         {
@@ -360,6 +390,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             Destroy(currentFill);
             currentIndicator = null;
             currentFill = null;
+
+            StartCoroutine(MakeDamageCollider(idx, maxLength, position));
         }
     }
 
@@ -387,6 +419,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 StopCoroutine(shockwaveCoroutine);
                 Destroy(currentShockwave);
                 currentShockwave = null;
+            }
+            if (currentDamageCollider != null)
+            {
+                Destroy(currentDamageCollider);
+                currentDamageCollider= null;
             }
         }
     }
@@ -659,19 +696,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    bool FixAggroTarget()
+    bool FixAggroTargetAndDisplay()
     {
         if (canChange1)
         {
             isAggroFixed = true;
-        }
-        return true;
-    }
-
-    bool DisplayAggroTarget()
-    {
-        if (canChange1)
-        {
             UIManager_Ygg.Instance.WhosAggro();
         }
         return true;

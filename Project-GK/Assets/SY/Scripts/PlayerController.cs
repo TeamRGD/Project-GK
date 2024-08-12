@@ -258,6 +258,18 @@ public class PlayerController : MonoBehaviour
         targetPlayerState.Revive();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
+        {
+            // 데미지 입기
+        }
+        else if (other.gameObject.CompareTag("ShockDamageCollider"))
+        {
+            // 데미지 입기 + 잠깐 스턴
+        }
+    }
+
     // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정
     public void SetSpeed(float value)
     {

@@ -24,6 +24,9 @@ TagManager:
   - Others
   - BookPage2_2
   - BookPage2_3
+  - ShockWave
+  - DamageCollider
+  - ShockDamageCollider
   layers:
   - Default
   - TransparentFX
