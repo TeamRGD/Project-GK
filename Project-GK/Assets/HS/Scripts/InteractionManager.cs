@@ -94,6 +94,14 @@ public class InteractionManager : MonoBehaviour
         {
             // 이동식 발판
         }
+
+        else if (hitInfo.collider.CompareTag("Rope"))
+        {
+            if(hitInfo.collider.TryGetComponent<TarzanSwing>(out TarzanSwing tarzanSwing))
+            {
+                tarzanSwing.MoveLampWithPlayer();
+            }
+        }
     }
 
     void DeactiveUI(int index)
