@@ -5163,6 +5163,7 @@ GameObject:
   - component: {fileID: 3899536905504140821}
   - component: {fileID: -6139773246994478324}
   - component: {fileID: 5754159406006844263}
+  - component: {fileID: 2105167569673174645}
   m_Layer: 0
   m_Name: Wi
   m_TagString: PlayerWi
@@ -5466,6 +5467,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOpen: 0
+--- !u!136 &2105167569673174645
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 909712977899993400}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.01
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.39, z: 0}
 --- !u!1 &969318899471238391
 GameObject:
   m_ObjectHideFlags: 0

@@ -99,7 +99,7 @@ public class InteractionManager : MonoBehaviour
         {
             if(hitInfo.collider.TryGetComponent<TarzanSwing>(out TarzanSwing tarzanSwing))
             {
-                tarzanSwing.MoveLampWithPlayer();
+                tarzanSwing.StartCoroutine("MoveLampWithPlayer");
             }
         }
     }
