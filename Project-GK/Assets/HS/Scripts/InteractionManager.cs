@@ -102,6 +102,14 @@ public class InteractionManager : MonoBehaviour
                 tarzanSwing.StartCoroutine("MoveLampWithPlayer");
             }
         }
+
+        else if (hitInfo.collider.CompareTag("Rope2"))
+        {
+            if (hitInfo.collider.TryGetComponent<TarzanSwing2>(out TarzanSwing2 tarzanSwing2))
+            {
+                tarzanSwing2.StartCoroutine("MoveLampWithPlayer");
+            }
+        }
     }
 
     void DeactiveUI(int index)

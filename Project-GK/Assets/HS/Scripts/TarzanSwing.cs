@@ -8,8 +8,6 @@ public class TarzanSwing : MonoBehaviour
     [SerializeField] Transform objectToAttach;    // 플레이어가 붙을 오브젝트 트랜스폼
 
     private Transform originalParent;   // 플레이어의 원래 부모 트랜스폼 (부모가 없을 경우 null일 수 있음)
-    private bool isAttached = false;    // 플레이어가 오브젝트에 붙어있는지 여부
-
     RotateObjectByAngle rotateObjectByAngle;
 
     private void Start()
@@ -68,7 +66,6 @@ public class TarzanSwing : MonoBehaviour
         player.parent = objectToAttach;
         player.localPosition = new Vector3(0f, -4f, 0f);
         player.localRotation = Quaternion.Euler(15f, 0f, 0f);
-        isAttached = true;
     }
 
     private void DetachPlayer()
@@ -84,9 +81,8 @@ public class TarzanSwing : MonoBehaviour
         }
 
 
-        player.position = new Vector3(77f, 25f, -17f);
+        player.position = new Vector3(77f, 25f, -17f); 
         player.rotation = Quaternion.Euler(0f, 90f, 0f);
-        isAttached = false;
     }
 
     void ComeToPlayer()

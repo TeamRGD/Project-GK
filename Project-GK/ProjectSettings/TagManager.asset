@@ -27,6 +27,7 @@ TagManager:
   - ShockWave
   - DamageCollider
   - ShockDamageCollider
+  - Rope2
   layers:
   - Default
   - TransparentFX
