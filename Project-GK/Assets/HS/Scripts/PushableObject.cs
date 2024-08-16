@@ -49,7 +49,6 @@ public class PushableObject : MonoBehaviour
                 {
                     isPlayerNearby = true;
                     playerTransform = other.transform;
-                    playerController.SetSpeed(2);
                 }
             }
         }
@@ -87,7 +86,7 @@ public class PushableObject : MonoBehaviour
 
             if (playerController != null)
             {
-                playerController.SetSpeed(2);
+                playerController.SetSpeed(2); // 속도를 느리게 바꾼다.
             }
         }
     }
@@ -102,7 +101,7 @@ public class PushableObject : MonoBehaviour
 
             if (playerController != null)
             {
-                playerController.SetSpeed(-1);
+                playerController.SetSpeed(-1); // 속도를 원래 상태로 변경함(플컨에 저장되어 있음)
             }
         }
     }
