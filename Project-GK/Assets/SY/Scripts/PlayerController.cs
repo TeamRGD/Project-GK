@@ -17,21 +17,32 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask collisionMask;
     [SerializeField] Transform aim;
 
-    float verticalLookRotation;
-    bool grounded;
-    bool canControl = true;
-    bool canMove = true;
-    Vector3 smoothMoveVelocity;
-    Vector3 moveAmount;
-
+    // Component
     Rigidbody rb;
     Animator animator;
-
     PhotonView PV;
     PlayerAttack playerAttack;
     PlayerToolManager playerToolManager;
 
+    // Bool variable
+    bool grounded;
+    bool canControl = true;
+    bool canLook = true;
+    bool canMove = true;
     bool isWalking = false;
+
+    // Other variable
+    Vector3 smoothMoveVelocity;
+    Vector3 moveAmount;
+    float verticalLookRotation;
+
+    // Raycast variable
+    LayerMask interactableLayer;
+    InteractionManager interactionManager; // 상호작용 스크립트 총괄
+    Outline currentOutline; // 현재 활성화된 Outline 참조
+    float interactionRange = 10f; // 상호작용 가능한 거리
+    bool canInteract = false;
+    RaycastHit hitInfo;
 
     void Awake()
     {
@@ -44,7 +55,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        // 플레이어 초기 방향 설정
         this.transform.rotation = Quaternion.Euler(0, 270, 0);
+
         // 자신만 제어할 수 있도록
         if (!PV.IsMine)
         {
@@ -54,6 +67,10 @@ public class PlayerController : MonoBehaviour
         // 마우스 커서 제거
         CursorOff();
 
+        // Interaction
+        interactionManager = FindObjectOfType<InteractionManager>();
+
+        // Boss에 Player 배정
         GameObject boss1 = GameObject.Find("Yggdrasil"); // [임시완]
         boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
     }
@@ -77,21 +94,61 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void Movement()
+    {
+        Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        // Run
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            Sprint(moveDir);
+        }
+        // Walk
+        else
+        {
+            Walk(moveDir);
+        }
+        isWalking = moveDir != Vector3.zero;
+        animator.SetBool("isWalking", isWalking);
+    }
+
+    void Walk(Vector3 moveDir)
+    {
+        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * walkSpeed, ref smoothMoveVelocity, smoothTime);
+        animator.SetBool("isRunning", false); 
+    }
+
+    void Sprint(Vector3 moveDir)
+    {
+        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * sprintSpeed, ref smoothMoveVelocity, smoothTime);
+        animator.SetBool("isRunning", true);
+    }
+
+    void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        {
+            animator.SetBool("isJumping", true);
+            rb.AddForce(transform.up * jumpForce);
+        }
+    }
+
+    public void SetGroundedState(bool _grounded)
+    {
+        if (_grounded && grounded != _grounded)
+        {
+            animator.SetBool("isJumping", false);
+        }
+        grounded = _grounded;
+    }
+
     public void CursorOn()
     {
         if (!PV.IsMine)
             return;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        PV.RPC("CursorOnRPC", RpcTarget.AllBuffered);
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-    }
-
-    [PunRPC]
-    void CursorOnRPC()
-    {
-        moveAmount = Vector3.zero;
+        ResetRigidBody();
+        animator.SetBool("isWalking", false);
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
         SetCanControl(false);
@@ -103,15 +160,16 @@ public class PlayerController : MonoBehaviour
             return;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        PV.RPC("CursorOffRPC", RpcTarget.AllBuffered);
-    }
-
-    [PunRPC]
-    void CursorOffRPC()
-    {
         playerAttack.SetCanAttack(true);
         playerToolManager.SetCanChange(true);
         SetCanControl(true);
+    }
+
+    void ResetRigidBody()
+    {
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        moveAmount = Vector3.zero;
     }
     
     private void FixedUpdate()
@@ -123,8 +181,11 @@ public class PlayerController : MonoBehaviour
 
     void Look()
     {
-        MoveCamera();
-        MoveAimObject();
+        if (canLook)
+        {
+            MoveCamera();
+            MoveAimObject();
+        }
     }
 
     void MoveCamera()
@@ -170,66 +231,63 @@ public class PlayerController : MonoBehaviour
         Ray ray = cameraHolder.GetComponentInChildren<Camera>().ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         Vector3 desiredPosition = ray.origin + ray.direction * 10.0f;
         aim.position = Vector3.Lerp(aim.position, desiredPosition, smoothTime);
+
+        // Interaction
+        CheckForInteractable(ray);
     }
 
-    void Movement()
+    void CheckForInteractable(Ray ray)
     {
-        Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        if (Input.GetKey(KeyCode.LeftShift)) // Run
+        if (Physics.Raycast(ray, out hitInfo, interactionRange, interactableLayer))
         {
-            Run(moveDir);
+            // 이전에 활성화된 Outline이 있다면 비활성화
+            if (currentOutline != null && currentOutline != hitInfo.collider.GetComponent<Outline>())
+            {
+                currentOutline.enabled = false;
+                currentOutline = null;
+            }
+
+            // 새로운 오브젝트의 Outline을 활성화
+            if (hitInfo.collider.TryGetComponent(out Outline outline))
+            {
+                outline.enabled = true;
+                currentOutline = outline; // 현재 활성화된 Outline 참조 저장
+                canInteract = true;
+
+                if (Input.GetKeyDown(KeyCode.T))
+                {
+                    interactionManager.CheckForTags(hitInfo);
+                }
+            }
         }
-        else // Walk
+        else
         {
-            Walk(moveDir);
+            // Raycast가 아무 오브젝트에도 닿지 않을 때
+            if (currentOutline != null)
+            {
+                currentOutline.enabled = false;
+                currentOutline = null;
+            }
+            canInteract = false;
         }
-        isWalking = moveDir != Vector3.zero;
-        animator.SetBool("isWalking", isWalking);
-    }
-
-    void Walk(Vector3 moveDir)
-    {
-        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * walkSpeed, ref smoothMoveVelocity, smoothTime);
-        animator.SetBool("isRunning", false); 
-    }
-
-    void Run(Vector3 moveDir)
-    {
-        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * sprintSpeed, ref smoothMoveVelocity, smoothTime);
-        animator.SetBool("isRunning", true);
-    }
-
-    void Jump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
-        {
-            rb.AddForce(transform.up * jumpForce);
-            animator.SetTrigger("isJumping");
-        }
-    }
-
-    public void SetGroundedState(bool _grounded)
-    {
-        grounded = _grounded;
     }
 
     public void SetCanControl(bool value)
     {
         if (!PV.IsMine)
             return;
-        PV.RPC("SetCanControlRPC", RpcTarget.AllBuffered, value);
-    }
-
-    [PunRPC]
-    void SetCanControlRPC(bool value)
-    {
         canControl = value;
         if (!canControl)
         {
-            moveAmount = Vector3.zero;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            ResetRigidBody();
         }
+    }
+
+    public void SetCanMove(bool value)
+    {
+        if (!PV.IsMine)
+            return;
+        canMove = value;
     }
 
     void Save()
@@ -249,7 +307,7 @@ public class PlayerController : MonoBehaviour
                         hitCollider.TryGetComponent<PlayerStateManager>(out targetPlayerState);
                         if (targetPlayerState != null && !targetPlayerState.GetIsAlive()) // isAlive가 false이면
                         {
-                            PV.RPC("SaveRPC", RpcTarget.AllBuffered, targetPlayerState);
+                            targetPlayerState.Revive();
                             break;
                         }
                     }

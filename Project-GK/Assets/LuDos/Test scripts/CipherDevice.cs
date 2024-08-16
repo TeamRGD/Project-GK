@@ -50,8 +50,8 @@ public class CipherDevice : MonoBehaviour
         {
             PlayerController playerController;
             PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
+            playerController = other.GetComponentInParent<PlayerController>();
+            PV = playerController.GetComponentInParent<PhotonView>();
             if (!players.ContainsKey(playerController))
             {
                 players.Add(playerController, PV);
@@ -69,8 +69,8 @@ public class CipherDevice : MonoBehaviour
         {
             PlayerController playerController;
             PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
+            playerController = other.GetComponentInParent<PlayerController>();
+            PV = playerController.GetComponentInParent<PhotonView>();
             if (players.ContainsKey(playerController))
             {
                 if (PV.IsMine) // Exit한 플레이어에게만.

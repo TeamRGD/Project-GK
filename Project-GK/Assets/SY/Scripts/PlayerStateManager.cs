@@ -6,24 +6,27 @@ using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
 {
-    PhotonView PV;
-    
-    bool isGroggy = false;
     
     // HP
     private int maxHealth = 100;
-    public int currentHealth; // (test) should be private.
-    private bool isAlive;
+    private int currentHealth;
 
     // 마력
     private int maxPower = 150;
-    public int currentPower; // (test) should be private.
+    private int currentPower;
 
     // 궁극주문력
     private int maxUltimatePower = 100;
-    public int currentUltimatePower; // (test) should be private.
+    private int currentUltimatePower;
 
+    // 코루틴 변수
     private WaitForSeconds oneSecond = new WaitForSeconds(1f);
+
+    // Bool 값들
+    public bool isAlive = true;
+
+    // Component
+    PhotonView PV;
     PlayerController playerController;
     PlayerAttack playerAttack;
     PlayerToolManager playerToolManager;
@@ -40,22 +43,30 @@ public class PlayerStateManager : MonoBehaviour
 
     void Start()
     {
-        isAlive = true;
+        if (!PV.IsMine)
+            return;
         currentHealth = maxHealth;
         currentPower = maxPower;
         currentUltimatePower = 0;
         StartCoroutine(RecoverPower());
     }
 
-    void OnTriggerEnter(Collider other)
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            //TakeDamage(100);
+            currentUltimatePower = 100;
+        }
+    }
+
+    void OnTriggerEnter(Collider other) // 수정 필요. 콜라이더를 여러 부분에 해뒀기 때문에 중복으로 TakeDamage가 적용됨.
     {
         if (isAlive)
         {
             if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
             {
                 TakeDamage(3);
-                if (!PV.IsMine)
-                    return;
                 animator.SetTrigger("getHit");
             }
             else if (other.gameObject.CompareTag("ShockDamageCollider"))
@@ -71,14 +82,6 @@ public class PlayerStateManager : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        PV.RPC("TakeDamageRPC", RpcTarget.AllBuffered, damage);
-    }
-    
-    [PunRPC]
-    void TakeDamageRPC(int damage)
-    {
-        if (!PV.IsMine)
-            return;
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -88,34 +91,26 @@ public class PlayerStateManager : MonoBehaviour
         UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
     }
 
+    void OnDeath()
+    {
+        animator.SetBool("isGroggy", true);
+        animator.SetTrigger("groggy");
+        SetCanState(false);
+        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void OnDeathRPC()
+    {
+        isAlive = false;
+    }
+
     void OnGroggy()
     {
         animator.SetBool("isGroggy", true);
         animator.SetTrigger("groggy");
-        PV.RPC("OnGroggyRPC", RpcTarget.AllBuffered);
+        SetCanState(false);
         StartCoroutine(GroggyTime(2));
-    }
-
-    [PunRPC]
-    void OnGroggyRPC()
-    {
-        isGroggy = true;
-        playerController.SetCanControl(false);
-        playerAttack.SetCanAttack(false);
-        playerToolManager.SetCanChange(false);
-    }
-    void OnNotGroggy()
-    {
-        PV.RPC("OnNotGroggyRPC", RpcTarget.AllBuffered);
-    }
-
-    [PunRPC]
-    void OnNotGroggyRPC()
-    {
-        isGroggy = false;
-        playerController.SetCanControl(true);
-        playerAttack.SetCanAttack(true);
-        playerToolManager.SetCanChange(true);
     }
 
     IEnumerator GroggyTime(float time)
@@ -124,45 +119,31 @@ public class PlayerStateManager : MonoBehaviour
         animator.SetBool("isGroggy", false);
         OnNotGroggy();
     }
-
-    void OnDeath()
+    
+    void OnNotGroggy()
     {
-        animator.SetBool("isGroggy", true);
-        animator.SetTrigger("groggy");
-        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
+        SetCanState(true);
     }
 
-    [PunRPC]
-    void OnDeathRPC()
+    void SetCanState(bool value)
     {
-        isAlive = false;
-        playerController.SetCanControl(false);
-        playerAttack.SetCanAttack(false);
-        playerToolManager.SetCanChange(false);
+        playerController.SetCanControl(value);
+        playerAttack.SetCanAttack(value);
+        playerToolManager.SetCanChange(value);
     }
 
     public void Revive()
     {
         animator.SetBool("isGroggy", false);
         PV.RPC("ReviveRPC", RpcTarget.AllBuffered);
+        SetCanState(true);
     }
 
     [PunRPC]
     void ReviveRPC()
     {
         isAlive = true;
-        playerController.SetCanControl(true);
-        playerAttack.SetCanAttack(true);
-        playerToolManager.SetCanChange(true);
         currentHealth = maxHealth;
-    }
-
-    [PunRPC]
-    void UpdateManaRPC()
-    {
-        if (!PV.IsMine)
-            return;
-        UIManager_Player.Instance.ManageMana(currentPower, maxPower);
     }
     
     IEnumerator RecoverPower() // 매초마다 마력 5씩 회복
@@ -177,7 +158,7 @@ public class PlayerStateManager : MonoBehaviour
                 {
                     currentPower = maxPower;
                 }
-                PV.RPC("UpdateManaRPC", RpcTarget.AllBuffered);
+                UIManager_Player.Instance.ManageMana(currentPower, maxPower);
             }
         }
     }
@@ -239,17 +220,17 @@ public class PlayerStateManager : MonoBehaviour
         return isAlive;
     }
 
-    public int GetHealth()
+    public int GetHealth() // 동기화 안됨.
     {
         return currentHealth;
     }
 
-    public int GetPower()
+    public int GetPower() // 동기화 안됨.
     {
         return currentPower;
     }
 
-    public int GetUltimatePower()
+    public int GetUltimatePower() // 동기화 안됨.
     {
         return currentUltimatePower;
     }

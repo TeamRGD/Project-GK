@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class PlayerToolManager : MonoBehaviour
 {
+
+    // Component
     PhotonView PV;
     PlayerAttack playerAttack;
     public List<GameObject> tools = new List<GameObject>();
+
+    // Information variable
     private int currentToolIndex = 0;
     private bool canChange = true;
 
@@ -26,11 +30,11 @@ public class PlayerToolManager : MonoBehaviour
     {
         if (!PV.IsMine || !canChange)
             return;
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
             SwitchToNextTool();
         }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        else if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
             SwitchToPreviousTool();
         }
@@ -39,29 +43,20 @@ public class PlayerToolManager : MonoBehaviour
     void SwitchToNextTool()
     {
         PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
-        PV.RPC("SetInventoryUIRPC", RpcTarget.AllBuffered);
+        UIManager_Player.Instance.SetInventory(currentToolIndex);
     }
 
     void SwitchToPreviousTool()
     {
         PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
-        PV.RPC("SetInventoryUIRPC", RpcTarget.AllBuffered);
+        UIManager_Player.Instance.SetInventory(currentToolIndex);
     }
 
     [PunRPC]
     void SwitchToNextToolRPC()
     {
         currentToolIndex = (currentToolIndex + 1) % tools.Count;
-        UIManager_Player.Instance.SetInventory(currentToolIndex);
         UpdateToolVisibility();
-    }
-
-    [PunRPC]
-    void SetInventoryUIRPC()
-    {
-        if (!PV.IsMine)
-            return;
-        UIManager_Player.Instance.SetInventory(currentToolIndex);
     }
 
     [PunRPC]
@@ -72,12 +67,6 @@ public class PlayerToolManager : MonoBehaviour
     }
 
     void UpdateToolVisibility()
-    {
-        PV.RPC("UpdateToolVisibilityRPC", RpcTarget.AllBuffered);
-    }
-
-    [PunRPC]
-    void UpdateToolVisibilityRPC()
     {
         for (int i = 0; i < tools.Count; i++)
         {
@@ -90,6 +79,12 @@ public class PlayerToolManager : MonoBehaviour
     {
         return currentToolIndex;
     }
+
+    public void SetCanChange(bool value)
+    {
+        canChange = value;
+    }
+
 
     /* 상호작용 부분에서 수정 필요.
     public void AddTool(GameObject newTool)
@@ -108,15 +103,4 @@ public class PlayerToolManager : MonoBehaviour
         }
     }
     */
-
-    public void SetCanChange(bool value)
-    {
-        PV.RPC("SetCanChangeRPC", RpcTarget.AllBuffered, value);
-    }
-
-    [PunRPC]
-    void SetCanChangeRPC(bool value)
-    {
-        canChange = value;
-    }
 }
