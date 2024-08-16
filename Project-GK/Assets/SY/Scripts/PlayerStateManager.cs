@@ -51,17 +51,10 @@ public class PlayerStateManager : MonoBehaviour
         StartCoroutine(RecoverPower());
     }
 
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.M))
-        {
-            //TakeDamage(100);
-            currentUltimatePower = 100;
-        }
-    }
-
     void OnTriggerEnter(Collider other) // 수정 필요. 콜라이더를 여러 부분에 해뒀기 때문에 중복으로 TakeDamage가 적용됨.
     {
+        if (!PV.IsMine)
+            return;
         if (isAlive)
         {
             if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
@@ -94,9 +87,16 @@ public class PlayerStateManager : MonoBehaviour
     void OnDeath()
     {
         animator.SetBool("isGroggy", true);
-        animator.SetTrigger("groggy");
+        animator.SetBool("groggy", true);
         SetCanState(false);
+        StartCoroutine(GroggyAnimTime(0.2f));
         PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
+    }
+
+    IEnumerator GroggyAnimTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.SetBool("groggy", false);
     }
 
     [PunRPC]
@@ -108,7 +108,8 @@ public class PlayerStateManager : MonoBehaviour
     void OnGroggy()
     {
         animator.SetBool("isGroggy", true);
-        animator.SetTrigger("groggy");
+        animator.SetBool("groggy", true);
+        StartCoroutine(GroggyAnimTime(0.2f));
         SetCanState(false);
         StartCoroutine(GroggyTime(2));
     }
@@ -132,18 +133,22 @@ public class PlayerStateManager : MonoBehaviour
         playerToolManager.SetCanChange(value);
     }
 
-    public void Revive()
+    public void Revive() // 상대 PC에서 해당 함수를 실행하기 때문에, 본인 PC에서 소생되기 위해 모든 것을 동기화 함수에 넣어줌.
     {
-        animator.SetBool("isGroggy", false);
         PV.RPC("ReviveRPC", RpcTarget.AllBuffered);
-        SetCanState(true);
     }
 
     [PunRPC]
     void ReviveRPC()
     {
+        animator.SetBool("isGroggy", false);
         isAlive = true;
         currentHealth = maxHealth;
+        SetCanState(true);
+        // UI만 동기화 X
+        if(!PV.IsMine)
+            return;
+        UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
     }
     
     IEnumerator RecoverPower() // 매초마다 마력 5씩 회복
@@ -167,14 +172,6 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
-        PV.RPC("IncreaseUltimatePowerRPC", RpcTarget.AllBuffered, amount);
-    }
-
-    [PunRPC]
-    void IncreaseUltimatePowerRPC(int amount)
-    {
-        if (!PV.IsMine)
-            return;
         currentUltimatePower += amount;
         if (currentUltimatePower > maxUltimatePower)
         {
@@ -187,27 +184,11 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
-        PV.RPC("DecreasePowerRPC", RpcTarget.AllBuffered, amount);
-    }
-
-    [PunRPC]
-    void DecreasePowerRPC(int amount)
-    {
-        if (!PV.IsMine)
-            return;
         currentPower -= amount;
         UIManager_Player.Instance.ManageMana(currentPower, maxPower);
     }
 
     public void ResetUltimatePower()
-    {
-        if (!PV.IsMine)
-            return;
-        PV.RPC("ResetUltimatePowerRPC", RpcTarget.AllBuffered);
-    }
-
-    [PunRPC]
-    void ResetUltimatePowerRPC()
     {
         if (!PV.IsMine)
             return;

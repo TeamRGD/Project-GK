@@ -6184,6 +6184,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   aim: {fileID: 8770323177228056638}
+  isSaving: 1
+  currentSaveTime: 0
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &730783521546183074
 MonoBehaviour:
   m_ObjectHideFlags: 0

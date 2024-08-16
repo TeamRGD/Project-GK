@@ -57,7 +57,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.37696335
+      - time: 0.5
         functionName: ShotProjectile
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: e8351ccc39458214984ee7b31b85c4ed, type: 3}

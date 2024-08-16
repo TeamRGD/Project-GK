@@ -2,6 +2,7 @@ using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float distanceFromPlayer, minDistanceFromPlayer;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] Transform aim;
+    
 
     // Component
     Rigidbody rb;
@@ -30,14 +32,16 @@ public class PlayerController : MonoBehaviour
     bool canLook = true;
     bool canMove = true;
     bool isWalking = false;
+    public bool isSaving = true;
 
     // Other variable
     Vector3 smoothMoveVelocity;
     Vector3 moveAmount;
     float verticalLookRotation;
+    public float currentSaveTime = 0.0f;
 
     // Raycast variable
-    LayerMask interactableLayer;
+    [SerializeField] LayerMask interactableLayer;
     InteractionManager interactionManager; // 상호작용 스크립트 총괄
     Outline currentOutline; // 현재 활성화된 Outline 참조
     float interactionRange = 10f; // 상호작용 가능한 거리
@@ -209,7 +213,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Linecast(playerPosition, cameraPosition, out hit, collisionMask))
         {
             float hitDistance = Vector3.Distance(playerPosition, hit.point);
-            if (hit.collider.CompareTag("Wall")||hit.collider.CompareTag("BookCase")||hit.collider.CompareTag("Others")) // 벽과 충돌했을 경우
+            if (hit.collider.CompareTag("Wall")||hit.collider.CompareTag("BookCase")||hit.collider.CompareTag("Ground")) // 벽과 충돌했을 경우
             {
                 cameraHolder.transform.position = hit.point + Vector3.up * 1f;
             }
@@ -292,34 +296,82 @@ public class PlayerController : MonoBehaviour
 
     void Save()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKey(KeyCode.F))
         {
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 반경 2.0f 플레이어 주위에 있는 콜라이더 검색
-            foreach (var hitCollider in hitColliders)
+            if (!isSaving)
             {
-                if (hitCollider.CompareTag("PlayerWi")||hitCollider.CompareTag("PlayerZard")) // Player이면
+                Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 반경 2.0f 플레이어 주위에 있는 콜라이더 검색
+                foreach (var hitCollider in hitColliders)
                 {
-                    PhotonView targetPV;
-                    hitCollider.TryGetComponent<PhotonView>(out targetPV);
-                    if (targetPV != null && !targetPV.IsMine)
+                    if (hitCollider.CompareTag("PlayerWi")||hitCollider.CompareTag("PlayerZard")) // Player이면
                     {
-                        PlayerStateManager targetPlayerState;
-                        hitCollider.TryGetComponent<PlayerStateManager>(out targetPlayerState);
-                        if (targetPlayerState != null && !targetPlayerState.GetIsAlive()) // isAlive가 false이면
+                        PhotonView targetPV;
+                        hitCollider.TryGetComponent<PhotonView>(out targetPV);
+                        if (targetPV != null && !targetPV.IsMine)
                         {
-                            targetPlayerState.Revive();
-                            break;
+                            PlayerStateManager targetPlayerState;
+                            hitCollider.TryGetComponent<PlayerStateManager>(out targetPlayerState);
+                            if (targetPlayerState != null && !targetPlayerState.GetIsAlive()) // isAlive가 false이면
+                            {
+                                SetCanState(false);
+                                StartCoroutine(SaveTime(0.3f));
+                                StartCoroutine(SaveProcess(targetPlayerState));
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
+        else
+        {
+            if (isSaving)
+            {
+                SetCanState(true);
+                currentSaveTime = 0.0f;
+            }
+        }
     }
 
-    [PunRPC]
-    void SaveRPC(PlayerStateManager targetPlayerState)
+    void SetCanState(bool value)
     {
-        targetPlayerState.Revive();
+        isSaving = !value;
+        animator.SetBool("isRescuing", !value);
+        animator.SetBool("rescue", !value);
+        SetCanMove(value);
+        playerAttack.SetCanAttack(value);
+        playerToolManager.SetCanChange(value);
+    }
+
+    IEnumerator SaveTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.SetBool("rescue", false);
+    }
+
+    IEnumerator SaveProcess(PlayerStateManager targetPlayerState)
+    {
+        while (isSaving)
+        {
+            currentSaveTime += Time.deltaTime;
+
+            if (currentSaveTime >= 6.0f)
+            {
+                SetCanState(true);
+                targetPlayerState.Revive();
+                currentSaveTime = 0.0f;
+                yield break;
+            }
+
+            yield return null;
+        }
+        SetCanState(true);
+        currentSaveTime = 0.0f;
+    }
+
+    public void SetIsSaving(bool value)
+    {
+        isSaving = false;
     }
 
     // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정

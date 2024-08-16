@@ -27,6 +27,7 @@ public class PlayerAttack : MonoBehaviour
     float attackCool = 0.5f;
     float projectileSpeed = 20f;
     float maxRayDistance = 100f;
+    bool isUltimate = false;
 
     void Awake()
     {
@@ -86,6 +87,7 @@ public class PlayerAttack : MonoBehaviour
         else if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()==100) // 궁극기
         {
             animator.SetBool("isUltimate", true);
+            isUltimate = true;
             playerState.ResetUltimatePower();
             attackCount = 0;
             lastAttackTime = Time.time;
@@ -103,32 +105,7 @@ public class PlayerAttack : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         animator.SetBool("isUltimate", false);
-    }
-
-    [PunRPC]
-    void UltimateAttackRPC()
-    {
-        if (!PV.IsMine) return;
-        playerState.ResetUltimatePower();
-        attackCount = 0;
-        lastAttackTime = Time.time;
-    }
-
-    [PunRPC]
-    void AttackRPC(int count) // 1타, 2타 -> 마력 10 소모, 3타 -> 마력 15 소모.
-    {
-        if (!PV.IsMine) return;
-        if (count < 2)
-        {
-            attackCount++;
-            playerState.DecreasePower(10);
-        }
-        else
-        {
-            attackCount = 0;
-            playerState.DecreasePower(15);
-        }
-        lastAttackTime = Time.time;
+        isUltimate = false;
     }
 
     void ShotProjectile() // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
@@ -136,7 +113,7 @@ public class PlayerAttack : MonoBehaviour
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
             Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            ray.origin = new Vector3(playerBody.position.x , playerBody.position.y+1, playerBody.position.z);
+            ray.origin = playerBody.TransformPoint(new Vector3(0, 2f, 1f));
 
             Vector3 targetPoint = Vector3.zero;
 
@@ -152,11 +129,18 @@ public class PlayerAttack : MonoBehaviour
 
             Vector3 direction = (targetPoint - projectileSpawnPoint.position).normalized;
 
-            // 투사체 생성
-            GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));
-
-            SetProjectileRPC(projectile.GetComponent<PhotonView>().ViewID, direction, (attackCount-1+3)%3);
-            //PV.RPC("SetProjectileRPC", RpcTarget.AllBuffered, projectile.GetComponent<PhotonView>().ViewID, direction, (attackCount-1+3)%3);
+            if (!isUltimate)
+            {
+                // 투사체 생성
+                GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));
+                SetProjectileRPC(projectile.GetComponent<PhotonView>().ViewID, direction, (attackCount-1+3)%3);
+            }
+            else
+            {
+                // 투사체 생성
+                GameObject projectile = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", projectilePrefab.name), projectileSpawnPoint.position, Quaternion.LookRotation(direction));
+                SetProjectileRPC(projectile.GetComponent<PhotonView>().ViewID, direction, 5);
+            }
         }
     }
 
@@ -172,7 +156,7 @@ public class PlayerAttack : MonoBehaviour
         projectile.TryGetComponent<Projectile>(out projScript);
         if (projScript != null)
         {
-            projScript.SetAttackPower((count < 2) ? 2f : 3f);
+            projScript.SetAttackPower((count==5)? 10f : (count < 2) ? 2f : 3f);
             projScript.SetOwner(PV.ViewID);
         }
 
@@ -186,12 +170,6 @@ public class PlayerAttack : MonoBehaviour
     }
 
     public void SetCanAttack(bool value)
-    {
-        PV.RPC("SetCanAttackRPC", RpcTarget.AllBuffered, value);
-    }
-
-    [PunRPC]
-    void SetCanAttackRPC(bool value)
     {
         canAttack = value;
     }
