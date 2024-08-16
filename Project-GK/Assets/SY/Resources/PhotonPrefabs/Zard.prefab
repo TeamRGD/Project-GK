@@ -803,7 +803,7 @@ GameObject:
   - component: {fileID: 7573830429060871902}
   m_Layer: 0
   m_Name: Root_Spine
-  m_TagString: Untagged
+  m_TagString: PlayerZard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6504,7 +6504,7 @@ GameObject:
   - component: {fileID: 2646678592437550603}
   m_Layer: 0
   m_Name: L_UpperArm
-  m_TagString: Untagged
+  m_TagString: PlayerZard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6590,7 +6590,7 @@ GameObject:
   - component: {fileID: 1582489362818323661}
   m_Layer: 0
   m_Name: Root_Head
-  m_TagString: Untagged
+  m_TagString: PlayerZard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7356,7 +7356,7 @@ GameObject:
   - component: {fileID: 6671225269964384096}
   m_Layer: 0
   m_Name: R_UpperArm
-  m_TagString: Untagged
+  m_TagString: PlayerZard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
