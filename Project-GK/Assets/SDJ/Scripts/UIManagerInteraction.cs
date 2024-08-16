@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
-using JetBrains.Annotations;
 
 public class UIManagerInteraction : MonoBehaviour
 {
@@ -11,6 +10,8 @@ public class UIManagerInteraction : MonoBehaviour
 
     public GameObject inputCipherDisplay;
     public GameObject inputCipherEnter;
+    public GameObject enterButton1;
+    public GameObject enterButton2;
 
     public TextMeshProUGUI inputField;
     public Button inputButton;
@@ -55,11 +56,15 @@ public class UIManagerInteraction : MonoBehaviour
         //    PopDownPaper(4);
         //}
 
-        //if (Input.GetKeyDown(KeyCode.Y))
-        //{
-        //    ActivateCipher();
-        //}
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            ActivateCipher(1);
+        }
 
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            ActivateCipher(2);
+        }
         //if (Input.GetKeyDown(KeyCode.T))
         //{
         //    DeactivateCipher();
@@ -67,8 +72,18 @@ public class UIManagerInteraction : MonoBehaviour
     }
 
     //------------Cipher--------------
-    public void ActivateCipher()
+    public void ActivateCipher(int index = 1)
     {
+        if (index == 1)
+        {
+            enterButton1.SetActive(true);
+            enterButton2.SetActive(false);
+        } else if (index == 2) 
+        {
+            enterButton1.SetActive(false);
+            enterButton2.SetActive(true);
+        }
+
         inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
         inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(120f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
@@ -94,10 +109,7 @@ public class UIManagerInteraction : MonoBehaviour
 
     public void CheckCipher(int code)
     {
-        int realCode = 0;
-        if (code == 1) realCode = 1234; 
-        else if (code == 2) realCode = 5678;
-        if (inputField.text == realCode.ToString())
+        if (inputField.text == code.ToString())
         {
             Debug.Log("That's Right!");
             inputField.DOColor(Color.green, 0.2f).SetEase(Ease.OutSine);
