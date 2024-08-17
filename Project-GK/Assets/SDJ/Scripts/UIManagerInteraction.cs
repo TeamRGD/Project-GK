@@ -56,15 +56,15 @@ public class UIManagerInteraction : MonoBehaviour
         //    PopDownPaper(4);
         //}
 
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            ActivateCipher(1);
-        }
+        //if (Input.GetKeyDown(KeyCode.Y))
+        //{
+        //    ActivateCipher(1);
+        //}
 
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            ActivateCipher(2);
-        }
+        //if (Input.GetKeyDown(KeyCode.U))
+        //{
+        //    ActivateCipher(2);
+        //}
         //if (Input.GetKeyDown(KeyCode.T))
         //{
         //    DeactivateCipher();
