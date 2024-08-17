@@ -21,7 +21,7 @@ public class Puzzle2Book : MonoBehaviour
 
     public static void ActivateCipher()
     {
-        UIManagerInteraction.Instance.ActivateCipher();
+        UIManagerInteraction.Instance.ActivateCipher(1);
     }
 
     public static void DeactivateCipher()
@@ -32,6 +32,7 @@ public class Puzzle2Book : MonoBehaviour
     void DisableAndEnableNew() // 암호 정답 이후
     {
         openBook.SetActive(true);
+        gameObject.SetActive(false);
     }
 
     void OnTriggerEnter(Collider other)
@@ -40,8 +41,8 @@ public class Puzzle2Book : MonoBehaviour
         {
             PlayerController playerController;
             PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
+            playerController = other.GetComponentInParent<PlayerController>();
+            PV = playerController.GetComponentInParent<PhotonView>();
             if (!players.ContainsKey(playerController))
             {
                 players.Add(playerController, PV);
@@ -59,8 +60,8 @@ public class Puzzle2Book : MonoBehaviour
         {
             PlayerController playerController;
             PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
+            playerController = other.GetComponentInParent<PlayerController>();
+            PV = playerController.GetComponentInParent<PhotonView>();
             if (players.ContainsKey(playerController))
             {
                 if (PV.IsMine) // Exit한 플레이어에게만.
