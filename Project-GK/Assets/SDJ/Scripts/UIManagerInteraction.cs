@@ -113,6 +113,7 @@ public class UIManagerInteraction : MonoBehaviour
         {
             Debug.Log("That's Right!");
             inputField.DOColor(Color.green, 0.2f).SetEase(Ease.OutSine);
+            if (enterButton1.activeSelf) print("edit like this CuriHus");
         }
         else
         {
@@ -136,7 +137,6 @@ public class UIManagerInteraction : MonoBehaviour
             paperSFXs[randint].Play();
         }
         papers[index].transform.DOScale(Vector3.one * 0.8f, 0.15f).SetEase(Ease.OutSine).OnStart(() => papers[index].SetActive(true));
-        // 플레이어 카메라/마우스 제한
     }
 
     public void PopDownPaper(int index)
@@ -147,6 +147,5 @@ public class UIManagerInteraction : MonoBehaviour
             paperSFXs[randint].Play();
         }
         papers[index].transform.DOScale(Vector3.zero, 0.15f).SetEase(Ease.InSine).OnComplete(() => papers[index].SetActive(false));
-        // 플레이어 카메라/마우스 제한 해제
     }
 }
