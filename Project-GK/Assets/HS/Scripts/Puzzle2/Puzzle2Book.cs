@@ -7,29 +7,29 @@ public class Puzzle2Book : MonoBehaviour
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
 
     [SerializeField] GameObject openBook;
-    bool isClear;
+    public static bool isClear = false;
 
-    public static void ActiveUI() // InteractionManager로부터 명령받아 UI 명령을 진행하는 함수.
+    public static void ActiveUI() // 힌트페이지 열기
     {
         UIManagerInteraction.Instance.PopUpPaper(4);
     }
 
-    public static void DeactiveUI()
+    public static void DeactiveUI() // 힌트페이지 닫기
     {
         UIManagerInteraction.Instance.PopDownPaper(4);
     }
 
-    public static void ActivateCipher()
+    public static void ActivateCipher() // 정답 입력 페이지 열기
     {
         UIManagerInteraction.Instance.ActivateCipher(1);
     }
 
-    public static void DeactivateCipher()
+    public static void DeactivateCipher()  // 정답 입력 페이지 닫기
     {
         UIManagerInteraction.Instance.DeactivateCipher();
     }
 
-    void DisableAndEnableNew() // 암호 정답 이후
+    public void DisableAndEnableNew() // 암호 정답 이후
     {
         openBook.SetActive(true);
         gameObject.SetActive(false);

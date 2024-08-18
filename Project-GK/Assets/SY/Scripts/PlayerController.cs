@@ -262,6 +262,11 @@ public class PlayerController : MonoBehaviour
                 {
                     interactionManager.CheckForTags(hitInfo);
                 }
+
+                else if (Input.GetKeyDown(KeyCode.Y))
+                {
+                    interactionManager.CheckForTags2(hitInfo);
+                }
             }
         }
         else

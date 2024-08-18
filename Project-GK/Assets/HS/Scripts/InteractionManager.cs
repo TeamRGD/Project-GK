@@ -112,6 +112,16 @@ public class InteractionManager : MonoBehaviour
         }
     }
 
+    public void CheckForTags2(RaycastHit hitInfo)
+    {
+        if (hitInfo.collider.CompareTag("Book2"))
+        {
+            Puzzle2Book.ActivateCipher();
+            isOpen = 500;
+            playerController.CursorOn();
+        }
+    }
+
     void DeactiveUI(int index)
     {
         if (index == 1)
@@ -141,6 +151,11 @@ public class InteractionManager : MonoBehaviour
         else if (index ==7)
         {
             Puzzle3Note.DeactiveUI();
+        }
+        else if (index == 500)
+        {
+            Puzzle2Book.DeactivateCipher();
+            playerController.CursorOff();
         }
 
         isOpen = 0;
