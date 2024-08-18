@@ -33,6 +33,7 @@ public class InteractionManager : MonoBehaviour
             {
                 Puzzle1Note.ActiveUI();
                 isOpen = 1;
+                playerController.CursorOn();
             }
         }
 
@@ -42,6 +43,7 @@ public class InteractionManager : MonoBehaviour
             {
                 Puzzle2BookPage1.ActiveUI();
                 isOpen = 2;
+                playerController.CursorOn();
             }
         }
 
@@ -51,6 +53,7 @@ public class InteractionManager : MonoBehaviour
             {
                 Puzzle2BookPage2.ActiveUI();
                 isOpen = 3;
+                playerController.CursorOn();
             }
         }
         
@@ -60,6 +63,7 @@ public class InteractionManager : MonoBehaviour
             {
                 Puzzle2BookPage3.ActiveUI();
                 isOpen = 4;
+                playerController.CursorOn();
             }
         }
 
@@ -69,6 +73,7 @@ public class InteractionManager : MonoBehaviour
             {
                 Puzzle2Book.ActiveUI();
                 isOpen = 5;
+                playerController.CursorOn();
             }
         }
 
@@ -78,6 +83,7 @@ public class InteractionManager : MonoBehaviour
             {
                 Puzzle2Note.ActiveUI();
                 isOpen = 6;
+                playerController.CursorOn();
             }
         }
 
@@ -87,12 +93,8 @@ public class InteractionManager : MonoBehaviour
             {
                 Puzzle3Note.ActiveUI();
                 isOpen = 7;
+                playerController.CursorOn();
             }
-        }
-
-        else if (hitInfo.collider.CompareTag("Stair"))
-        {
-            // 이동식 발판
         }
 
         else if (hitInfo.collider.CompareTag("Rope"))
@@ -155,9 +157,8 @@ public class InteractionManager : MonoBehaviour
         else if (index == 500)
         {
             Puzzle2Book.DeactivateCipher();
-            playerController.CursorOff();
         }
-
+        playerController.CursorOff();
         isOpen = 0;
     }
 }
