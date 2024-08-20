@@ -28,6 +28,7 @@ TagManager:
   - DamageCollider
   - ShockDamageCollider
   - Rope2
+  - ZiplineItem
   layers:
   - Default
   - TransparentFX

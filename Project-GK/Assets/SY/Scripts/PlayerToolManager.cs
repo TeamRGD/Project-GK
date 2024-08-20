@@ -86,10 +86,11 @@ public class PlayerToolManager : MonoBehaviour
     }
 
 
-    /* 상호작용 부분에서 수정 필요.
     public void AddTool(GameObject newTool)
     {
-        PV.RPC("AddToolRPC", RpcTarget.AllBuffered, newTool.GetComponent<PhotonView>().ViewID);
+        //PV.RPC("AddToolRPC", RpcTarget.AllBuffered, newTool.GetComponent<PhotonView>().ViewID);
+        tools.Add(newTool.gameObject);
+        UpdateToolVisibility();
     }
 
     [PunRPC]
@@ -102,5 +103,6 @@ public class PlayerToolManager : MonoBehaviour
             UpdateToolVisibility();
         }
     }
-    */
+    
 }
+
