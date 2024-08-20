@@ -22,6 +22,9 @@ public class UIManagerInteraction : MonoBehaviour
 
     UIManager_Player uiManager;
 
+    // CuriHuS
+    Puzzle2Book puzzle2Book;
+
     // for Singleton Pattern (Don't know meaning but everyone uses this)
     void Awake()
     {
@@ -43,6 +46,7 @@ public class UIManagerInteraction : MonoBehaviour
             papers[i].SetActive(false);
         }
         uiManager = FindObjectOfType<UIManager_Player>();
+        puzzle2Book = FindAnyObjectByType<Puzzle2Book>();
     }
 
     void Update()
@@ -113,7 +117,14 @@ public class UIManagerInteraction : MonoBehaviour
         {
             Debug.Log("That's Right!");
             inputField.DOColor(Color.green, 0.2f).SetEase(Ease.OutSine);
-            if (enterButton1.activeSelf) print("edit like this CuriHus");
+            if (enterButton1.activeSelf)
+            {
+                puzzle2Book.DisableAndEnableNew();
+            }
+            else
+            {
+                // 퍼즐 3
+            }
         }
         else
         {
