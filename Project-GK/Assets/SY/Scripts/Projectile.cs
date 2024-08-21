@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Properties;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -47,7 +48,10 @@ public class Projectile : MonoBehaviour
     private IEnumerator DestroyAfterSeconds()
     {
         yield return seconds;
-        Destroy(gameObject);
+        if (myPV.IsMine)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     public void SetOwner(int photonViewId) // 해당 투사체의 주인 설정. 이 또한 동기화 해야 함.

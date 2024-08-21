@@ -40,6 +40,7 @@ public class CipherDevice : MonoBehaviour
             {
                 playerController.CursorOff();
                 UIManager_Ygg.Instance.DeactivateCipher();
+                UIManager_Player.Instance.DisableInteractionNotice();
             }
         }
     }

@@ -79,6 +79,7 @@ public class PlayerStateManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             currentHealth = 0;
+            PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
             OnDeath();
         }
         UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
@@ -90,7 +91,6 @@ public class PlayerStateManager : MonoBehaviour
         animator.SetBool("groggy", true);
         SetCanState(false);
         StartCoroutine(GroggyAnimTime(0.2f));
-        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
     }
 
     IEnumerator GroggyAnimTime(float time)

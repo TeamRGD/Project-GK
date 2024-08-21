@@ -75,6 +75,31 @@ MonoBehaviour:
   - OnNotGroggyRPC
   - SecCanMoveRPC
   - AddToolRPC
+  - UpdateHealthRPC
+  - StartAction1
+  - StartAction2
+  - StartAction3
+  - StartRPC
+  - ExecutePatternRPC
+  - SetTriggerRPC
+  - RandomBasicAttack
+  - ExecuteRandomBasicAttackRPC
+  - ShowIndicatorRPC
+  - UpdateObject
+  - UpdateFill
+  - UpdateIndicator
+  - CreateShockwaveRPC
+  - RandomBasicAttackRPC
+  - StopRandomBasicAttackRPC
+  - ChangeBooksToGreenRPC
+  - MakeInvincibleRPC
+  - UpdateHintUI
+  - ActivateCipherDevice1RPC
+  - FixAggroTargetAndDisplayRPC
+  - ResetBookLightsAndAggroRPC
+  - UpdateValue
+  - ReleaseInvincibilityAndGroggyRPC
+  - SetGroggyRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

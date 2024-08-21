@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
 using System;
+using Photon.Pun;
+using Unity.Properties;
 
 public class UIManager_Ygg : MonoBehaviour
 {
@@ -36,6 +38,7 @@ public class UIManager_Ygg : MonoBehaviour
     public GameObject attackNodeContainer;
     private int playerAttackCount;
     UIManager_Player uiManager;
+    PhotonView PV;
 
     // for Singleton Pattern (Don't know meaning but everyone uses this)
     void Awake()
@@ -48,6 +51,7 @@ public class UIManager_Ygg : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+        TryGetComponent<PhotonView>(out PV);
     }
 
     void Start()
@@ -173,15 +177,20 @@ public class UIManager_Ygg : MonoBehaviour
         {
             Debug.Log("That's Right!");
             inputField.DOColor(Color.green, 0.2f).SetEase(Ease.OutSine);
-            boss.GetComponent<Boss1>().IsCorrect = true;
+            PV.RPC("UpdateValue", RpcTarget.AllBuffered, true); // 상대 PC에 Correct value 동기화
         }
         else
         {
             Debug.Log("Nope");
             inputField.DOColor(Color.red, 0.2f).SetEase(Ease.OutSine);
             inputField.DOColor(Color.white, 0.2f).SetEase(Ease.OutSine).SetDelay(0.2f);
-            boss.GetComponent<Boss1>().IsCorrect = false;
+            PV.RPC("UpdateValue", RpcTarget.AllBuffered, false); // 상대 PC에 Correct value 동기화
         }
+    }
+    [PunRPC]
+    void UpdateValue(bool value)
+    {
+        boss.GetComponent<Boss1>().IsCorrect = value;
     }
 
     public void ResetCipher()
