@@ -73,6 +73,20 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter(Collision other)
+    {
+        if (!PV.IsMine)
+            return;
+        if (isAlive)
+        {
+            if (other.gameObject.CompareTag("DamageCollider"))
+            {
+                TakeDamage(3);
+                animator.SetTrigger("getHit");
+            }
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
