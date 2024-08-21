@@ -111,11 +111,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            TakeDamage(1);
-            Debug.Log("Boss Health: " + currentHealth);
-        }
+        //if (Input.GetKeyDown(KeyCode.F))
+        //{
+        //    TakeDamage(1);
+        //    Debug.Log("Boss Health: " + currentHealth);
+        //}
         //if (Input.GetKeyDown(KeyCode.M))
         //{
         //    IsCorrect = true;
