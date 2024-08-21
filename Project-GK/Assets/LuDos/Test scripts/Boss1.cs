@@ -1101,6 +1101,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     public void TakeDamage(float amount)
     {
         PV.RPC("TakeDamageRPC", RpcTarget.All, amount);
+        UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
     }
 
     [PunRPC]
