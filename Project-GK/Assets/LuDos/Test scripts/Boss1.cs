@@ -943,8 +943,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(3.0f);
 
-        animator.SetTrigger("BothArmSlam"); // 1.08s
-        //photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
+        //animator.SetTrigger("BothArmSlam"); // 1.08s
+        photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
 
         yield return new WaitForSeconds(1.0f);
 
@@ -1000,6 +1000,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (i != untouchedArea)
                 {
+                    Areas[i].transform.parent.tag = "DamageCollider";
                     Areas[i].tag = "DamageCollider";
                 }
             }
@@ -1011,6 +1012,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (i != untouchedArea)
                 {
+                    Areas[i].transform.parent.tag = "Ground";
                     Areas[i].tag = "Ground";
                 }
             }
