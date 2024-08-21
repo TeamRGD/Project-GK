@@ -943,28 +943,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(3.0f);
 
-        // animator.SetTrigger("BothArmSlam"); // 1.08s
-        photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
+        animator.SetTrigger("BothArmSlam"); // 1.08s
+        //photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
 
         yield return new WaitForSeconds(1.0f);
 
-        for (int i = 0; i < Areas.Count; i++)
-        {
-            if (i != untouchedArea)
-            {
-                Areas[i].tag = "DamageCollider";
-            }
-        }
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 2, untouchedArea); // 코루틴 후 Area 동기화
 
         yield return new WaitForSeconds(0.1f);
 
-        for (int i = 0; i < Areas.Count; i++)
-        {
-            if (i != untouchedArea)
-            {
-                Areas[i].tag = "Ground";
-            }
-        }
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 3, untouchedArea); // 코루틴 후 Area 동기화
 
         yield return new WaitForSeconds(3.0f);
 
@@ -994,7 +982,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
             }
         }
-        if (idx == 1)
+        else if (idx == 1)
         {
             foreach (var entry in originalAreaMaterials)
             {
@@ -1005,6 +993,27 @@ public class Boss1 : MonoBehaviourPunCallbacks
             attackCount++;
 
             isExecutingAreaAttack = false;
+        }
+        else if (idx == 2)
+        {
+            for (int i = 0; i < Areas.Count; i++)
+            {
+                if (i != untouchedArea)
+                {
+                    Areas[i].tag = "DamageCollider";
+                }
+            }
+        }
+
+        else if (idx == 3)
+        {
+            for (int i = 0; i < Areas.Count; i++)
+            {
+                if (i != untouchedArea)
+                {
+                    Areas[i].tag = "Ground";
+                }
+            }
         }
     }
 
