@@ -8,6 +8,7 @@ using Unity.Properties;
 using TMPro;
 using UnityEngine.Animations;
 using System.IO; // Finding Path in Unity Editor
+using UnityEngine.UIElements;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
@@ -110,11 +111,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.F))
-        //{
-        //    TakeDamage(1);
-        //    Debug.Log("Boss Health: " + currentHealth);
-        //}
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            TakeDamage(1);
+            Debug.Log("Boss Health: " + currentHealth);
+        }
         //if (Input.GetKeyDown(KeyCode.M))
         //{
         //    IsCorrect = true;
@@ -942,9 +943,30 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(3.0f);
 
-        animator.SetTrigger("BothArmSlam"); // 1.08s
+        // animator.SetTrigger("BothArmSlam"); // 1.08s
         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
-        yield return new WaitForSeconds(4.0f);
+
+        yield return new WaitForSeconds(1.0f);
+
+        for (int i = 0; i < Areas.Count; i++)
+        {
+            if (i != untouchedArea)
+            {
+                Areas[i].tag = "DamageCollider";
+            }
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        for (int i = 0; i < Areas.Count; i++)
+        {
+            if (i != untouchedArea)
+            {
+                Areas[i].tag = "Ground";
+            }
+        }
+
+        yield return new WaitForSeconds(3.0f);
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
     }
@@ -958,7 +980,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (i != untouchedArea)
                 {
-                    Transform childTransform = Areas[i].transform.GetChild(0);
+                    Transform childTransform = Areas[i].transform;
                     Renderer childRenderer = childTransform.GetComponent<Renderer>();
                     if (childRenderer != null)
                     {
@@ -1221,6 +1243,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     bool DamageAllMap()
     {
         Debug.Log("DamageAllMap"); // 임시완
+        StartCoroutine(MakeDamageCollider(1, 40f, transform.position));
 
         canDisplay = true;
         collisionCount = 0;
