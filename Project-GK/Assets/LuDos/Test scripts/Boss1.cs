@@ -123,6 +123,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         //{
         //    collisionCount++;
         //}
+        UpdateHealth();
     }
 
     IEnumerator ExecuteBehaviorTree()
@@ -1132,5 +1133,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
             UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
         }
+    }
+
+    void UpdateHealth()
+    {
+        PV.RPC("UpdateHealthRPC", RpcTarget.AllBuffered, currentHealth);
+    }
+
+    [PunRPC]
+    void UpdateHealthRPC(float currentHealth_)
+    {
+        currentHealth = currentHealth_;
     }
 }
