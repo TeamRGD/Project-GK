@@ -91,13 +91,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     BTNode pattern2Tree;
     BTNode pattern3Tree;
 
-    PhotonView PV;
-
-    void Awake()
-    {
-        TryGetComponent<PhotonView>(out PV);
-    }
-
     void Start()
     {
         currentHealth = maxHealth;
@@ -106,6 +99,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
+
         // Master(Wi) PC에서만 해당 코루틴이 동작하도록. Master에서 동기화해줌.
         if (PhotonNetwork.IsMasterClient)
         {
@@ -268,8 +262,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         isExecutingPattern = false;
     }
+
     [PunRPC]
-    void SetGroggyRPC()
+    void SetGroggyRPC() // Groggy 동기화를 위한 함수
     {
         isGroggy = true;
 
@@ -283,9 +278,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         UIManager_Ygg.Instance.DisableAttackNode();
     }
 
-    bool SetGroggy()
+    bool SetGroggy() // 동기화를 위한 수정
     {
-        PV.RPC("SetGroggyRPC", RpcTarget.AllBuffered);
+        photonView.RPC("SetGroggyRPC", RpcTarget.AllBuffered);
 
         return true;
     }
@@ -301,7 +296,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         isGroggy = false;
     }
 
-    void Die()
+    [PunRPC]
+    void DieRPC() // [임시완] 죽는 거 보고 싶어서 이렇게 함.ㅎ
     {
         isInvincible = true;
 
@@ -317,40 +313,48 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
+    void Die()
+    {
+        photonView.RPC("DieRPC", RpcTarget.AllBuffered);
+    }
+
     IEnumerator MakeDamageCollider(int idx, float maxLength, Vector3 position)
     {
-        if (idx == 0)
-        {   
-            // PhotonNetwork를 통해 생성
-            currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
-
-            float width = 0.5f;
-            currentDamageCollider.transform.localScale = new Vector3(width, currentDamageCollider.transform.localScale.y, maxLength);
-
-            yield return new WaitForSeconds(0.1f);
-            
-            // PhotonNetwork를 통해 삭제
-            PhotonNetwork.Destroy(currentDamageCollider);
-            currentDamageCollider = null;
-        }
-        else
+        if (PhotonNetwork.IsMasterClient) // Master PC에서만 실행 (생성 및 Transformation은 PhotonTransformView를 통해서 동기화 됨.)
         {
-            // PhotonNetwork를 통해 생성
-            currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
+            if (idx == 0)
+            {   
+                // PhotonNetwork를 통해 생성
+                currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
 
-            currentDamageCollider.transform.localScale = new Vector3(maxLength, currentDamageCollider.transform.localScale.y, maxLength);
+                float width = 0.5f;
+                currentDamageCollider.transform.localScale = new Vector3(width, currentDamageCollider.transform.localScale.y, maxLength);
 
-            yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.1f);
+                
+                // PhotonNetwork를 통해 삭제
+                PhotonNetwork.Destroy(currentDamageCollider);
+                currentDamageCollider = null;
+            }
+            else
+            {
+                // PhotonNetwork를 통해 생성
+                currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
 
-            // PhotonNetwork를 통해 삭제
-            PhotonNetwork.Destroy(currentDamageCollider);
-            currentDamageCollider = null;
+                currentDamageCollider.transform.localScale = new Vector3(maxLength, currentDamageCollider.transform.localScale.y, maxLength);
+
+                yield return new WaitForSeconds(0.1f);
+
+                // PhotonNetwork를 통해 삭제
+                PhotonNetwork.Destroy(currentDamageCollider);
+                currentDamageCollider = null;
+            }
         }
     }
 
     IEnumerator ShowIndicator(int idx, float maxLength, Vector3 position, float duration)
     {
-        if (PhotonNetwork.IsMasterClient) // Master PC에서만 실행
+        if (PhotonNetwork.IsMasterClient) // Master PC에서만 실행 (생성 및 Transformation은 PhotonTransformView를 통해서 동기화 됨.)
         {
             position.y = 0.15f; // 임시완
 
@@ -488,7 +492,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    [PunRPC] // 동기화를 위해 RPC 함수로 작성
+    [PunRPC] // 동기화를 위해 RPC 함수내에 로직 작성
     public void RandomBasicAttackRPC(int attackType)
     {
         if (!isExecutingAttack)
@@ -860,7 +864,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool ReleaseInvincibilityAndGroggy()
     {
-        PV.RPC("ReleaseInvincibilityAndGroggyRPC", RpcTarget.AllBuffered);
+        photonView.RPC("ReleaseInvincibilityAndGroggyRPC", RpcTarget.AllBuffered);
 
         return SetGroggy();
     }
@@ -897,16 +901,15 @@ public class Boss1 : MonoBehaviourPunCallbacks
     bool AttackAreas()
     {
         if (isExecutingAreaAttack) return false;
-
-        StartCoroutine(AttackAreasCoroutine());
+        int untouchedArea = Random.Range(0, 8); // Master가 정해주고 이를 상대에게 동기화 해주기 위해 동기화 함수 밖으로 빼냄. 
+        StartCoroutine(AttackAreasCoroutine(untouchedArea));
         return true;
     }
 
-    IEnumerator AttackAreasCoroutine()
+    IEnumerator AttackAreasCoroutine(int untouchedArea)
     {
         isExecutingAreaAttack = true;
 
-        int untouchedArea = Random.Range(0, 8);
         attackedAreas.Add(untouchedArea);
 
         Vector3 targetPosition = BookCaseCollisions[untouchedArea].transform.position; // Area position (0,0,0)
@@ -919,47 +922,68 @@ public class Boss1 : MonoBehaviourPunCallbacks
             transform.rotation = targetRotation;
         }
 
-        for (int i = 0; i < Areas.Count; i++)
-        {
-            if (i != untouchedArea)
-            {
-                Transform childTransform = Areas[i].transform.GetChild(0);
-                Renderer childRenderer = childTransform.GetComponent<Renderer>();
-                if (childRenderer != null)
-                {
-                    if (!originalAreaMaterials.ContainsKey(childRenderer))
-                    {
-                        originalAreaMaterials.Add(childRenderer, childRenderer.material);
-                    }
-
-                    childRenderer.material = RedMaterial;
-                }
-            }
-        }
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 0, untouchedArea); // 코루틴 전 Area 동기화
 
         yield return new WaitForSeconds(3.0f);
 
         animator.SetTrigger("BothArmSlam"); // 1.08s
         yield return new WaitForSeconds(4.0f);
 
-        foreach (var entry in originalAreaMaterials)
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
+    }
+
+    [PunRPC]
+    void AttackAreasCoroutineRPC(int idx, int untouchedArea)
+    {
+        if (idx == 0)
         {
-            entry.Key.material = entry.Value;
+            for (int i = 0; i < Areas.Count; i++)
+            {
+                if (i != untouchedArea)
+                {
+                    Transform childTransform = Areas[i].transform.GetChild(0);
+                    Renderer childRenderer = childTransform.GetComponent<Renderer>();
+                    if (childRenderer != null)
+                    {
+                        if (!originalAreaMaterials.ContainsKey(childRenderer))
+                        {
+                            originalAreaMaterials.Add(childRenderer, childRenderer.material);
+                        }
+
+                        childRenderer.material = RedMaterial;
+                    }
+                }
+            }
         }
-        originalAreaMaterials.Clear();
+        if (idx == 1)
+        {
+            foreach (var entry in originalAreaMaterials)
+            {
+                entry.Key.material = entry.Value;
+            }
+            originalAreaMaterials.Clear();
 
-        attackCount++;
+            attackCount++;
 
-        isExecutingAreaAttack = false;
+            isExecutingAreaAttack = false;
+        }
+    }
+
+
+
+    [PunRPC]
+    void ActivateCipherDevice2RPC(int Code)
+    {
+        CipherDevice.SetActive(true);
+        Debug.Log("Code: " + Code);
+        UIManager_Ygg.Instance.patternCode = Code;
     }
     bool ActivateCipherDevice2()
     {
         if (canChange2)
         {
-            CipherDevice.SetActive(true);
             Code = ConvertListToInt(attackedAreas);
-            Debug.Log("Code: " + Code);
-            UIManager_Ygg.Instance.patternCode = Code;
+            photonView.RPC("ActivateCipherDevice2RPC",RpcTarget.AllBuffered, Code);
         }
         return true;
     }
@@ -974,13 +998,18 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return int.Parse(sb.ToString());
     }
 
+    [PunRPC]
+    void ChargeAttackRPC()
+    {
+        chargeAttackCoroutine = StartCoroutine(ChargeAttackCoroutine());
+    }
 
     bool ChargeAttack()
     {
         if (canChange2)
         {
             canChange2 = false;
-            chargeAttackCoroutine = StartCoroutine(ChargeAttackCoroutine());
+            photonView.RPC("ChargeAttackRPC", RpcTarget.AllBuffered);
         }
         return true;
     }
@@ -1030,11 +1059,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
         animator.SetTrigger("Roar");
         yield return new WaitForSeconds(4.0f);
     }
+    [PunRPC]
+    void DisplayBookCaseOrderRPC()
+    {
+        UIManager_Ygg.Instance.EnableAttackNode();
+    }
     bool DisplayBookCaseOrder()
     {
         if (canDisplay)
         {
-            UIManager_Ygg.Instance.EnableAttackNode();
+            photonView.RPC("DisplayBookCaseOrderRPC", RpcTarget.AllBuffered);
 
             canDisplay = false;
         }
@@ -1044,16 +1078,23 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (!isExecutingBookAttack)
         {
-            StartCoroutine(LightAndAttackBookCaseCoroutine());
+            selectedBookCaseIndex = Random.Range(0, 7);
+            photonView.RPC("LightAndAttackBookCaseCoroutineRPC", RpcTarget.AllBuffered, selectedBookCaseIndex);
         }
         return isWrongBookCase; // Default false
     }
 
-    IEnumerator LightAndAttackBookCaseCoroutine()
+    [PunRPC]
+    void LightAndAttackBookCaseCoroutineRPC(int selectedBookCaseIndex)
+    {
+        StartCoroutine(LightAndAttackBookCaseCoroutine(selectedBookCaseIndex));
+    }
+
+    IEnumerator LightAndAttackBookCaseCoroutine(int selectedBookCaseIndex)
     {
         isExecutingBookAttack = true;
 
-        selectedBookCaseIndex = Random.Range(0, 7);
+        //selectedBookCaseIndex = Random.Range(0, 7);
 
         // Light ON
         Renderer bookCaseRenderer = BookCaseCollisions[selectedBookCaseIndex].GetComponent<Renderer>();
@@ -1183,7 +1224,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     public void TakeDamage(float amount)
     {
-        PV.RPC("TakeDamageRPC", RpcTarget.All, amount);
+        photonView.RPC("TakeDamageRPC", RpcTarget.All, amount);
         UIManager_Ygg.Instance.ManageHealth(currentHealth, maxHealth);
     }
 
