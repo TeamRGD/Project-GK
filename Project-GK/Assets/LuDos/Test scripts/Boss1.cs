@@ -116,14 +116,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
         //    TakeDamage(1);
         //    Debug.Log("Boss Health: " + currentHealth);
         //}
-        //if (Input.GetKeyDown(KeyCode.M))
-        //{
-        //    IsCorrect = true;
-        //}
-        //if (Input.GetKeyDown(KeyCode.C))
-        //{
-        //    collisionCount++;
-        //}
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            IsCorrect = true;
+        }
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            collisionCount++;
+        }
     }
 
     IEnumerator ExecuteBehaviorTree()
