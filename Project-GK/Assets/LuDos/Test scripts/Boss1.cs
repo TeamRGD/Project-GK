@@ -73,6 +73,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     public GameObject CipherDevice;
     private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
     private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
+    Renderer bookCaseRenderer;
 
     Animator animator;
 
@@ -271,8 +272,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         isGroggy = true;
 
-        //animator.SetTrigger("Groggy");
-        photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Groggy");
+        animator.SetTrigger("Groggy");
 
         StartCoroutine(GroggyTime(10.0f));
 
@@ -310,13 +310,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (currentState.IsName("Groggy"))
         {
-            //animator.SetTrigger("GroggytoDeath");
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "GroggytoDeath");
+            animator.SetTrigger("GroggytoDeath");
         }
         else
         {
-            //animator.SetTrigger("Death");
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Death");
+            animator.SetTrigger("Death");
         }
     }
 
@@ -791,7 +789,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             CipherDevice.SetActive(true);
             UIManager_Ygg.Instance.isCorrectedPrevCode = true;
         }
-        if (idx == 1)
+        else if (idx == 1)
         {
             UIManager_Ygg.Instance.patternCode = Code;
             Debug.Log(Code);
@@ -944,7 +942,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(3.0f);
 
-        //animator.SetTrigger("BothArmSlam"); // 1.08s
+        animator.SetTrigger("BothArmSlam"); // 1.08s
         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
         yield return new WaitForSeconds(4.0f);
 
@@ -1017,18 +1015,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return int.Parse(sb.ToString());
     }
 
-    [PunRPC]
-    void ChargeAttackRPC()
-    {
-        canChange2 = false;
-        chargeAttackCoroutine = StartCoroutine(ChargeAttackCoroutine());
-    }
-
     bool ChargeAttack()
     {
         if (canChange2)
         {
-            photonView.RPC("ChargeAttackRPC", RpcTarget.AllBuffered);
+            canChange2 = false;
+            chargeAttackCoroutine = StartCoroutine(ChargeAttackCoroutine());
         }
         return true;
     }
@@ -1037,13 +1029,19 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(2.0f);
 
-        //animator.SetTrigger("ChargeAndShockWave"); // 10s
-        photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "ChargeAndShockWave");
+        animator.SetTrigger("ChargeAndShockWave"); // 10s
+        //photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "ChargeAndShockWave");
 
         yield return new WaitForSeconds(9.0f);
 
         StartCoroutine(CreateShockwave(10.0f, 0.1f, transform.position, 10.0f));
 
+        photonView.RPC("ChargeAttackCoroutineRPC", RpcTarget.AllBuffered);
+    }
+    
+    [PunRPC]
+    void ChargeAttackCoroutineRPC()
+    {
         attackedAreas.Clear();
         attackCount = 0;
         canChange2 = true;
@@ -1098,39 +1096,22 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (!isExecutingBookAttack)
         {
-            selectedBookCaseIndex = Random.Range(0, 7);
-            photonView.RPC("LightAndAttackBookCaseCoroutineRPC", RpcTarget.AllBuffered, selectedBookCaseIndex);
+            StartCoroutine(LightAndAttackBookCaseCoroutine());
         }
         return isWrongBookCase; // Default false
     }
 
-    [PunRPC]
-    void LightAndAttackBookCaseCoroutineRPC(int selectedBookCaseIndex)
-    {
-        StartCoroutine(LightAndAttackBookCaseCoroutine(selectedBookCaseIndex));
-    }
-
-    IEnumerator LightAndAttackBookCaseCoroutine(int selectedBookCaseIndex)
+    IEnumerator LightAndAttackBookCaseCoroutine()
     {
         isExecutingBookAttack = true;
 
-        //selectedBookCaseIndex = Random.Range(0, 7);
+        selectedBookCaseIndex = Random.Range(0, 7);
 
-        // Light ON
-        Renderer bookCaseRenderer = BookCaseCollisions[selectedBookCaseIndex].GetComponent<Renderer>();
-
-        if (bookCaseRenderer != null)
-        {
-            bookCaseRenderer.material = GreenMaterial;
-        }
+        photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 0, selectedBookCaseIndex);
 
         yield return new WaitForSeconds(5.0f);
 
-        if (bookCaseRenderer != null)
-        {
-            // bookCaseRenderer.material = null;
-            bookCaseRenderer.material = Temporary; // 임시완
-        }
+        photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 1, selectedBookCaseIndex);
 
         //animator.SetTrigger("InvincibletoDash");
         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "InvincibletoDash");
@@ -1164,12 +1145,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
             //animator.SetTrigger("CrashAtBookCase");
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
             yield return new WaitForSeconds(1.0f);
-            UIManager_Ygg.Instance.NodeDeduction();
+            photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 2, selectedBookCaseIndex);
             collisionCount++;
         }
         else
         {
-            UIManager_Ygg.Instance.ResetAttackNode();
+            photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 3, selectedBookCaseIndex);
             //animator.SetTrigger("CrashAtBookCase");
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
             yield return new WaitForSeconds(1.0f);
@@ -1179,6 +1160,37 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return moveBackCoroutine = StartCoroutine(MoveBackToCenter());
 
         yield return new WaitForSeconds(3.0f);
+    }
+
+    [PunRPC]
+    void UpdateUI(int idx, int selectedBookCaseIndex) // UI 동기화를 위한 RPC 함수
+    {
+        if (idx==0)
+        {
+            // Light ON
+            bookCaseRenderer = BookCaseCollisions[selectedBookCaseIndex].GetComponent<Renderer>();
+
+            if (bookCaseRenderer != null)
+            {
+                bookCaseRenderer.material = GreenMaterial;
+            }
+        }
+        else if (idx==1)
+        {
+            if (bookCaseRenderer != null)
+            {
+                // bookCaseRenderer.material = null;
+                bookCaseRenderer.material = Temporary; // 임시완
+            }
+        }
+        else if (idx==2)
+        {
+            UIManager_Ygg.Instance.NodeDeduction();
+        }
+        else if (idx==3)
+        {
+            UIManager_Ygg.Instance.ResetAttackNode();
+        }
     }
 
     IEnumerator MoveBackToCenter()
