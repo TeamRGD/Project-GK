@@ -156,7 +156,7 @@ public class PlayerAttack : MonoBehaviour
         projectile.TryGetComponent<Projectile>(out projScript);
         if (projScript != null)
         {
-            projScript.SetAttackPower((count==5)? 10f : (count < 2) ? 2f : 3f);
+            projScript.SetAttackPower((count==5)? 2 : (count < 2) ? 1f : 1f);
             projScript.SetOwner(PV.ViewID);
         }
 
