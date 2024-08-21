@@ -51,6 +51,14 @@ public class PlayerStateManager : MonoBehaviour
         StartCoroutine(RecoverPower());
     }
 
+    void Update()
+    {
+        if (!isAlive)
+        {
+            SetCanState(false);
+        }
+    }
+
     void OnTriggerEnter(Collider other) // 수정 필요. 콜라이더를 여러 부분에 해뒀기 때문에 중복으로 TakeDamage가 적용됨.
     {
         if (!PV.IsMine)
