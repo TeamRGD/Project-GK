@@ -5,6 +5,7 @@ public class InteractionManager : MonoBehaviour
 {
     PlayerController playerController;
     PhotonView PV;
+    [SerializeField] CameraTrigger cameraTrigger;
     [SerializeField] int isOpen = 0;
 
     private void Start()
@@ -126,9 +127,13 @@ public class InteractionManager : MonoBehaviour
     {
         if (hitInfo.collider.CompareTag("Book2"))
         {
-            Puzzle2Book.ActivateCipher();
-            isOpen = 500;
-            playerController.CursorOn();
+            if (hitInfo.collider.TryGetComponent<Puzzle2Book>(out Puzzle2Book puzzle2Book))
+            {
+                Debug.Log("커서온 및 InteractionManager에서 실행");
+                playerController.CursorOn();
+                StartCoroutine(puzzle2Book.ActivateCipher());  // 코루틴 실행
+                isOpen = 500;
+            }
         }
     }
 
@@ -165,6 +170,12 @@ public class InteractionManager : MonoBehaviour
         else if (index == 500)
         {
             Puzzle2Book.DeactivateCipher();
+            Camera camera = playerController.GetComponentInChildren<Camera>();
+            if (camera != null)
+            {
+                Debug.Log("InteractionManager 끄기");
+                cameraTrigger.InitializeCamera(camera);
+            }
         }
         playerController.CursorOff();
         isOpen = 0;

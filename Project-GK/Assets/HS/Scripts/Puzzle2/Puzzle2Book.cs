@@ -1,5 +1,6 @@
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class Puzzle2Book : MonoBehaviour
@@ -7,7 +8,7 @@ public class Puzzle2Book : MonoBehaviour
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
 
     [SerializeField] GameObject openBook;
-    public static bool isClear = false;
+    [SerializeField] CameraTrigger cameraTrigger;
 
     public static void ActiveUI() // 힌트페이지 열기
     {
@@ -19,9 +20,13 @@ public class Puzzle2Book : MonoBehaviour
         UIManagerInteraction.Instance.PopDownPaper(4);
     }
 
-    public static void ActivateCipher() // 정답 입력 페이지 열기
+    public IEnumerator ActivateCipher() // 정답 입력 페이지 열기
     {
+        Debug.Log("ActivateCipher 실행");
+        cameraTrigger.ActivateCameraMoving();
+        yield return new WaitForSeconds(4f);
         UIManagerInteraction.Instance.ActivateCipher(1);
+        yield return null;
     }
 
     public static void DeactivateCipher()  // 정답 입력 페이지 닫기
