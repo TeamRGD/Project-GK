@@ -9,8 +9,7 @@ public class Puzzle3 : MonoBehaviour
     [SerializeField] Transform cabinetSetParent;   // 서랍들의 부모 오브젝트를 설정하는 Transform 변수
     [SerializeField] Transform answerParent;
 
-    [SerializeField] List<Drawer> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
-    [SerializeField] private DrawerData drawerData;
+    [SerializeField] List<GameObject> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
     private void Start()
     {
         drawerList = new List<Drawer>(cabinetSetParent.GetComponentsInChildren<Drawer>());
@@ -24,12 +23,6 @@ public class Puzzle3 : MonoBehaviour
         {
             drawerList[i].Start();
         }
-        drawerData.stairDrawerList = stairDrawerList;
-    }
-
-    private void OnEnable()
-    {
-        stairDrawerList = drawerData.stairDrawerList;
     }
 
     public void CheckPuzzleComplete()
@@ -69,7 +62,11 @@ public class Puzzle3 : MonoBehaviour
 
         for (int i=0; i< stairDrawerList.Count; i++)
         {
-            stairDrawerList[i].OpenDrawer();
+            if(stairDrawerList[i].TryGetComponent<Drawer>(out Drawer drawer))
+            {
+                drawer.OpenDrawer();
+
+            }
         }
 
         for (int i=0; i<drawerAnswerList.Count; i++)
