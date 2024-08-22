@@ -15,7 +15,7 @@ public class TarzanSwing : MonoBehaviour
         rotateObjectByAngle = GetComponentInParent<RotateObjectByAngle>();
     }
 
-    private void Update()
+    private void Update() // 디버그용 코드
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -31,22 +31,8 @@ public class TarzanSwing : MonoBehaviour
     public IEnumerator MoveLampWithPlayer()
     {
         AttachPlayer();  // 플레이어를 자식 관계로 변경
-
         GoStage();
-
-        // 일정 조건 만족 시까지 실행
-        // while (true)
-        // {
-        //     // 조건에 따라 루프를 종료하거나 동작
-        //     if (/* 특정 조건 */)
-        //     {
-        //         break;
-        //     }
-        //     yield return null;
-        // }
-
         yield return new WaitForSeconds(3.0f);
-
         DetachPlayer();  // 플레이어를 다시 원래 위치로 해제
     }
 

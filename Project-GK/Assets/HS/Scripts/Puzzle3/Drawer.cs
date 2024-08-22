@@ -5,7 +5,17 @@ using UnityEngine;
 public class Drawer : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 2f;
-    [SerializeField] bool isOpen = false;
+    [SerializeField] public bool isOpen = false;
+    Puzzle3 puzzle3Manager;
+
+    public void Start()
+    {
+        puzzle3Manager = FindAnyObjectByType<Puzzle3>();
+        if(puzzle3Manager != null)
+        {
+            Debug.Log("퍼즐3 찾음");
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -17,18 +27,29 @@ public class Drawer : MonoBehaviour
             {
                 if (isOpen)
                 {
-                    transform.Translate(new Vector3(-3, 0, 0), Space.Self);
-                    isOpen = false;
+                    OpenDrawer();
                 }
                 else
                 {
-                    transform.Translate(new Vector3(3, 0, 0), Space.Self);
-                    isOpen = true;
+                    CloseDrawer();
                 }
 
                 // Projectile 오브젝트 삭제
                 Destroy(other.gameObject);
+                puzzle3Manager.CheckPuzzleComplete();
             }
         }
+    }
+
+    public void OpenDrawer()
+    {
+        transform.Translate(new Vector3(-3, 0, 0), Space.Self);
+        isOpen = false;
+    }
+
+    public void CloseDrawer()
+    {
+        transform.Translate(new Vector3(3, 0, 0), Space.Self);
+        isOpen = true;
     }
 }

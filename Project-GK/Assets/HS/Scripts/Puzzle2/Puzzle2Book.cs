@@ -9,6 +9,7 @@ public class Puzzle2Book : MonoBehaviour
 
     [SerializeField] GameObject openBook;
     [SerializeField] CameraTrigger cameraTrigger;
+    [SerializeField] Puzzle2 puzzle2Manager;
 
     public static void ActiveUI() // 힌트페이지 열기
     {
@@ -38,6 +39,7 @@ public class Puzzle2Book : MonoBehaviour
     {
         openBook.SetActive(true);
         gameObject.SetActive(false);
+        puzzle2Manager.OnPuzzleComplete();
     }
 
     void OnTriggerEnter(Collider other)
