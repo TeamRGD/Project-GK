@@ -7,6 +7,7 @@ public class Puzzle1 : MonoBehaviour
     [SerializeField] List<int> targetDirection; // 각 퍼즐 프레임의 목표 회전 각도
     [SerializeField] GameObject clearItem; // 퍼즐 클리어 시 다음 아이템 지급
     [SerializeField] GameObject puzzle2Manager; // 퍼즐2 매니저
+    [SerializeField] GameObject lamp; // 퍼즐2로 넘어가는 램프
 
     // 오브젝트가 회전을 완료했을 때 호출되는 함수
     public void CheckPuzzleCompletion()
@@ -27,7 +28,12 @@ public class Puzzle1 : MonoBehaviour
     void OnPuzzleComplete()
     {
         Debug.Log("모든 오브젝트가 목표 각도에 도달했습니다! 퍼즐 완료!");
-        clearItem.SetActive(true);
+        //clearItem.SetActive(true); // 아이템 있을 때 수정.
+        if(lamp.TryGetComponent<TarzanSwing>(out TarzanSwing tarzanSwing))
+        {
+            tarzanSwing.ComeToPlayer();
+        }
+        
         puzzle2Manager.SetActive(true);
     }
 }

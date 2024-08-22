@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6853593749967793778}
   - component: {fileID: 8232993191023578422}
   m_Layer: 0
-  m_Name: Puzzle2Manager 1
+  m_Name: Puzzle2Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

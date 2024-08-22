@@ -86,12 +86,12 @@ public class TarzanSwing2 : MonoBehaviour
         player.rotation = Quaternion.Euler(0f, 90f, 0f);
     }
 
-    void ComeToPlayer()
+    public void ComeToPlayer()
     {
         rotateObjectByAngle.RotateX(40f);
     }
 
-    void GoStage()
+    public void GoStage()
     {
         rotateObjectByAngle.RotateX(-100f);
     }

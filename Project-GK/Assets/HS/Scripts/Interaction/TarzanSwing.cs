@@ -85,12 +85,12 @@ public class TarzanSwing : MonoBehaviour
         player.rotation = Quaternion.Euler(0f, 90f, 0f);
     }
 
-    void ComeToPlayer()
+    public void ComeToPlayer()
     {
         rotateObjectByAngle.RotateX(40f);
     }
 
-    void GoStage()
+    public void GoStage()
     {
         rotateObjectByAngle.RotateX(-100f);
     }
@@ -99,7 +99,8 @@ public class TarzanSwing : MonoBehaviour
     {
         if(other.CompareTag("PlayerWi"))
         {
-            player = other.transform;
+            player = other.transform.root;
+
         }
     }
 }
