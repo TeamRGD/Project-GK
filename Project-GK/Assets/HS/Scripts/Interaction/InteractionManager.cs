@@ -12,6 +12,7 @@ public class InteractionManager : MonoBehaviour
     {
         TryGetComponent<PhotonView>(out PV);
         playerController = GetComponentInChildren<PlayerController>();
+        cameraTrigger = FindAnyObjectByType<CameraTrigger>();
     }
 
     private void Update()
