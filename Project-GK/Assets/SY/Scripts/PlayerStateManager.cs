@@ -124,10 +124,10 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnDeath()
     {
+        SetCanState(false);
         animator.SetBool("onDeath", true);
         animator.SetBool("groggy", true);
         StartCoroutine(GroggyAnimTime(0.2f));
-        SetCanState(false);
     }
 
     IEnumerator GroggyAnimTime(float time)
