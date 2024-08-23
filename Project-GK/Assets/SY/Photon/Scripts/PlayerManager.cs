@@ -8,7 +8,7 @@ using System.Numerics;
 public class PlayerManager : MonoBehaviour
 {
     PhotonView PV;
-    private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(37, 24, -17);
+    private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(13, 1, -1);
     private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(13, 1, 1);
 
 
