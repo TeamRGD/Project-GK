@@ -10,6 +10,7 @@ public class Puzzle3 : MonoBehaviour
     [SerializeField] Transform answerParent;
 
     [SerializeField] List<GameObject> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
+    public bool isClear; // 스테이지 클리어 시 true
     private void Start()
     {
         drawerList = new List<Drawer>(cabinetSetParent.GetComponentsInChildren<Drawer>());
@@ -44,11 +45,11 @@ public class Puzzle3 : MonoBehaviour
         }
 
         // 모든 조건이 충족되면 퍼즐 완료
-        StartCoroutine(OnPuzzleComplete());
+        isClear = true;
     }
 
     // 퍼즐 완성 시 실행할 함수
-    IEnumerator OnPuzzleComplete()
+    public IEnumerator OnPuzzleComplete()
     {
         Debug.Log("Puzzle3 Complete!");
         // 퍼즐 완료 시 추가적인 동작을 여기에 추가
@@ -65,7 +66,6 @@ public class Puzzle3 : MonoBehaviour
             if(stairDrawerList[i].TryGetComponent<Drawer>(out Drawer drawer))
             {
                 drawer.OpenDrawer();
-
             }
         }
 

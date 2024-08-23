@@ -130,10 +130,19 @@ public class InteractionManager : MonoBehaviour
         {
             if (hitInfo.collider.TryGetComponent<Puzzle2Book>(out Puzzle2Book puzzle2Book))
             {
-                Debug.Log("커서온 및 InteractionManager에서 실행");
                 playerController.CursorOn();
                 StartCoroutine(puzzle2Book.ActivateCipher());  // 코루틴 실행
                 isOpen = 500;
+            }
+        }
+
+        if (hitInfo.collider.CompareTag("Puzzle3Cipher"))
+        {
+            if (hitInfo.collider.TryGetComponent<Puzzle3Cipher>(out Puzzle3Cipher puzzle3Cipher))
+            {
+                playerController.CursorOn();
+                StartCoroutine(puzzle3Cipher.ActivateCipher());  // 코루틴 실행
+                isOpen = 501;
             }
         }
     }
@@ -174,10 +183,19 @@ public class InteractionManager : MonoBehaviour
             Camera camera = playerController.GetComponentInChildren<Camera>();
             if (camera != null)
             {
-                Debug.Log("InteractionManager 끄기");
                 cameraTrigger.InitializeCamera(camera);
             }
         }
+        else if (index == 501)
+        {
+            Puzzle3Cipher.DeactivateCipher();
+            Camera camera = playerController.GetComponentInChildren<Camera>();
+            if (camera != null)
+            {
+                cameraTrigger.InitializeCamera(camera);
+            }
+        }
+
         playerController.CursorOff();
         isOpen = 0;
     }

@@ -16,14 +16,12 @@ public class Puzzle2BookPage2 : MonoBehaviour
         UIManagerInteraction.Instance.PopDownPaper(2);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
-            PlayerController playerController;
-            PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
+            PlayerController playerController = other.GetComponentInParent<PlayerController>();
+            PhotonView PV = playerController.GetComponentInParent<PhotonView>();
             if (!players.ContainsKey(playerController))
             {
                 players.Add(playerController, PV);
@@ -41,8 +39,8 @@ public class Puzzle2BookPage2 : MonoBehaviour
         {
             PlayerController playerController;
             PhotonView PV;
-            other.TryGetComponent<PlayerController>(out playerController);
-            playerController.TryGetComponent<PhotonView>(out PV);
+            playerController = other.GetComponentInParent<PlayerController>();
+            PV = playerController.GetComponentInParent<PhotonView>();
             if (players.ContainsKey(playerController))
             {
                 if (PV.IsMine) // Exit한 플레이어에게만.

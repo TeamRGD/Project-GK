@@ -29,7 +29,7 @@ TagManager:
   - ShockDamageCollider
   - Rope2
   - ZiplineItem
-  - Drawer
+  - Puzzle3Cipher
   layers:
   - Default
   - TransparentFX

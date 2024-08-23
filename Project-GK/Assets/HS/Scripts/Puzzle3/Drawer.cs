@@ -19,13 +19,20 @@ public class Drawer : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (!this.enabled) // 스크립트가 활성화 상태인지 확인
+        {
+            return; // 스크립트가 비활성화 상태면 충돌을 무시
+        }
+
         if (other.gameObject.CompareTag("Projectile_Zard") ||
             other.gameObject.CompareTag("Projectile_Wi"))
         {
             Collider ownCollider;
             if (TryGetComponent<Collider>(out ownCollider))
             {
-                if (isOpen)
+                Debug.Log($"This object's Collider: {ownCollider}, IsTrigger: {ownCollider.isTrigger}");
+                Debug.Log($"Other Collider Info: {other}");
+                if (!isOpen)
                 {
                     OpenDrawer();
                 }
@@ -43,13 +50,13 @@ public class Drawer : MonoBehaviour
 
     public void OpenDrawer()
     {
-        transform.Translate(new Vector3(-3, 0, 0), Space.Self);
-        isOpen = false;
+        transform.Translate(new Vector3(3, 0, 0), Space.Self);
+        isOpen = true;
     }
 
     public void CloseDrawer()
     {
-        transform.Translate(new Vector3(3, 0, 0), Space.Self);
-        isOpen = true;
+        transform.Translate(new Vector3(-3, 0, 0), Space.Self);
+        isOpen = false;
     }
 }

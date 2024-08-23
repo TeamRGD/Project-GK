@@ -24,6 +24,7 @@ public class UIManagerInteraction : MonoBehaviour
 
     // CuriHuS
     Puzzle2Book puzzle2Book;
+    Puzzle3Cipher puzzle3Cipher;
 
     // for Singleton Pattern (Don't know meaning but everyone uses this)
     void Awake()
@@ -47,6 +48,7 @@ public class UIManagerInteraction : MonoBehaviour
         }
         uiManager = FindObjectOfType<UIManager_Player>();
         puzzle2Book = FindAnyObjectByType<Puzzle2Book>();
+        puzzle3Cipher = FindAnyObjectByType<Puzzle3Cipher>();
     }
 
     void Update()
@@ -123,7 +125,7 @@ public class UIManagerInteraction : MonoBehaviour
             }
             else
             {
-                // 퍼즐 3
+                puzzle3Cipher.DisableAndEnable();
             }
         }
         else

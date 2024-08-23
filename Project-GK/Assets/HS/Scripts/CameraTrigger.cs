@@ -6,8 +6,8 @@ public class CameraTrigger : MonoBehaviour
     Camera playerCamera;
     PlayerController playerController;
 
-    [SerializeField] float transitionSpeed = 4f;
-    [SerializeField] float waitTime = 2f;
+    [SerializeField] public float transitionSpeed = 3f;
+    [SerializeField] public float waitTime = 0.3f;
 
     // 목표 위치는 월드 좌표로 설정
     [SerializeField] Vector3 targetWorldPosition = new Vector3(90, 22, -17);

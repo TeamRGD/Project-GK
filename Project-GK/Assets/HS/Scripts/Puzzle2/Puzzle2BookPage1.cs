@@ -16,7 +16,7 @@ public class Puzzle2BookPage1 : MonoBehaviour
         UIManagerInteraction.Instance.PopDownPaper(3);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
