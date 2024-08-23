@@ -6299,6 +6299,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 2
     Name: isRescuing
+  - Type: 4
+    SynchronizeType: 2
+    Name: onDeath
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0

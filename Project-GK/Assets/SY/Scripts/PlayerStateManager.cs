@@ -24,6 +24,7 @@ public class PlayerStateManager : MonoBehaviour
 
     // Bool 값들
     public bool isAlive = true;
+    bool isGroggy = false;
 
     // Component
     PhotonView PV;
@@ -68,8 +69,11 @@ public class PlayerStateManager : MonoBehaviour
             if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
             {
                 TakeDamage(3);
-                animator.SetBool("getHit", true);
-                StartCoroutine(GetHitAnimTime(0.2f));
+                if (isAlive)
+                {
+                    animator.SetBool("getHit", true);
+                    StartCoroutine(GetHitAnimTime(0.2f));
+                }
             }
             else if (other.gameObject.CompareTag("ShockDamageCollider"))
             {
@@ -91,8 +95,11 @@ public class PlayerStateManager : MonoBehaviour
             if (other.gameObject.CompareTag("DamageCollider"))
             {
                 TakeDamage(3);
-                animator.SetBool("getHit", true);
-                StartCoroutine(GetHitAnimTime(0.2f));
+                if (isAlive)
+                {
+                    animator.SetBool("getHit", true);
+                    StartCoroutine(GetHitAnimTime(0.2f));
+                }
             }
         }
     }
@@ -117,10 +124,10 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnDeath()
     {
-        animator.SetBool("isGroggy", true);
+        animator.SetBool("onDeath", true);
         animator.SetBool("groggy", true);
-        SetCanState(false);
         StartCoroutine(GroggyAnimTime(0.2f));
+        SetCanState(false);
     }
 
     IEnumerator GroggyAnimTime(float time)
@@ -137,11 +144,12 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnGroggy()
     {
+        isGroggy = true;
+        SetCanState(false);
         animator.SetBool("isGroggy", true);
         animator.SetBool("groggy", true);
         StartCoroutine(GroggyAnimTime(0.2f));
-        SetCanState(false);
-        StartCoroutine(GroggyTime(2));
+        StartCoroutine(GroggyTime(2.1f));
     }
 
     IEnumerator GroggyTime(float time)
@@ -154,6 +162,7 @@ public class PlayerStateManager : MonoBehaviour
     void OnNotGroggy()
     {
         SetCanState(true);
+        isGroggy = false;
     }
 
     void SetCanState(bool value)
@@ -171,7 +180,7 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void ReviveRPC()
     {
-        animator.SetBool("isGroggy", false);
+        animator.SetBool("onDeath", false);
         isAlive = true;
         currentHealth = maxHealth;
         SetCanState(true);
@@ -244,5 +253,10 @@ public class PlayerStateManager : MonoBehaviour
     public int GetUltimatePower() // 동기화 안됨.
     {
         return currentUltimatePower;
+    }
+
+    public bool GetIsGroggy()
+    {
+        return isGroggy;
     }
 }

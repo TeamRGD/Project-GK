@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     PhotonView PV;
     PlayerAttack playerAttack;
     PlayerToolManager playerToolManager;
+    PlayerStateManager playerState;
 
     // Bool variable
     bool grounded;
@@ -55,6 +56,7 @@ public class PlayerController : MonoBehaviour
         TryGetComponent<PlayerAttack>(out playerAttack);
         TryGetComponent<PlayerToolManager>(out playerToolManager);
         TryGetComponent<Animator>(out animator);
+        TryGetComponent<PlayerStateManager>(out playerState);
     }
 
     void Start()
@@ -81,6 +83,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (!playerState.GetIsAlive())
+            aim.position = new Vector3(aim.position.x, -1000f, aim.position.z);
         // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
         if (!PV.IsMine || !canControl)
             return;
