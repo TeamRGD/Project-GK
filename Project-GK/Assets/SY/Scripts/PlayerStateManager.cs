@@ -68,7 +68,8 @@ public class PlayerStateManager : MonoBehaviour
             if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
             {
                 TakeDamage(3);
-                animator.SetTrigger("getHit");
+                animator.SetBool("getHit", true);
+                StartCoroutine(GetHitAnimTime(0.2f));
             }
             else if (other.gameObject.CompareTag("ShockDamageCollider"))
             {
@@ -90,9 +91,16 @@ public class PlayerStateManager : MonoBehaviour
             if (other.gameObject.CompareTag("DamageCollider"))
             {
                 TakeDamage(3);
-                animator.SetTrigger("getHit");
+                animator.SetBool("getHit", true);
+                StartCoroutine(GetHitAnimTime(0.2f));
             }
         }
+    }
+
+    IEnumerator GetHitAnimTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.SetBool("getHit", false);
     }
 
     public void TakeDamage(int damage)

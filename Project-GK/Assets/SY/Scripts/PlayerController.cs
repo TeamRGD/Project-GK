@@ -297,6 +297,7 @@ public class PlayerController : MonoBehaviour
         if (!PV.IsMine)
             return;
         canMove = value;
+        ResetRigidBody();
     }
 
     void Save()
