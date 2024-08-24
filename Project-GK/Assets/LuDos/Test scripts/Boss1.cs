@@ -207,6 +207,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (!isGroggy)
                 {
+                    isAggroFixed = false;
                     RandomBasicAttack();
                 }
             }
@@ -1093,12 +1094,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (canChange2)
         {
-            SelectAggroTarget();
-            if (cipherDeviceScript != null)
-            {
-                cipherDeviceScript.AggroTarget = aggroTarget;
-            }
-
             Code = ConvertListToInt(attackedAreas);
             photonView.RPC("ActivateCipherDevice2RPC",RpcTarget.AllBuffered, Code);
         }
