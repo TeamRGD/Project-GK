@@ -407,6 +407,6 @@ public class PlayerController : MonoBehaviour
 
     public void IAmAggro(string aggroing)
     {
-        UIManager_Player.Instance.AggroAim(aggroing.Substring(0, aggroing.IndexOf("(")));
+        UIManager_Player.Instance.AggroAim(aggroing);
     }
 }

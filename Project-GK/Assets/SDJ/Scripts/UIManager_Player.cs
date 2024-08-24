@@ -140,11 +140,11 @@ public class UIManager_Player : MonoBehaviour
 
     public void AggroAim(string who)
     {
-        if (who == "Wi")
+        if (who == "PlayerWi")
         {
             //Color aimColor = new Color(54f, 194f, 82f);
             aim.color = Color.green;
-        } else if (who == "Zard")
+        } else if (who == "PlayerZard")
         {
             //Color aimColor = new Color(217f, 85f, 59f);
             aim.color = Color.red;

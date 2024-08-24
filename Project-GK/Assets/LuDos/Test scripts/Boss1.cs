@@ -283,7 +283,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < PlayerList.Count; i++)
         {
-            PlayerList[i].GetComponent<PlayerController>().IAmAggro("PROJECTGK()");
+            PlayerList[i].GetComponent<PlayerController>().IAmAggro("PlayerNone");
         }
         //UIManager_Ygg.Instance.AggroEnd();
         UIManager_Ygg.Instance.DisableHint();
@@ -820,7 +820,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             isAggroFixed = true;
             for (int i = 0; i < PlayerList.Count; i++)
             {
-                PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.name);
+                PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.tag);
             }
         }
         return true;
