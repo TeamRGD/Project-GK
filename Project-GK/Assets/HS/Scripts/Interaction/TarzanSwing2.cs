@@ -100,7 +100,7 @@ public class TarzanSwing2 : MonoBehaviour
     {
         if(other.CompareTag("PlayerWi"))
         {
-            player = other.transform;
+            player = other.transform.root;
         }
     }
 }
