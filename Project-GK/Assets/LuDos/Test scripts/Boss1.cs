@@ -275,7 +275,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         StartCoroutine(GroggyTime(10.0f));
 
-        aggroTarget.GetComponent<PlayerController>().IAmAggro("PROJECTGK()");
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            PlayerList[i].GetComponent<PlayerController>().IAmAggro("PROJECTGK()");
+        }
         //UIManager_Ygg.Instance.AggroEnd();
         UIManager_Ygg.Instance.DisableHint();
         UIManager_Ygg.Instance.DisableAreaNum();
@@ -808,7 +811,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
     void FixAggroTargetAndDisplayRPC()
     {
         isAggroFixed = true;
-        aggroTarget.GetComponent<PlayerController>().IAmAggro(aggroTarget.name);
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.name);
+        }
     }
 
     bool FixAggroTargetAndDisplay()

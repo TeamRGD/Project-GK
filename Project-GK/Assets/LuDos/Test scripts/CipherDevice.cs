@@ -16,7 +16,7 @@ public class CipherDevice : MonoBehaviour
             PhotonView PV = players[playerController];
             if (PV != null && PV.IsMine)
             {
-                if (Input.GetKeyDown(KeyCode.T))
+                if (Input.GetKeyDown(KeyCode.Y))
                 {
                     playerController.CursorOn();
                     UIManager_Ygg.Instance.ActivateCipher();
@@ -40,7 +40,7 @@ public class CipherDevice : MonoBehaviour
             {
                 playerController.CursorOff();
                 UIManager_Ygg.Instance.DeactivateCipher();
-                UIManager_Player.Instance.DisableInteractionNotice();
+                UIManager_Player.Instance.DisableInteractionNoticeForCipher();
             }
         }
     }
@@ -58,7 +58,7 @@ public class CipherDevice : MonoBehaviour
                 players.Add(playerController, PV);
                 if (PV.IsMine) // Enter한 플레이어에게만.
                 {
-                    UIManager_Player.Instance.EnableInteractionNotice();
+                    UIManager_Player.Instance.EnableInteractionNoticeForCipher(false);
                 }
             }
         }
@@ -76,7 +76,7 @@ public class CipherDevice : MonoBehaviour
             {
                 if (PV.IsMine) // Exit한 플레이어에게만.
                 {
-                    UIManager_Player.Instance.DisableInteractionNotice();
+                    UIManager_Player.Instance.DisableInteractionNoticeForCipher();
                 }
                 players.Remove(playerController);
             }

@@ -24,6 +24,7 @@ public class UIManager_Player : MonoBehaviour
 
     // for Interaction
     public GameObject interactionNotice;
+    public GameObject interactionNoticeForCipher;
 
     // SFX
 
@@ -102,6 +103,26 @@ public class UIManager_Player : MonoBehaviour
     {
         interactionNotice.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
         interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
+    }
+
+    public void EnableInteractionNoticeForCipher(bool down)
+    {
+        if (down)
+        {
+            interactionNoticeForCipher.GetComponent<CanvasGroup>().DOFade(1, 0.1f).SetEase(Ease.OutSine);
+            interactionNoticeForCipher.GetComponent<RectTransform>().DOAnchorPosY(-120f, 0.1f).SetEase(Ease.OutBack);
+        }
+        else
+        {
+            interactionNoticeForCipher.GetComponent<CanvasGroup>().DOFade(1, 0.1f).SetEase(Ease.OutSine);
+            interactionNoticeForCipher.GetComponent<RectTransform>().DOAnchorPosY(-70f, 0.1f).SetEase(Ease.OutBack);
+        }
+    }
+
+    public void DisableInteractionNoticeForCipher()
+    {
+        interactionNoticeForCipher.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
+        interactionNoticeForCipher.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
     }
 
 
