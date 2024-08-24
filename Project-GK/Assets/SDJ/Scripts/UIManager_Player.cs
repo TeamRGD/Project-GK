@@ -17,6 +17,9 @@ public class UIManager_Player : MonoBehaviour
     public Image aim;
     public AudioSource inventorySFX;
 
+    //for aggro
+    public Image saveCirc;
+
     // for Interaction
     public GameObject interactionNotice;
 
@@ -99,4 +102,9 @@ public class UIManager_Player : MonoBehaviour
         interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
     }
 
+
+    public void SaveUI(float currentSaveTime)
+    {
+        saveCirc.fillAmount = currentSaveTime / 6f;
+    }
 }

@@ -375,11 +375,12 @@ public class PlayerController : MonoBehaviour
                 currentSaveTime = 0.0f;
                 yield break;
             }
-
+            UIManager_Player.Instance.SaveUI(currentSaveTime);
             yield return null;
         }
         SetCanState(true);
         currentSaveTime = 0.0f;
+        UIManager_Player.Instance.SaveUI(currentSaveTime);
     }
 
     public void SetIsSaving(bool value)
