@@ -340,6 +340,7 @@ public class PlayerController : MonoBehaviour
         {
             if (isSaving)
             {
+                UIManager_Player.Instance.SaveUI(0);
                 SetCanState(true);
                 currentSaveTime = 0.0f;
             }
@@ -373,6 +374,7 @@ public class PlayerController : MonoBehaviour
                 SetCanState(true);
                 targetPlayerState.Revive();
                 currentSaveTime = 0.0f;
+                UIManager_Player.Instance.SaveUI(0);
                 yield break;
             }
             UIManager_Player.Instance.SaveUI(currentSaveTime);
@@ -380,7 +382,6 @@ public class PlayerController : MonoBehaviour
         }
         SetCanState(true);
         currentSaveTime = 0.0f;
-        UIManager_Player.Instance.SaveUI(currentSaveTime);
     }
 
     public void SetIsSaving(bool value)

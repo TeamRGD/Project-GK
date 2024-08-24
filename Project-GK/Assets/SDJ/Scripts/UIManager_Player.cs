@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +20,7 @@ public class UIManager_Player : MonoBehaviour
 
     //for aggro
     public Image saveCirc;
+    public TMP_Text saveText;
 
     // for Interaction
     public GameObject interactionNotice;
@@ -105,6 +107,13 @@ public class UIManager_Player : MonoBehaviour
 
     public void SaveUI(float currentSaveTime)
     {
+        if (currentSaveTime == 0)
+        {
+            saveText.gameObject.SetActive(false);
+        } else
+        {
+            saveText.gameObject.SetActive(true);
+        }
         saveCirc.fillAmount = currentSaveTime / 6f;
     }
 }
