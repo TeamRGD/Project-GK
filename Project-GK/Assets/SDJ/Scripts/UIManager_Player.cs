@@ -116,4 +116,20 @@ public class UIManager_Player : MonoBehaviour
         }
         saveCirc.fillAmount = currentSaveTime / 6f;
     }
+
+    public void AggroAim(string who)
+    {
+        if (who == "Wi")
+        {
+            //Color aimColor = new Color(54f, 194f, 82f);
+            aim.color = Color.green;
+        } else if (who == "Zard")
+        {
+            //Color aimColor = new Color(217f, 85f, 59f);
+            aim.color = Color.red;
+        } else
+        {
+            aim.color = Color.white;
+        }
+    }
 }

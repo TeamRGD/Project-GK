@@ -111,11 +111,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.F))
-        //{
-        //    TakeDamage(1);
-        //    Debug.Log("Boss Health: " + currentHealth);
-        //}
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            TakeDamage(1);
+            Debug.Log("Boss Health: " + currentHealth);
+        }
         if (Input.GetKeyDown(KeyCode.M))
         {
             IsCorrect = true;
@@ -275,7 +275,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         StartCoroutine(GroggyTime(10.0f));
 
-        UIManager_Ygg.Instance.AggroEnd();
+        aggroTarget.GetComponent<PlayerController>().IAmAggro("PROJECTGK()");
+        //UIManager_Ygg.Instance.AggroEnd();
         UIManager_Ygg.Instance.DisableHint();
         UIManager_Ygg.Instance.DisableAreaNum();
         UIManager_Ygg.Instance.DisableAttackNode();
@@ -807,7 +808,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     void FixAggroTargetAndDisplayRPC()
     {
         isAggroFixed = true;
-        UIManager_Ygg.Instance.WhosAggro();
+        aggroTarget.GetComponent<PlayerController>().IAmAggro(aggroTarget.name);
     }
 
     bool FixAggroTargetAndDisplay()

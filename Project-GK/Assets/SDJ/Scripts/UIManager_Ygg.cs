@@ -63,54 +63,54 @@ public class UIManager_Ygg : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            ActivateCipher();
-        }
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            DeactivateCipher();
-        }
+        //if (Input.GetKeyDown(KeyCode.V))
+        //{
+        //    ActivateCipher();
+        //}
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    DeactivateCipher();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            EnableAreaNum();
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            DisableAreaNum();
-        }
+        //if (Input.GetKeyDown(KeyCode.N))
+        //{
+        //    EnableAreaNum();
+        //}
+        //if (Input.GetKeyDown(KeyCode.M))
+        //{
+        //    DisableAreaNum();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            EnableAttackNode();
-        }
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            DisableAttackNode();
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            NodeDeduction();
-        }
+        //if (Input.GetKeyDown(KeyCode.Z))
+        //{
+        //    EnableAttackNode();
+        //}
+        //if (Input.GetKeyDown(KeyCode.X))
+        //{
+        //    DisableAttackNode();
+        //}
+        //if (Input.GetKeyDown(KeyCode.C))
+        //{
+        //    NodeDeduction();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            EnableHint();
-            }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            DisableHint();
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    EnableHint();
+        //    }
+        //if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    DisableHint();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            WhosAggro();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            AggroEnd();
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    WhosAggro();
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha4))
+        //{
+        //    AggroEnd();
+        //}
     }
 
     //------------DEFAULT--------------

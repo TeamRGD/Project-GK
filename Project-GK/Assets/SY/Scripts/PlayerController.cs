@@ -404,4 +404,9 @@ public class PlayerController : MonoBehaviour
             sprintSpeed = value;
         }
     }
+
+    public void IAmAggro(string aggroing)
+    {
+        UIManager_Player.Instance.AggroAim(aggroing.Substring(0, aggroing.IndexOf("(")));
+    }
 }
