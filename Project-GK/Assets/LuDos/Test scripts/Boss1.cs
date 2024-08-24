@@ -52,6 +52,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool isInvincible = false;
     bool isAggroFixed = false;
+    bool isSorted = false;
 
     [HideInInspector]
     public int Code;
@@ -813,11 +814,18 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return true;
     }
 
+    [PunRPC]
+    void PlayerListSortRPC()
+    {
+        PlayerList.Sort((player1, player2) => player1.name.CompareTo(player2.name));
+    }
+
     bool FixAggroTargetAndDisplay()
     {
         if (canChange1)
         {
             isAggroFixed = true;
+            photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
             for (int i = 0; i < PlayerList.Count; i++)
             {
                 PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.tag);
