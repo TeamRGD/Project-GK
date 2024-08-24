@@ -8,7 +8,6 @@ public class TarzanSwing2 : MonoBehaviour
     [SerializeField] Transform objectToAttach;    // 플레이어가 붙을 오브젝트 트랜스폼
 
     private Transform originalParent;   // 플레이어의 원래 부모 트랜스폼 (부모가 없을 경우 null일 수 있음)
-
     RotateObjectByAngle rotateObjectByAngle;
 
     private void Start()
@@ -16,38 +15,11 @@ public class TarzanSwing2 : MonoBehaviour
         rotateObjectByAngle = GetComponentInParent<RotateObjectByAngle>();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ComeToPlayer();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            GoStage();
-        }
-    }
-
     public IEnumerator MoveLampWithPlayer()
     {
         AttachPlayer();  // 플레이어를 자식 관계로 변경
-
         GoStage();
-
-        // 일정 조건 만족 시까지 실행
-        // while (true)
-        // {
-        //     // 조건에 따라 루프를 종료하거나 동작
-        //     if (/* 특정 조건 */)
-        //     {
-        //         break;
-        //     }
-        //     yield return null;
-        // }
-
         yield return new WaitForSeconds(3.0f);
-
         DetachPlayer();  // 플레이어를 다시 원래 위치로 해제
     }
 
@@ -80,8 +52,6 @@ public class TarzanSwing2 : MonoBehaviour
         {
             player.parent = null; // 부모가 없었으면 null로 설정 (최상위 객체로 돌아감)
         }
-
-
         player.position = new Vector3(133f, 25f, -17f);
         player.rotation = Quaternion.Euler(0f, 90f, 0f);
     }

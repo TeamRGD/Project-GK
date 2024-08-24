@@ -15,19 +15,6 @@ public class TarzanSwing : MonoBehaviour
         rotateObjectByAngle = GetComponentInParent<RotateObjectByAngle>();
     }
 
-    private void Update() // 디버그용 코드
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ComeToPlayer();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            GoStage();
-        }
-    }
-
     public IEnumerator MoveLampWithPlayer()
     {
         AttachPlayer();  // 플레이어를 자식 관계로 변경
@@ -65,8 +52,6 @@ public class TarzanSwing : MonoBehaviour
         {
             player.parent = null; // 부모가 없었으면 null로 설정 (최상위 객체로 돌아감)
         }
-
-
         player.position = new Vector3(77f, 25f, -17f); 
         player.rotation = Quaternion.Euler(0f, 90f, 0f);
     }
@@ -86,7 +71,6 @@ public class TarzanSwing : MonoBehaviour
         if(other.CompareTag("PlayerWi"))
         {
             player = other.transform.root;
-
         }
     }
 }

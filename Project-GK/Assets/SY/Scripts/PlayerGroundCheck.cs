@@ -13,37 +13,37 @@ public class PlayerGroundCheck : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Ground"))
+        if (other.CompareTag("Ground") || other.CompareTag("Others"))
         playerController.SetGroundedState(true);
     }
 
     void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("Ground"))
+        if(other.CompareTag("Ground") || other.CompareTag("Others"))
         playerController.SetGroundedState(false);
     }
 
     void OnTriggerStay(Collider other)
     {
-        if(other.CompareTag("Ground"))
+        if(other.CompareTag("Ground") || other.CompareTag("Others"))
         playerController.SetGroundedState(true);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Ground"))
+        if(collision.gameObject.CompareTag("Ground") || collision.collider.CompareTag("Others"))
         playerController.SetGroundedState(true);
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Ground"))
+        if(collision.gameObject.CompareTag("Ground") || collision.collider.CompareTag("Others"))
         playerController.SetGroundedState(false);
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Ground"))
+        if(collision.gameObject.CompareTag("Ground") || collision.collider.CompareTag("Others"))
         playerController.SetGroundedState(true);
     }
 }

@@ -48,6 +48,7 @@ public class Puzzle3Cipher : MonoBehaviour
                 if (PV.IsMine) // Enter한 플레이어에게만.
                 {
                     UIManager_Player.Instance.EnableInteractionNotice();
+                    UIManager_Player.Instance.EnableInteractionNoticeForCipher(false);
                 }
             }
         }
