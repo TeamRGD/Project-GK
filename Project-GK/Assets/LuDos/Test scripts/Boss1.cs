@@ -7,7 +7,7 @@ using Photon.Realtime;
 using Unity.Properties;
 using TMPro;
 using UnityEngine.Animations;
-using System.IO; // Finding Path in Unity Editor
+using System.IO;
 using UnityEngine.UIElements;
 
 public class Boss1 : MonoBehaviourPunCallbacks
@@ -81,6 +81,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     [HideInInspector]
     public List<GameObject> PlayerList;
     GameObject aggroTarget;
+    CipherDevice cipherDeviceScript;
     Rigidbody rb;
     public GameObject ShockWave;
 
@@ -106,6 +107,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             StartCoroutine(ExecuteBehaviorTree());
+        }
+
+        GameObject cipherDeviceObject = GameObject.FindWithTag("CipherDevice");
+
+        if (cipherDeviceObject != null)
+        {
+            cipherDeviceScript = cipherDeviceObject.GetComponent<CipherDevice>();
         }
     }
 
@@ -140,7 +148,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
                         {
                             StopRandomBasicAttack();
                         }
-                        //animator.SetTrigger("Exit");
                         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(ArmSlamAndGetEnergy());
@@ -160,7 +167,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
                         {
                             StopRandomBasicAttack();
                         }
-                        //animator.SetTrigger("Exit");
                         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(JumpToCenter());
@@ -179,7 +185,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
                         {
                             StopRandomBasicAttack();
                         }
-                        //animator.SetTrigger("Exit");
                         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(Roar());
@@ -845,6 +850,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (canChange1)
         {
+            SelectAggroTarget();
+            if (cipherDeviceScript != null)
+            {
+                cipherDeviceScript.AggroTarget = aggroTarget;
+            }
+
             photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.AllBuffered, 0, 0);
 
             for (int i = 0; i < 4; i++)
@@ -1082,6 +1093,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (canChange2)
         {
+            SelectAggroTarget();
+            if (cipherDeviceScript != null)
+            {
+                cipherDeviceScript.AggroTarget = aggroTarget;
+            }
+
             Code = ConvertListToInt(attackedAreas);
             photonView.RPC("ActivateCipherDevice2RPC",RpcTarget.AllBuffered, Code);
         }

@@ -7,6 +7,7 @@ public class CipherDevice : MonoBehaviour
 {
     public float interactionRange = 5f; // 상호작용 범위
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
+    [HideInInspector] public GameObject AggroTarget;
 
     void Update()
     {
@@ -47,7 +48,7 @@ public class CipherDevice : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject == AggroTarget)
         {
             PlayerController playerController;
             PhotonView PV;
@@ -66,7 +67,7 @@ public class CipherDevice : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject == AggroTarget)
         {
             PlayerController playerController;
             PhotonView PV;
