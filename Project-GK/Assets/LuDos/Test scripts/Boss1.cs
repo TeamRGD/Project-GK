@@ -813,21 +813,15 @@ public class Boss1 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    [PunRPC]
-    void FixAggroTargetAndDisplayRPC()
-    {
-        isAggroFixed = true;
-        for (int i = 0; i < PlayerList.Count; i++)
-        {
-            PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.name);
-        }
-    }
-
     bool FixAggroTargetAndDisplay()
     {
         if (canChange1)
         {
-            photonView.RPC("FixAggroTargetAndDisplayRPC", RpcTarget.AllBuffered);
+            isAggroFixed = true;
+            for (int i = 0; i < PlayerList.Count; i++)
+            {
+                PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.name);
+            }
         }
         return true;
     }

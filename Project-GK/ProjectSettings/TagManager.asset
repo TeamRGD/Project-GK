@@ -30,6 +30,7 @@ TagManager:
   - Rope2
   - ZiplineItem
   - Puzzle3Cipher
+  - CipherDevice
   layers:
   - Default
   - TransparentFX
