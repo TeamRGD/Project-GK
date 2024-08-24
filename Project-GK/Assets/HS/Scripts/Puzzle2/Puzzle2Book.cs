@@ -75,6 +75,7 @@ public class Puzzle2Book : MonoBehaviour
                 if (PV.IsMine) // Exit한 플레이어에게만.
                 {
                     UIManager_Player.Instance.DisableInteractionNotice();
+                    UIManager_Player.Instance.DisableInteractionNoticeForCipher();
                 }
                 players.Remove(playerController);
             }
