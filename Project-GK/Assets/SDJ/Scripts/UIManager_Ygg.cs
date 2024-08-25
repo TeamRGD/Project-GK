@@ -142,12 +142,10 @@ public class UIManager_Ygg : MonoBehaviour
 
     public void ActivateCipher()
     {
-        ResetCipher();
-
-        inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
-        inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
-        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(120f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
-        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
+        inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f).OnStart(() => inputCipherDisplay.gameObject.SetActive(true)); 
+        inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
+        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(120f, 0.15f).SetEase(Ease.OutSine).OnStart(() => ResetCipher());
+        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine);
 
         uiManager.interactionNotice.gameObject.SetActive(false);
     }
@@ -178,6 +176,7 @@ public class UIManager_Ygg : MonoBehaviour
         {
             inputField.DOColor(Color.red, 0.2f).SetEase(Ease.OutSine);
             inputField.text = "WRONG";
+            StartCoroutine(ResetCipherWithDelay());
             PV.RPC("UpdateValue", RpcTarget.AllBuffered, false); // 상대 PC에 Correct value 동기화
         }
     }

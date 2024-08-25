@@ -81,7 +81,6 @@ public class UIManagerInteraction : MonoBehaviour
     //------------Cipher--------------
     public void ActivateCipher(int index = 1)
     {
-        ResetCipher();
         if (index == 1)
         {
             enterButton1.SetActive(true);
@@ -92,10 +91,10 @@ public class UIManagerInteraction : MonoBehaviour
             enterButton2.SetActive(true);
         }
 
-        inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
-        inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f);
-        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(120f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherDisplay.gameObject.SetActive(true));
-        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine).OnStart(() => inputCipherEnter.gameObject.SetActive(true));
+        inputCipherDisplay.GetComponent<CanvasGroup>().DOFade(1, 0.15f).OnStart(() => inputCipherDisplay.gameObject.SetActive(true)); ;
+        inputCipherEnter.GetComponent<CanvasGroup>().DOFade(1, 0.15f).OnStart(() => inputCipherEnter.gameObject.SetActive(true)); ;
+        inputCipherDisplay.GetComponent<RectTransform>().DOAnchorPosY(120f, 0.15f).SetEase(Ease.OutSine).OnStart(() => ResetCipher());
+        inputCipherEnter.GetComponent<RectTransform>().DOAnchorPosY(-200f, 0.15f).SetEase(Ease.OutSine);
 
         uiManager.interactionNotice.gameObject.SetActive(false);
     }
@@ -134,7 +133,7 @@ public class UIManagerInteraction : MonoBehaviour
             
             inputField.DOColor(Color.red, 0.2f).SetEase(Ease.OutSine);
             inputField.text = "WRONG";
-
+            StartCoroutine(ResetCipherWithDelay());
         }
     }
 
