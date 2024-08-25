@@ -16,17 +16,27 @@ public class PushableObject : MonoBehaviour
 
     private void Update()
     {
-        if (isPlayerNearby && Input.GetKeyDown(KeyCode.T))
+        // 플레이어가 가까이 있는지 확인
+        if (isPlayerNearby)
         {
-            if (isPushing)
+            // T키가 눌려 있는 동안만 isPushing을 true로 유지
+            if (Input.GetKey(KeyCode.T))
             {
-                StopPushing();
+                if (!isPushing) // 처음 눌렸을 때만 StartPushing 호출
+                {
+                    StartPushing();
+                }
             }
             else
             {
-                StartPushing();
+                if (isPushing) // T키를 떼면 StopPushing 호출
+                {
+                    StopPushing();
+                }
             }
         }
+
+        // isPushing이 true일 때 오브젝트를 이동
         if (isPushing)
         {
             MoveObjectWithPlayer();
@@ -35,7 +45,6 @@ public class PushableObject : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
             PlayerController playerController;
@@ -66,10 +75,10 @@ public class PushableObject : MonoBehaviour
             {
                 if (PV.IsMine) // Exit한 플레이어에게만.
                 {
-                   StopPushing();
+                    StopPushing();
 
-                   isPlayerNearby = false;
-                   playerTransform = null;
+                    isPlayerNearby = false;
+                    playerTransform = null;
                 }
                 players.Remove(playerController);
             }
