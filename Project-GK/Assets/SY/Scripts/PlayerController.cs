@@ -314,6 +314,7 @@ public class PlayerController : MonoBehaviour
         {
             if (!isSaving)
             {
+                Physics.queriesHitTriggers = true;
                 Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 반경 2.0f 플레이어 주위에 있는 콜라이더 검색
                 foreach (var hitCollider in hitColliders)
                 {
