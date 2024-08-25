@@ -116,6 +116,7 @@ MonoBehaviour:
   - SelectAggroTargetRPC
   - SetIsAggroFixed
   - IAmAggroRPC
+  - PlayerAggroUI
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

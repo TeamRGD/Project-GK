@@ -29,7 +29,6 @@ public class CipherDevice : MonoBehaviour
                 }
             }
         }
-        Debug.Log(AggroTarget);
     }
 
     public void InActive()

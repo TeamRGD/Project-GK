@@ -48,6 +48,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     bool canChange2 = true;
     bool canDisplay = true;
     bool isSorted = false;
+    bool isStarted = false;
     [HideInInspector]
     public bool IsCorrect = false;
 
@@ -79,9 +80,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     Animator animator;
 
-    [HideInInspector]
     public List<GameObject> PlayerList;
-    GameObject aggroTarget;
+    public GameObject aggroTarget;
+
+    [HideInInspector]
     CipherDevice cipherDeviceScript;
     Rigidbody rb;
     public GameObject ShockWave;
@@ -104,16 +106,17 @@ public class Boss1 : MonoBehaviourPunCallbacks
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
-
-        // Master(Wi) PC에서만 해당 코루틴이 동작하도록. Master에서 동기화해줌.
-        if (PhotonNetwork.IsMasterClient)
-        {
-            StartCoroutine(ExecuteBehaviorTree());
-        }
     }
 
     void Update()
     {
+        // Master(Wi) PC에서만 해당 코루틴이 동작하도록. Master에서 동기화해줌.
+        if (PhotonNetwork.IsMasterClient && PlayerList.Count==2 && !isStarted) // [임시완]
+        {
+            isStarted = true;
+            photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
+            StartCoroutine(ExecuteBehaviorTree());
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
             TakeDamage(1);
@@ -486,7 +489,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void SelectAggroTargetRPC()
+    void SelectAggroTargetRPC(int idx)
     {
         if (isAggroFixed)
         {
@@ -494,26 +497,20 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         else
         {
-            int idx = Random.Range(0, PlayerList.Count);
             aggroTarget = PlayerList[idx];
         }
     }
 
     void SelectAggroTarget()
     {
-        photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered);
+        int idx = Random.Range(0, PlayerList.Count);
+        photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered, idx);
     }
 
     bool RandomBasicAttack() // RandomBasicAttack 동기화
     {
         if (!isExecutingAttack)
         {
-            if (PlayerList.Count == 2 && !isSorted)
-            {
-                photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
-                isSorted = true;
-            }
-
             int attackType = UnityEngine.Random.Range(1, 6);
 
             switch (attackType)
@@ -541,7 +538,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void PlayerListSortRPC()
     {
+        StartCoroutine(WaitTime()); // [임시완]
         PlayerList.Sort((player1, player2) => player1.name.CompareTo(player2.name));
+    }
+    IEnumerator WaitTime()
+    {
+        yield return new WaitForSeconds(1.0f);
     }
 
 
@@ -773,6 +775,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (canChange1)
         {
             // Select 4 BookCase
+            bookcaseIndices.Clear();
             while (bookcaseIndices.Count < 4)
             {
                 int index = Random.Range(0, 7);
@@ -791,6 +794,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 int childCount = BookCases[bookcaseIndex].transform.childCount;
                 numberOfBooks.Add(Random.Range(1, childCount + 1));
             }
+
+            numBooksOfBookCase.Clear();
 
             for (int i = 0; i < bookcaseIndices.Count; i++)
             {
@@ -835,10 +840,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void ActivateCipherDevice1RPC(int idx, int Code)
     {
-        for (int i = 0; i < PlayerList.Count; i++)
-        {
-            PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.tag);
-        }
         if (idx == 0)
         {
             if (cipherDeviceScript != null)
@@ -861,7 +862,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             SelectAggroTarget();
             photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.AllBuffered, 0, 0);
-
+            
+            Code = 0;
             for (int i = 0; i < 4; i++)
             {
                 Code += (bookcaseIndices[i] + 1) * numBooksOfBookCase[i];
@@ -871,7 +873,17 @@ public class Boss1 : MonoBehaviourPunCallbacks
             photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.AllBuffered, 1, Code);
             canChange1 = false;
         }
+        photonView.RPC("PlayerAggroUI",RpcTarget.AllBuffered);
         return true;
+    }
+
+    [PunRPC]
+    void PlayerAggroUI()
+    {
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.tag);
+        }
     }
 
     bool IsCipherCorrect()
