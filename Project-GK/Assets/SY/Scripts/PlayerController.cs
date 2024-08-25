@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask interactableLayer;
     InteractionManager interactionManager; // 상호작용 스크립트 총괄
     Outline currentOutline; // 현재 활성화된 Outline 참조
-    float interactionRange = 10f; // 상호작용 가능한 거리
+    [SerializeField] float interactionRange = 8f; // 상호작용 가능한 거리
     bool canInteract = false;
     RaycastHit hitInfo;
 
