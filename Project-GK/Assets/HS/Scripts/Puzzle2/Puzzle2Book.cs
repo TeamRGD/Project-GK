@@ -30,6 +30,8 @@ public class Puzzle2Book : MonoBehaviour
         cameraTrigger.ActivateCameraMoving();
         yield return new WaitForSeconds(4f);
         UIManagerInteraction.Instance.ActivateCipher(1);
+        UIManager_Player.Instance.DisableInteractionNotice();
+        UIManager_Player.Instance.DisableInteractionNoticeForCipher();
         yield return null;
     }
 

@@ -11,10 +11,6 @@ public class Drawer : MonoBehaviour
     public void Start()
     {
         puzzle3Manager = FindAnyObjectByType<Puzzle3>();
-        if(puzzle3Manager != null)
-        {
-            Debug.Log("퍼즐3 찾음");
-        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -30,8 +26,6 @@ public class Drawer : MonoBehaviour
             Collider ownCollider;
             if (TryGetComponent<Collider>(out ownCollider))
             {
-                Debug.Log($"This object's Collider: {ownCollider}, IsTrigger: {ownCollider.isTrigger}");
-                Debug.Log($"Other Collider Info: {other}");
                 if (!isOpen)
                 {
                     OpenDrawer();
@@ -43,7 +37,6 @@ public class Drawer : MonoBehaviour
 
                 // Projectile 오브젝트 삭제
                 Destroy(other.gameObject);
-                puzzle3Manager.CheckPuzzleComplete();
             }
         }
     }
