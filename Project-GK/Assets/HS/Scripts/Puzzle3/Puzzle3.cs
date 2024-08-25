@@ -5,10 +5,17 @@ using UnityEngine;
 public class Puzzle3 : MonoBehaviour
 {
     private List<Drawer> drawerList;  // Drawer 스크립트가 붙어있는 서랍들의 리스트
+    private List<Drawer> drawerAnswerList;
     [SerializeField] Transform cabinetSetParent;   // 서랍들의 부모 오브젝트를 설정하는 Transform 변수
     [SerializeField] Transform answerParent;
 
     [SerializeField] List<GameObject> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
+
+    private void Awake()
+    {
+        drawerList = new List<Drawer>(cabinetSetParent.GetComponentsInChildren<Drawer>());
+        drawerAnswerList = new List<Drawer>(answerParent.GetComponentsInChildren<Drawer>());
+    }
 
     // 퍼즐 완성 시 실행할 함수
     public IEnumerator OnPuzzleComplete()
@@ -19,6 +26,12 @@ public class Puzzle3 : MonoBehaviour
         {
             drawerList[i].CloseDrawer();
         }
+
+        for (int i=0; i<drawerAnswerList.Count; i++)
+        {
+            drawerAnswerList[i].CloseDrawer();
+        }
+
         // 닫히는 사운드 추가
         yield return new WaitForSeconds(0.3f);
         // 열리는 사운드 추가
@@ -28,11 +41,18 @@ public class Puzzle3 : MonoBehaviour
             if(stairDrawerList[i].TryGetComponent<Drawer>(out Drawer drawer))
             {
                 drawer.OpenDrawer();
+                drawer.OpenDrawer();
+                drawer.enabled = false;
             }
         }
         for (int i = 0; i < drawerList.Count; i++)
         {
             drawerList[i].enabled = false;
+        }
+
+        for (int i = 0; i < drawerAnswerList.Count; i++)
+        {
+            drawerAnswerList[i].enabled = false;
         }
 
         yield return null;

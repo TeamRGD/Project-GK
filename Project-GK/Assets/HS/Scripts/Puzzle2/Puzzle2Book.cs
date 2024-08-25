@@ -26,16 +26,17 @@ public class Puzzle2Book : MonoBehaviour
 
     public IEnumerator ActivateCipher() // 정답 입력 페이지 열기
     {
-        Debug.Log("ActivateCipher 실행");
         cameraTrigger.ActivateCameraMoving();
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(cameraTrigger.transitionSpeed + cameraTrigger.waitTime);
+
         UIManagerInteraction.Instance.ActivateCipher(1);
         UIManager_Player.Instance.DisableInteractionNotice();
         UIManager_Player.Instance.DisableInteractionNoticeForCipher();
+
         yield return null;
     }
 
-    public static void DeactivateCipher()  // 정답 입력 페이지 닫기
+    public void DeactivateCipher()  // 정답 입력 페이지 닫기
     {
         UIManagerInteraction.Instance.DeactivateCipher();
     }
@@ -51,8 +52,6 @@ public class Puzzle2Book : MonoBehaviour
     {
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
-            PlayerController playerController;
-            PhotonView PV;
             playerController = other.GetComponentInParent<PlayerController>();
             PV = playerController.GetComponentInParent<PhotonView>();
             if (!players.ContainsKey(playerController))
@@ -71,8 +70,6 @@ public class Puzzle2Book : MonoBehaviour
     {
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
         {
-            PlayerController playerController;
-            PhotonView PV;
             playerController = other.GetComponentInParent<PlayerController>();
             PV = playerController.GetComponentInParent<PhotonView>();
             if (players.ContainsKey(playerController))

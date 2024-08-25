@@ -7,6 +7,9 @@ public class Puzzle3Cipher : MonoBehaviour
 {
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
 
+    PlayerController playerController;
+    PhotonView PV;
+
     [SerializeField] CameraTrigger cameraTrigger;
     [SerializeField] Puzzle3 puzzle3Manager;
 
@@ -19,7 +22,7 @@ public class Puzzle3Cipher : MonoBehaviour
         yield return null;
     }
 
-    public static void DeactivateCipher()  // 정답 입력 페이지 닫기
+    public void DeactivateCipher()  // 정답 입력 페이지 닫기
     {
         UIManagerInteraction.Instance.DeactivateCipher();
     }

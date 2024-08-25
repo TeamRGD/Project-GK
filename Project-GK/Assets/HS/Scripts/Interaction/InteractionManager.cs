@@ -5,6 +5,9 @@ public class InteractionManager : MonoBehaviour
 {
     PlayerController playerController;
     PhotonView PV;
+    Puzzle2Book puzzle2Book;
+    Puzzle3Cipher puzzle3Cipher;
+
     [SerializeField] CameraTrigger cameraTrigger;
     [SerializeField] int isOpen = 0;
 
@@ -13,6 +16,8 @@ public class InteractionManager : MonoBehaviour
         TryGetComponent<PhotonView>(out PV);
         playerController = GetComponentInChildren<PlayerController>();
         cameraTrigger = FindAnyObjectByType<CameraTrigger>();
+        puzzle2Book = FindAnyObjectByType<Puzzle2Book>();
+        puzzle3Cipher = FindAnyObjectByType<Puzzle3Cipher>();
     }
 
     private void Update()
@@ -131,6 +136,8 @@ public class InteractionManager : MonoBehaviour
             if (hitInfo.collider.TryGetComponent<Puzzle2Book>(out Puzzle2Book puzzle2Book))
             {
                 playerController.CursorOn();
+                playerController.SetCanMove(false);
+
                 StartCoroutine(puzzle2Book.ActivateCipher());  // 코루틴 실행
                 isOpen = 500;
             }
@@ -141,6 +148,8 @@ public class InteractionManager : MonoBehaviour
             if (hitInfo.collider.TryGetComponent<Puzzle3Cipher>(out Puzzle3Cipher puzzle3Cipher))
             {
                 playerController.CursorOn();
+                playerController.SetCanMove(false);
+
                 StartCoroutine(puzzle3Cipher.ActivateCipher());  // 코루틴 실행
                 isOpen = 501;
             }
@@ -179,7 +188,7 @@ public class InteractionManager : MonoBehaviour
         }
         else if (index == 500)
         {
-            Puzzle2Book.DeactivateCipher();
+            puzzle2Book.DeactivateCipher();
             Camera camera = playerController.GetComponentInChildren<Camera>();
             if (camera != null)
             {
@@ -188,7 +197,7 @@ public class InteractionManager : MonoBehaviour
         }
         else if (index == 501)
         {
-            Puzzle3Cipher.DeactivateCipher();
+            puzzle3Cipher.DeactivateCipher();
             Camera camera = playerController.GetComponentInChildren<Camera>();
             if (camera != null)
             {
@@ -197,6 +206,8 @@ public class InteractionManager : MonoBehaviour
         }
 
         playerController.CursorOff();
+        playerController.SetCanMove(true);
+
         isOpen = 0;
     }
 }
