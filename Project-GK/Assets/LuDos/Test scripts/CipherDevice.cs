@@ -48,7 +48,7 @@ public class CipherDevice : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject == AggroTarget)
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject != AggroTarget)
         {
             PlayerController playerController;
             PhotonView PV;
@@ -67,7 +67,7 @@ public class CipherDevice : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject == AggroTarget)
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject != AggroTarget)
         {
             PlayerController playerController;
             PhotonView PV;
