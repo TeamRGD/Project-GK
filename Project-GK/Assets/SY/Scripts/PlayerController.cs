@@ -246,6 +246,7 @@ public class PlayerController : MonoBehaviour
 
     void CheckForInteractable(Ray ray)
     {
+        Physics.queriesHitTriggers = false;
         if (Physics.Raycast(ray, out hitInfo, interactionRange, interactableLayer))
         {
             // 이전에 활성화된 Outline이 있다면 비활성화

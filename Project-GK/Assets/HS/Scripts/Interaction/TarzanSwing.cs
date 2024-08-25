@@ -58,12 +58,12 @@ public class TarzanSwing : MonoBehaviour
 
     public void ComeToPlayer()
     {
-        rotateObjectByAngle.RotateX(40f);
+        rotateObjectByAngle.RotateX(45f);
     }
 
     public void GoStage()
     {
-        rotateObjectByAngle.RotateX(-100f);
+        rotateObjectByAngle.RotateX(-105f);
     }
 
     private void OnTriggerEnter(Collider other)
