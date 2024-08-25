@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
+using System.Collections;
 
 public class UIManagerInteraction : MonoBehaviour
 {
@@ -80,6 +81,7 @@ public class UIManagerInteraction : MonoBehaviour
     //------------Cipher--------------
     public void ActivateCipher(int index = 1)
     {
+        ResetCipher();
         if (index == 1)
         {
             enterButton1.SetActive(true);
@@ -117,7 +119,6 @@ public class UIManagerInteraction : MonoBehaviour
     {
         if (inputField.text == code.ToString())
         {
-            Debug.Log("That's Right!");
             inputField.DOColor(Color.green, 0.2f).SetEase(Ease.OutSine);
             if (enterButton1.activeSelf)
             {
@@ -130,15 +131,24 @@ public class UIManagerInteraction : MonoBehaviour
         }
         else
         {
-            Debug.Log("Nope");
+            
             inputField.DOColor(Color.red, 0.2f).SetEase(Ease.OutSine);
-            inputField.DOColor(Color.white, 0.2f).SetEase(Ease.OutSine).SetDelay(0.2f);
+            inputField.text = "WRONG";
+
         }
+    }
+
+    public IEnumerator ResetCipherWithDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        ResetCipher();
+        yield return null;
     }
 
     public void ResetCipher()
     {
         inputField.text = "";
+        inputField.color = Color.white;
     }
 
     //------------Paper--------------
