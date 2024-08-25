@@ -33,7 +33,8 @@ public class Puzzle1 : MonoBehaviour
         {
             tarzanSwing.ComeToPlayer();
         }
-        
+
+        gameObject.SetActive(false);
         puzzle2Manager.SetActive(true);
     }
 }

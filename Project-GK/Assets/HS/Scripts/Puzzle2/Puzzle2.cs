@@ -16,6 +16,7 @@ public class Puzzle2 : MonoBehaviour
         {
             tarzanSwing2.ComeToPlayer();
         }
+        gameObject.SetActive(false);
         puzzle3Manager.SetActive(true);
     }
 }
