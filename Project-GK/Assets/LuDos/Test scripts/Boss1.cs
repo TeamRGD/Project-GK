@@ -47,12 +47,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
     bool canChange1 = true;
     bool canChange2 = true;
     bool canDisplay = true;
+    bool isSorted = false;
     [HideInInspector]
     public bool IsCorrect = false;
 
     bool isInvincible = false;
     bool isAggroFixed = false;
-    bool isSorted = false;
 
     [HideInInspector]
     public int Code;
@@ -100,6 +100,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        cipherDeviceScript = CipherDevice.GetComponent<CipherDevice>();
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
@@ -108,13 +109,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             StartCoroutine(ExecuteBehaviorTree());
-        }
-
-        GameObject cipherDeviceObject = GameObject.FindWithTag("CipherDevice");
-
-        if (cipherDeviceObject != null)
-        {
-            cipherDeviceScript = cipherDeviceObject.GetComponent<CipherDevice>();
         }
     }
 
@@ -208,12 +202,18 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (!isGroggy)
                 {
-                    isAggroFixed = false;
+                    photonView.RPC("SetIsAggroFixed", RpcTarget.AllBuffered);
                     RandomBasicAttack();
                 }
             }
             yield return null;
         }
+    }
+
+    [PunRPC]
+    void SetIsAggroFixed()
+    {
+        isAggroFixed = false;
     }
 
     BTNode CreatePattern1Tree()
@@ -440,16 +440,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-    void StopRandomBasicAttack() // StopRandomBasicAttack 동기화
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            photonView.RPC("StopRandomBasicAttackRPC", RpcTarget.AllBuffered);
-        }
-    }
-
-    [PunRPC] // 동기화를 위해 RPC 함수로 작성
-    void StopRandomBasicAttackRPC()
+    void StopRandomBasicAttack()
     {
         if (randomBasicAttackCoroutine != null)
         {
@@ -482,6 +473,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
+
     void LookAtTarget(Vector3 targetDirection)
     {
         targetDirection.y = 0;
@@ -493,7 +485,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-    void SelectAggroTarget()
+    [PunRPC]
+    void SelectAggroTargetRPC()
     {
         if (isAggroFixed)
         {
@@ -506,21 +499,23 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-    bool RandomBasicAttack() // RandomBasicAttack 동기화
+    void SelectAggroTarget()
     {
-        if (PhotonNetwork.IsMasterClient && !isExecutingAttack)
-        {
-            int attackType = UnityEngine.Random.Range(1, 6);
-            photonView.RPC("RandomBasicAttackRPC", RpcTarget.All, attackType);
-        }
-        return true;
+        photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered);
     }
 
-    [PunRPC] // 동기화를 위해 RPC 함수내에 로직 작성
-    public void RandomBasicAttackRPC(int attackType)
+    bool RandomBasicAttack() // RandomBasicAttack 동기화
     {
         if (!isExecutingAttack)
         {
+            if (PlayerList.Count == 2 && !isSorted)
+            {
+                photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
+                isSorted = true;
+            }
+
+            int attackType = UnityEngine.Random.Range(1, 6);
+
             switch (attackType)
             {
                 case 1:
@@ -540,7 +535,15 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     break;
             }
         }
+        return true;
     }
+
+    [PunRPC]
+    void PlayerListSortRPC()
+    {
+        PlayerList.Sort((player1, player2) => player1.name.CompareTo(player2.name));
+    }
+
 
     IEnumerator LandAttackCoroutine()
     {
@@ -815,21 +818,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void PlayerListSortRPC()
+    void FixAggroTargetAndDisplayRPC()
     {
-        PlayerList.Sort((player1, player2) => player1.name.CompareTo(player2.name));
+        isAggroFixed = true;
     }
 
     bool FixAggroTargetAndDisplay()
     {
         if (canChange1)
         {
-            isAggroFixed = true;
-            photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
-            for (int i = 0; i < PlayerList.Count; i++)
-            {
-                PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.tag);
-            }
+            photonView.RPC("FixAggroTargetAndDisplayRPC", RpcTarget.AllBuffered);
         }
         return true;
     }
@@ -837,8 +835,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void ActivateCipherDevice1RPC(int idx, int Code)
     {
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            PlayerList[i].GetComponent<PlayerController>().IAmAggro(aggroTarget.tag);
+        }
         if (idx == 0)
         {
+            if (cipherDeviceScript != null)
+            {
+                cipherDeviceScript.AggroTarget = aggroTarget;
+            }
             CipherDevice.SetActive(true);
             UIManager_Ygg.Instance.isCorrectedPrevCode = true;
         }
@@ -854,11 +860,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (canChange1)
         {
             SelectAggroTarget();
-            if (cipherDeviceScript != null)
-            {
-                cipherDeviceScript.AggroTarget = aggroTarget;
-            }
-
             photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.AllBuffered, 0, 0);
 
             for (int i = 0; i < 4; i++)
@@ -898,14 +899,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         originalMaterials.Clear();
 
-        canChange1 = true;
-        IsCorrect = false;
-        successCount++;
         UIManager_Ygg.Instance.AggroEnd();
     }
 
     bool ResetBookLightsAndAggro()
     {
+        canChange1 = true;
+        IsCorrect = false;
+        successCount++;
         photonView.RPC("ResetBookLightsAndAggroRPC", RpcTarget.AllBuffered);
 
         return true;
@@ -916,6 +917,15 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         isInvincible = false;
 
+        if (CipherDevice != null && CipherDevice.activeSelf)
+        {
+            CipherDevice.GetComponent<CipherDevice>().InActive();
+            CipherDevice.SetActive(false);
+        }
+    }
+
+    bool ReleaseInvincibilityAndGroggy()
+    {
         if (randomBasicAttackCoroutine != null)
         {
             StopRandomBasicAttack();
@@ -928,16 +938,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             StopCoroutine(moveBackCoroutine);
         }
-
-        if (CipherDevice != null && CipherDevice.activeSelf)
-        {
-            CipherDevice.GetComponent<CipherDevice>().InActive();
-            CipherDevice.SetActive(false);
-        }
-    }
-
-    bool ReleaseInvincibilityAndGroggy()
-    {
         photonView.RPC("ReleaseInvincibilityAndGroggyRPC", RpcTarget.AllBuffered);
 
         return SetGroggy();
@@ -1084,7 +1084,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
 
-
     [PunRPC]
     void ActivateCipherDevice2RPC(int Code)
     {
@@ -1092,6 +1091,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         Debug.Log("Code: " + Code);
         UIManager_Ygg.Instance.patternCode = Code;
     }
+
     bool ActivateCipherDevice2()
     {
         if (canChange2)
@@ -1136,15 +1136,15 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         StartCoroutine(CreateShockwave(10.0f, 0.1f, transform.position, 10.0f));
 
+        attackedAreas.Clear();
+        attackCount = 0;
+        canChange2 = true;
         photonView.RPC("ChargeAttackCoroutineRPC", RpcTarget.AllBuffered);
     }
     
     [PunRPC]
     void ChargeAttackCoroutineRPC()
     {
-        attackedAreas.Clear();
-        attackCount = 0;
-        canChange2 = true;
         CipherDevice.SetActive(true);
     }
 
@@ -1184,14 +1184,15 @@ public class Boss1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void DisplayBookCaseOrderRPC()
     {
-        canDisplay = false;
         UIManager_Ygg.Instance.EnableAttackNode();
     }
+    
     bool DisplayBookCaseOrder()
     {
         if (canDisplay)
         {
             photonView.RPC("DisplayBookCaseOrderRPC", RpcTarget.AllBuffered);
+            canDisplay = false;
         }
         return true;
     }

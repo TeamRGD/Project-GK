@@ -29,6 +29,7 @@ public class CipherDevice : MonoBehaviour
                 }
             }
         }
+        Debug.Log(AggroTarget);
     }
 
     public void InActive()
@@ -48,7 +49,7 @@ public class CipherDevice : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject != AggroTarget)
+        if ((other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard")) && !other.CompareTag(AggroTarget.tag))
         {
             PlayerController playerController;
             PhotonView PV;
@@ -67,7 +68,7 @@ public class CipherDevice : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard") && other.gameObject != AggroTarget)
+        if ((other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard")) && !other.CompareTag(AggroTarget.tag))
         {
             PlayerController playerController;
             PhotonView PV;

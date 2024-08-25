@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -241,7 +242,8 @@ public class PlayerController : MonoBehaviour
         aim.position = Vector3.Lerp(aim.position, desiredPosition, smoothTime);
 
         // Interaction
-        CheckForInteractable(ray);
+        if (SceneManager.GetActiveScene().name == "S2_Library_03")
+            CheckForInteractable(ray);
     }
 
     void CheckForInteractable(Ray ray)
@@ -314,7 +316,6 @@ public class PlayerController : MonoBehaviour
         {
             if (!isSaving)
             {
-                Physics.queriesHitTriggers = true;
                 Collider[] hitColliders = Physics.OverlapSphere(transform.position, 2.0f); // 반경 2.0f 플레이어 주위에 있는 콜라이더 검색
                 foreach (var hitCollider in hitColliders)
                 {
@@ -408,6 +409,12 @@ public class PlayerController : MonoBehaviour
     }
 
     public void IAmAggro(string aggroing)
+    {
+        PV.RPC("IAmAggroRPC", RpcTarget.AllBuffered, aggroing);
+    }
+
+    [PunRPC]
+    void IAmAggroRPC(string aggroing)
     {
         UIManager_Player.Instance.AggroAim(aggroing);
     }

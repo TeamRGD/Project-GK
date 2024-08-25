@@ -116,7 +116,6 @@ public class PlayerStateManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
             OnDeath();
         }
         UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
@@ -124,10 +123,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnDeath()
     {
-        SetCanState(false);
-        animator.SetBool("onDeath", true);
-        animator.SetBool("groggy", true);
-        StartCoroutine(GroggyAnimTime(0.2f));
+        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
     }
 
     IEnumerator GroggyAnimTime(float time)
@@ -139,6 +135,10 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void OnDeathRPC()
     {
+        SetCanState(false); // 상대 화면에서도 빠른 동작 멈춤을 위해 동기화 해줌.
+        animator.SetBool("onDeath", true);
+        animator.SetBool("groggy", true);
+        StartCoroutine(GroggyAnimTime(0.2f));
         isAlive = false;
     }
 
