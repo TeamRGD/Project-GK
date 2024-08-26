@@ -127,8 +127,17 @@ public class InteractionManager : MonoBehaviour
                 tarzanSwing2.StartCoroutine("MoveLampWithPlayer");
             }
         }
+        
+        else if (hitInfo.collider.CompareTag("StairButton"))
+        {
+            if (hitInfo.collider.TryGetComponent<Puzzle4Button>(out Puzzle4Button puzzle4Button))
+            {
+                puzzle4Button.UseButton();
+            }
+        }
     }
 
+    // 암호 입력의 경우 Y키 이므로 PlayerController에서 Y키로 받아오는 함수
     public void CheckForTags2(RaycastHit hitInfo)
     {
         if (hitInfo.collider.CompareTag("Book2"))
