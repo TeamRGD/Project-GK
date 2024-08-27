@@ -29,7 +29,8 @@ public class PlayerController : MonoBehaviour
     PlayerStateManager playerState;
 
     // Bool variable
-    bool grounded;
+    [SerializeField] public bool grounded;
+    [SerializeField] public bool isJumping;
     bool canControl = true;
     bool canLook = true;
     bool canMove = true;
@@ -134,11 +135,18 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        if (Input.GetKeyDown(KeyCode.Space) && grounded && !isJumping)
         {
             animator.SetBool("isJumping", true);
             rb.AddForce(transform.up * jumpForce);
+            SetGroundedState(false);
+            SetJumpState(true);
         }
+    }
+
+    public void SetJumpState(bool _isJumping)
+    {
+        isJumping = _isJumping;
     }
 
     public void SetGroundedState(bool _grounded)
