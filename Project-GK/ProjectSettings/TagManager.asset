@@ -31,6 +31,7 @@ TagManager:
   - ZiplineItem
   - Puzzle3Cipher
   - CipherDevice
+  - StairButton
   layers:
   - Default
   - TransparentFX
