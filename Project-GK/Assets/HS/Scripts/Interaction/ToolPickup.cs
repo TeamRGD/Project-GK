@@ -46,11 +46,11 @@ public class ToolPickup : MonoBehaviour
         }
     }
 
-    public void AddToolToPlayer()
+    public void AddToolToPlayer(int idx)
     {
         if (playerToolManager != null)
         {
-            playerToolManager.AddTool(toolPrefab);
+            playerToolManager.AddTool(idx); // 짚라인 idx: 2, 그 후 추가되는 것 idx: 3.
             gameObject.SetActive(false);
         }
     }

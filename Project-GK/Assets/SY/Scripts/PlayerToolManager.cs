@@ -9,7 +9,8 @@ public class PlayerToolManager : MonoBehaviour
     // Component
     PhotonView PV;
     PlayerAttack playerAttack;
-    public List<GameObject> tools = new List<GameObject>();
+    public List<GameObject> entireTools = new List<GameObject>();
+    List<GameObject> tools = new List<GameObject>();
 
     // Information variable
     private int currentToolIndex = 0;
@@ -24,6 +25,8 @@ public class PlayerToolManager : MonoBehaviour
     void Start()
     {
         UpdateToolVisibility();
+        tools.Add(entireTools[0]);
+        tools.Add(entireTools[1]);
     }
 
     void Update()
@@ -86,22 +89,29 @@ public class PlayerToolManager : MonoBehaviour
     }
 
 
-    public void AddTool(GameObject newTool)
+    public void AddTool(int idx)
     {
-        //PV.RPC("AddToolRPC", RpcTarget.AllBuffered, newTool.GetComponent<PhotonView>().ViewID);
-        tools.Add(newTool.gameObject);
-        UpdateToolVisibility();
+        PV.RPC("AddToolRPC", RpcTarget.AllBuffered, idx);
     }
 
     [PunRPC]
-    void AddToolRPC(int newToolViewID)
+    void AddToolRPC(int idx)
     {
-        PhotonView newToolPV = PhotonView.Find(newToolViewID);
-        if (newToolPV != null)
-        {
-            tools.Add(newToolPV.gameObject);
-            UpdateToolVisibility();
-        }
+        tools.Add(entireTools[idx]);
+        UpdateToolVisibility();
+    }
+
+    public void UseTool(int idx)
+    {
+        PV.RPC("UseToolRPC", RpcTarget.AllBuffered, idx);
+    }
+
+    [PunRPC]
+    void UseToolRPC(int idx)
+    {
+        currentToolIndex = 0; // [임시완]
+        tools.RemoveAt(idx);
+        UpdateToolVisibility();
     }
     
 }
