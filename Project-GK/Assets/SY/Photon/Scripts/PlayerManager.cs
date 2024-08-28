@@ -8,9 +8,10 @@ using System.Numerics;
 public class PlayerManager : MonoBehaviour
 {
     PhotonView PV;
-    private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(13, 1, -1);
-    private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(13, 1, 1);
-
+    private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(37, 24, -17);
+    private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(37, 5, 0);
+    private UnityEngine.Quaternion startRotationWi = UnityEngine.Quaternion.Euler(90, 90, 180);  
+    private UnityEngine.Quaternion startRotationZard = UnityEngine.Quaternion.Euler(0, 90, 0); 
 
     void Awake()
     {
@@ -29,11 +30,11 @@ public class PlayerManager : MonoBehaviour
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Wi"), startPositionWi, UnityEngine.Quaternion.identity);
+            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Wi"), startPositionWi, startRotationWi);
         }
         else
         {
-            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Zard"), startPositionZard, UnityEngine.Quaternion.identity);
+            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Zard"), startPositionZard, startRotationZard);
         }
     }
 }
