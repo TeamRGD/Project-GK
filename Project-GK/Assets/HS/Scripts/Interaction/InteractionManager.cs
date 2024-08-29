@@ -48,7 +48,8 @@ public class InteractionManager : MonoBehaviour
         {
             if (hitInfo.collider.TryGetComponent<ToolPickup>(out ToolPickup toolPickup))
             {
-                toolPickup.AddToolToPlayer();
+                toolPickup.AddToolToPlayer(2);
+                UIManager_Player.Instance.DisableInteractionNotice();
             }
         }
 

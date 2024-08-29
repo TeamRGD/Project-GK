@@ -28,7 +28,7 @@ public class Puzzle1 : MonoBehaviour
     void OnPuzzleComplete()
     {
         Debug.Log("모든 오브젝트가 목표 각도에 도달했습니다! 퍼즐 완료!");
-        //clearItem.SetActive(true); // 아이템 있을 때 수정.
+        clearItem.SetActive(true); // 아이템 있을 때 수정.
         if(lamp.TryGetComponent<TarzanSwing>(out TarzanSwing tarzanSwing))
         {
             tarzanSwing.ComeToPlayer();
