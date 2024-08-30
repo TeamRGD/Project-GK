@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 342664590460268915}
   - component: {fileID: 8679354430010093897}
   - component: {fileID: 9197837587381557411}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -843,7 +843,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -869,7 +869,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -897,7 +897,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -1062,6 +1062,7 @@ MonoBehaviour:
   jumpForce: 230
   smoothTime: 0.15
   playerBody: {fileID: 5241704465359754820}
+  playerHead: {fileID: 6497011846251664338}
   distanceFromPlayer: 5
   minDistanceFromPlayer: 3
   collisionMask:
@@ -1184,7 +1185,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -1217,7 +1218,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -1225,6 +1226,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.35184002, y: 0.17698097, z: 0.14158136}
   m_Center: {x: -0.08, y: -0.03, z: -0.04}
+--- !u!4 &6497011846251664338 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1521929512549376637, guid: 169aac16af97f3040a4c04335401252b, type: 3}
+  m_PrefabInstance: {fileID: 5707467063344607663}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9052363205746785434 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5578680853199860427, guid: 169aac16af97f3040a4c04335401252b, type: 3}

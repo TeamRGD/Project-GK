@@ -1062,6 +1062,7 @@ MonoBehaviour:
   jumpForce: 230
   smoothTime: 0.15
   playerBody: {fileID: 5241704465359754820}
+  playerHead: {fileID: 6497011846251664338}
   distanceFromPlayer: 5
   minDistanceFromPlayer: 3
   collisionMask:
@@ -1225,6 +1226,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.35184002, y: 0.17698097, z: 0.14158136}
   m_Center: {x: -0.08, y: -0.03, z: -0.04}
+--- !u!4 &6497011846251664338 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1521929512549376637, guid: 169aac16af97f3040a4c04335401252b, type: 3}
+  m_PrefabInstance: {fileID: 5707467063344607663}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9052363205746785434 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5578680853199860427, guid: 169aac16af97f3040a4c04335401252b, type: 3}

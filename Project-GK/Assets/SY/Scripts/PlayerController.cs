@@ -1,3 +1,4 @@
+using DG.Tweening.Plugins.Options;
 using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
@@ -14,7 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject cameraHolder;
 
     [SerializeField] float mouseSensitivity, sprintSpeed, walkSpeed, jumpForce, smoothTime;
-    [SerializeField] Transform playerBody;
+    [SerializeField] Transform playerBody, playerHead;
     [SerializeField] float distanceFromPlayer, minDistanceFromPlayer;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] Transform aim;
@@ -211,7 +212,7 @@ public class PlayerController : MonoBehaviour
         verticalLookRotation -= verticalRotation;
         verticalLookRotation = Mathf.Clamp(verticalLookRotation, -60f, 60f);
         cameraHolder.transform.localEulerAngles = Vector3.right * verticalLookRotation;
-        Vector3 playerPosition = new Vector3(playerBody.position.x , playerBody.position.y+1, playerBody.position.z);
+        Vector3 playerPosition = playerHead.TransformPoint(new Vector3(-0.5f, 0, 0));
         Vector3 cameraPosition = playerPosition - cameraHolder.transform.forward * distanceFromPlayer;
 
         RaycastHit hit;
@@ -222,17 +223,17 @@ public class PlayerController : MonoBehaviour
             UnityEngine.Debug.DrawLine(playerPosition, hit.point);
             if (hit.collider.CompareTag("Wall")||hit.collider.CompareTag("BookCase")||hit.collider.CompareTag("Ground")) // 벽과 충돌했을 경우
             {
-                cameraHolder.transform.position = hit.point + Vector3.up * 1f;
+                cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, hit.point + Vector3.up, 0.15f);
             }
             else // 벽외의 다른 것들과 충돌했을 경우 Player와 일정 거리 두기 <- 수정이 필요한가? 고민
             {
                 float clampedDistance = Mathf.Clamp(hitDistance, minDistanceFromPlayer, distanceFromPlayer);
-                cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, playerPosition - cameraHolder.transform.forward * clampedDistance + Vector3.up * 1f, 0.03f); // 부드러운 움직임
+                cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, playerPosition - cameraHolder.transform.forward * clampedDistance + Vector3.up, 0.03f); // 부드러운 움직임
             }
         }
         else
         {
-            cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, cameraPosition + Vector3.up * 1f, 0.03f); // 부드러운 움직임
+            cameraHolder.transform.position = Vector3.Lerp(cameraHolder.transform.position, cameraPosition + Vector3.up, 0.03f); // 부드러운 움직임
         }
     }
 

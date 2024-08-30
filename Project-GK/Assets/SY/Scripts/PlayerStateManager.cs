@@ -103,7 +103,7 @@ public class PlayerStateManager : MonoBehaviour
             SetCanState(false);
             animator.SetBool("getHit", true);
             StartCoroutine(GetHitAnimTime(0.2f));
-            StartCoroutine(HitTime(1.0f));
+            StartCoroutine(HitTime(1.2f));
         }
     }
 
