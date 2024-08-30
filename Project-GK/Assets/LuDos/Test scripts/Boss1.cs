@@ -1008,9 +1008,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.1f);
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 3, untouchedArea); // 코루틴 후 Area 동기화
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
 
         yield return new WaitForSeconds(3.0f);
+
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
     }
 
     [PunRPC]
@@ -1050,7 +1051,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             isExecutingAreaAttack = false;
         }
 
-        else if (idx == 2)
+        else if (idx == 2) // 임시완
         {
             for (int i = 0; i < Areas.Count; i++)
             {
