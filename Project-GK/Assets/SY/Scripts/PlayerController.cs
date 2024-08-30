@@ -393,6 +393,17 @@ public class PlayerController : MonoBehaviour
         isSaving = false;
     }
 
+    public void IAmAggro(string aggroing)
+    {
+        PV.RPC("IAmAggroRPC", RpcTarget.AllBuffered, aggroing);
+    }
+
+    [PunRPC]
+    void IAmAggroRPC(string aggroing)
+    {
+        UIManager_Player.Instance.AggroAim(aggroing);
+    }
+
     // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정
     public void SetSpeed(float value)
     {
@@ -407,16 +418,5 @@ public class PlayerController : MonoBehaviour
             walkSpeed = value;
             sprintSpeed = value;
         }
-    }
-
-    public void IAmAggro(string aggroing)
-    {
-        PV.RPC("IAmAggroRPC", RpcTarget.AllBuffered, aggroing);
-    }
-
-    [PunRPC]
-    void IAmAggroRPC(string aggroing)
-    {
-        UIManager_Player.Instance.AggroAim(aggroing);
     }
 }
