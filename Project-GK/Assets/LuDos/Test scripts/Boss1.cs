@@ -21,8 +21,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     int successCount = 0;
     int attackCount = 0;
-    [HideInInspector]
-    public int collisionCount = 0;
+    [HideInInspector] public int collisionCount = 0;
 
     int selectedBookCaseIndex = 0;
     bool hasCollidedWithBookCase = false;
@@ -47,16 +46,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
     bool canChange1 = true;
     bool canChange2 = true;
     bool canDisplay = true;
-    bool isSorted = false;
     bool isStarted = false;
-    [HideInInspector]
-    public bool IsCorrect = false;
-
+    [HideInInspector] public bool IsCorrect = false;
     bool isInvincible = false;
     bool isAggroFixed = false;
 
-    [HideInInspector]
-    public int Code;
+    [HideInInspector] public int Code;
     int playerIdx = 0;
 
     public List<GameObject> AttackIndicators;
@@ -70,21 +65,19 @@ public class Boss1 : MonoBehaviourPunCallbacks
     public List<GameObject> BookCaseCollisions;
     public List<GameObject> Areas;
 
-    public Material GreenMaterial;
-    public Material RedMaterial;
+    public Material GreenMaterial; // 임시완
+    public Material RedMaterial; // 임시완
     public Material Temporary; // 임시완
     public GameObject CipherDevice;
     private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
     private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
     Renderer bookCaseRenderer;
 
-    Animator animator;
-
     public List<GameObject> PlayerList;
     public GameObject aggroTarget;
 
-    [HideInInspector]
     CipherDevice cipherDeviceScript;
+    Animator animator;
     Rigidbody rb;
     public GameObject ShockWave;
 
@@ -111,12 +104,20 @@ public class Boss1 : MonoBehaviourPunCallbacks
     void Update()
     {
         // Master(Wi) PC에서만 해당 코루틴이 동작하도록. Master에서 동기화해줌.
-        if (PhotonNetwork.IsMasterClient && PlayerList.Count==2 && !isStarted) // [임시완]
+        if (PhotonNetwork.IsMasterClient && PlayerList.Count==1 && !isStarted) // 임시완
         {
             isStarted = true;
             photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
             StartCoroutine(ExecuteBehaviorTree());
         }
+
+#if UNITY_EDITOR
+        ForDebug();
+#endif
+    }
+
+    void ForDebug()
+    {
         if (Input.GetKeyDown(KeyCode.F))
         {
             TakeDamage(1);
@@ -170,6 +171,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                         yield return StartCoroutine(JumpToCenter());
                         hasExecutedInitialActions2 = true;
                     }
+
                     StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
@@ -279,7 +281,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void SetGroggyRPC() // Groggy 동기화를 위한 함수
+    void SetGroggyRPC()
     {
         isGroggy = true;
 
@@ -289,13 +291,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             PlayerList[i].GetComponent<PlayerController>().IAmAggro("PlayerNone");
         }
-        //UIManager_Ygg.Instance.AggroEnd();
         UIManager_Ygg.Instance.DisableHint();
         UIManager_Ygg.Instance.DisableAreaNum();
         UIManager_Ygg.Instance.DisableAttackNode();
     }
 
-    bool SetGroggy() // 동기화를 위한 수정
+    bool SetGroggy()
     {
         photonView.RPC("SetGroggyRPC", RpcTarget.AllBuffered);
         if (PhotonNetwork.IsMasterClient)
@@ -309,7 +310,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     IEnumerator GroggyTime(float time)
     {
         yield return new WaitForSeconds(time);
-        //animator.SetTrigger("Idle");
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Idle");
@@ -322,7 +322,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void DieRPC() // [임시완] 죽는 거 보고 싶어서 이렇게 함
+    void DieRPC() // 임시완
     {
         isInvincible = true;
 
@@ -330,12 +330,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (currentState.IsName("Groggy"))
         {
-            //animator.SetTrigger("GroggytoDeath");
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "GroggytoDeath");
         }
         else
         {
-            //animator.SetTrigger("Death");
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Death");
         }
     }
@@ -347,11 +345,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator MakeDamageCollider(int idx, float maxLength, Vector3 position)
     {
-        if (PhotonNetwork.IsMasterClient) // Master PC에서만 실행 (생성 및 Transformation은 PhotonTransformView를 통해서 동기화 됨.)
+        if (PhotonNetwork.IsMasterClient)
         {
             if (idx == 0)
             {   
-                // PhotonNetwork를 통해 생성
                 currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
 
                 float width = 0.5f;
@@ -359,20 +356,17 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
                 yield return new WaitForSeconds(0.1f);
                 
-                // PhotonNetwork를 통해 삭제
                 PhotonNetwork.Destroy(currentDamageCollider);
                 currentDamageCollider = null;
             }
             else
             {
-                // PhotonNetwork를 통해 생성
                 currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
 
                 currentDamageCollider.transform.localScale = new Vector3(maxLength, currentDamageCollider.transform.localScale.y, maxLength);
 
                 yield return new WaitForSeconds(0.1f);
 
-                // PhotonNetwork를 통해 삭제
                 PhotonNetwork.Destroy(currentDamageCollider);
                 currentDamageCollider = null;
             }
@@ -381,7 +375,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator ShowIndicator(int idx, float maxLength, Vector3 position, float duration)
     {
-        if (PhotonNetwork.IsMasterClient) // Master PC에서만 실행 (생성 및 Transformation은 PhotonTransformView를 통해서 동기화 됨.)
+        if (PhotonNetwork.IsMasterClient)
         {
             position.y = 0.15f; // 임시완
 
@@ -407,8 +401,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
 
                 PhotonNetwork.Destroy(currentIndicator);
-                PhotonNetwork.Destroy(currentFill);
                 currentIndicator = null;
+                PhotonNetwork.Destroy(currentFill);
                 currentFill = null;
 
                 StartCoroutine(MakeDamageCollider(idx, maxLength, position));
@@ -434,8 +428,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
 
                 PhotonNetwork.Destroy(currentIndicator);
-                PhotonNetwork.Destroy(currentFill);
                 currentIndicator = null;
+                PhotonNetwork.Destroy(currentFill);
                 currentFill = null;
 
                 StartCoroutine(MakeDamageCollider(idx, maxLength, position));
@@ -476,8 +470,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-
-    void LookAtTarget(Vector3 targetDirection)
+    void LookAtTarget(Vector3 targetDirection) // 임시완. 회전 애니메이션 오면 코루틴으로 바꿀듯
     {
         targetDirection.y = 0;
 
@@ -507,7 +500,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered, idx);
     }
 
-    bool RandomBasicAttack() // RandomBasicAttack 동기화
+    bool RandomBasicAttack()
     {
         if (!isExecutingAttack)
         {
@@ -536,11 +529,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void PlayerListSortRPC()
+    void PlayerListSortRPC()  // 임시완
     {
-        StartCoroutine(WaitTime()); // [임시완]
+        StartCoroutine(WaitTime());
         PlayerList.Sort((player1, player2) => player1.name.CompareTo(player2.name));
     }
+
     IEnumerator WaitTime()
     {
         yield return new WaitForSeconds(1.0f);
@@ -563,7 +557,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, targetPosition, 2.6f));
         yield return new WaitForSeconds(1.0f);
 
-        //animator.SetTrigger("JumpAndLand"); // 2.9s
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "JumpAndLand");
@@ -599,14 +592,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 8.0f, 3.0f));
         yield return new WaitForSeconds(2.2f);
-        //animator.SetTrigger("BothArmSlam"); // 1.08s
+
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
         }
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(1.3f);
 
-        yield return new WaitForSeconds(0.5f);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 8.0f, 2.0f));
         yield return new WaitForSeconds(2.0f);
 
@@ -621,7 +613,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         SelectAggroTarget();
 
-        //animator.SetTrigger("IdletoSit"); // 0.32s
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "IdletoSit");
@@ -636,7 +627,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 8.0f - transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                //animator.SetTrigger("LeftArmHardSlam"); // 1.03s
+
                 if (PhotonNetwork.IsMasterClient)
                 {
                     photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "LeftArmHardSlam");
@@ -647,7 +638,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f - transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                //animator.SetTrigger("LeftArmSlam"); // 1.03s
+
                 if (PhotonNetwork.IsMasterClient)
                 {
                     photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "LeftArmSlam");
@@ -658,7 +649,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f + transform.right * 4.0f, 2.0f));
                 yield return new WaitForSeconds(1.3f);
-                //animator.SetTrigger("RightArmSlam"); // 1.03s
+
                 if (PhotonNetwork.IsMasterClient)
                 {
                     photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "RightArmSlam");
@@ -682,7 +673,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 3.0f));
         yield return new WaitForSeconds(2.3f);
-        //animator.SetTrigger("LegStomp"); // 1.87s
+
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "LegStomp");
@@ -707,7 +698,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
         yield return new WaitForSeconds(2.3f);
-        //animator.SetTrigger("PalmStrike"); // 1.97s
+
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "PalmStrike");
@@ -720,9 +711,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     // Pattern 1
-    void MakeInvincible() // MakeInvincible 동기화
+    void MakeInvincible()
     {
-        //animator.SetTrigger("Invincible");
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
@@ -730,14 +720,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         photonView.RPC("MakeInvincibleRPC", RpcTarget.AllBuffered);
     }
-    [PunRPC] void MakeInvincibleRPC() // 동기화를 위한 RPC 함수
+    [PunRPC] void MakeInvincibleRPC()
     {
         isInvincible = true;
     }
 
-    IEnumerator ArmSlamAndGetEnergy()
+    IEnumerator ArmSlamAndGetEnergy() // 임시완. 에너지를 받는 이펙트가 필요할듯
     {
-        //animator.SetTrigger("ArmSlamAndGetEnergy"); // 1.65s
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "ArmSlamAndGetEnergy");
@@ -747,7 +736,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void ChangeBooksToGreenRPC(int[] bookIndices, int bookcaseIndex) // 동기화를 위한 RPC 함수
+    void ChangeBooksToGreenRPC(int[] bookIndices, int bookcaseIndex)
     {
         foreach (int bookIndex in bookIndices)
         {
@@ -765,7 +754,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void UpdateHintUI() // UI 동기화를 위한 RPC 함수
+    void UpdateHintUI()
     {
         UIManager_Ygg.Instance.EnableHint();
     }
@@ -814,11 +803,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     }
                 }
                 // Light ON
-                int[] bookIndicesArray = bookIndices.ToArray(); // RPC 함수에서 List 타입을 지원하지 않으므로 array로 변경해줌.
-                photonView.RPC("ChangeBooksToGreenRPC", RpcTarget.AllBuffered, bookIndicesArray, bookcaseIndex); // 윗 부분은 Master PC에서 결정, 결정한 내용을 동기화
+                int[] bookIndicesArray = bookIndices.ToArray();
+                photonView.RPC("ChangeBooksToGreenRPC", RpcTarget.AllBuffered, bookIndicesArray, bookcaseIndex);
             }
         }
-        photonView.RPC("UpdateHintUI", RpcTarget.AllBuffered); // UI 동기화
+        photonView.RPC("UpdateHintUI", RpcTarget.AllBuffered);
         return true;
     }
 
@@ -852,7 +841,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         else if (idx == 1)
         {
             UIManager_Ygg.Instance.patternCode = Code;
-            Debug.Log(Code);
         }
     }
 
@@ -867,8 +855,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             for (int i = 0; i < 4; i++)
             {
                 Code += (bookcaseIndices[i] + 1) * numBooksOfBookCase[i];
-                Debug.Log("Index: " + string.Join(", ", bookcaseIndices[i] + 1));
-                Debug.Log("Index: " + string.Join(", ", numBooksOfBookCase[i]));
+                //Debug.Log("Index: " + string.Join(", ", bookcaseIndices[i] + 1));
+                //Debug.Log("Index: " + string.Join(", ", numBooksOfBookCase[i]));
             }
             photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.AllBuffered, 1, Code);
             canChange1 = false;
@@ -888,14 +876,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool IsCipherCorrect()
     {
-        if (IsCorrect)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return IsCorrect;
     }
 
     [PunRPC]
@@ -958,16 +939,15 @@ public class Boss1 : MonoBehaviourPunCallbacks
     // Pattern 2
     IEnumerator JumpToCenter()
     {
+        Vector3 startPosition = transform.position;
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
-        Vector3 startPosition = transform.position;
 
         float jumpDuration = 0.8f;
         float elapsedTime = 0.0f;
 
         yield return new WaitForSeconds(2.0f);
 
-        //animator.SetTrigger("JumpAndLand"); // 2.9s
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "JumpAndLand");
@@ -991,7 +971,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     bool AttackAreas()
     {
         if (isExecutingAreaAttack) return false;
-        int untouchedArea = Random.Range(0, 8); // Master가 정해주고 이를 상대에게 동기화 해주기 위해 동기화 함수 밖으로 빼냄. 
+        int untouchedArea = Random.Range(0, 8);
         StartCoroutine(AttackAreasCoroutine(untouchedArea));
         return true;
     }
@@ -1002,7 +982,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         attackedAreas.Add(untouchedArea);
 
-        Vector3 targetPosition = BookCaseCollisions[untouchedArea].transform.position; // Area position (0,0,0)
+        Vector3 targetPosition = BookCaseCollisions[untouchedArea].transform.position; // Area position (0,0,0) 이기 때문에 BookCaseCollisions로 대체
         Vector3 targetDirection = transform.position - targetPosition;
         targetDirection.y = 0;
 
@@ -1016,7 +996,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(3.0f);
 
-        //animator.SetTrigger("BothArmSlam"); // 1.08s
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
@@ -1029,10 +1008,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.1f);
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 3, untouchedArea); // 코루틴 후 Area 동기화
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
 
         yield return new WaitForSeconds(3.0f);
-
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
     }
 
     [PunRPC]
@@ -1058,6 +1036,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
             }
         }
+
         else if (idx == 1)
         {
             foreach (var entry in originalAreaMaterials)
@@ -1070,6 +1049,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             isExecutingAreaAttack = false;
         }
+
         else if (idx == 2)
         {
             for (int i = 0; i < Areas.Count; i++)
@@ -1095,12 +1075,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-
     [PunRPC]
     void ActivateCipherDevice2RPC(int Code)
     {
         CipherDevice.SetActive(true);
-        Debug.Log("Code: " + Code);
         UIManager_Ygg.Instance.patternCode = Code;
     }
 
@@ -1138,7 +1116,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(2.0f);
 
-        //animator.SetTrigger("ChargeAndShockWave"); // 10s
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "ChargeAndShockWave");
@@ -1162,7 +1139,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator CreateShockwave(float maxRadius, float startScale, Vector3 position, float speed)
     {
-        if (PhotonNetwork.IsMasterClient) // Master PC에서만 실행
+        if (PhotonNetwork.IsMasterClient)
         {
             position.y = 0.15f; // 임시완
 
@@ -1186,13 +1163,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
     // Pattern 3
     IEnumerator Roar()
     {
-        //animator.SetTrigger("Roar");
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Roar");
         }
         yield return new WaitForSeconds(4.0f);
     }
+
     [PunRPC]
     void DisplayBookCaseOrderRPC()
     {
@@ -1229,7 +1206,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 1, selectedBookCaseIndex);
 
-        //animator.SetTrigger("InvincibletoDash");
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "InvincibletoDash");
@@ -1260,8 +1236,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (collidedBookCaseIndex == selectedBookCaseIndex)
         {
-            Debug.Log("Correct Collision");
-            //animator.SetTrigger("CrashAtBookCase");
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
@@ -1273,7 +1247,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         else
         {
             photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 3, selectedBookCaseIndex);
-            //animator.SetTrigger("CrashAtBookCase");
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
@@ -1288,7 +1261,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void UpdateUI(int idx, int selectedBookCaseIndex) // UI 동기화를 위한 RPC 함수
+    void UpdateUI(int idx, int selectedBookCaseIndex)
     {
         if (idx==0)
         {
@@ -1320,7 +1293,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator MoveBackToCenter()
     {
-        //animator.SetTrigger("StaggeringBack");
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "StaggeringBack");
@@ -1340,7 +1312,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         transform.position = centerPosition;
 
-        //animator.SetTrigger("Invincible");
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
@@ -1351,8 +1322,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DamageAllMap()
     {
-        Debug.Log("DamageAllMap"); // 임시완
-        StartCoroutine(MakeDamageCollider(1, 40f, transform.position));
+        StartCoroutine(MakeDamageCollider(1, 40f, transform.position)); // 임시완 크기
 
         canDisplay = true;
         collisionCount = 0;
