@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     PlayerStateManager playerState;
 
     // Bool variable
-    [SerializeField] public bool grounded;
+    public bool grounded;
     bool canControl = true;
     bool canLook = true;
     bool canMove = true;

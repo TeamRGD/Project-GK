@@ -40,7 +40,7 @@ public class PlayerGroundCheck : MonoBehaviour
         if(IsTagValid(collision.transform.tag))
         {
             playerController.SetGroundedState(true);
-            Debug.Log(collision.gameObject);
+            //Debug.Log(collision.gameObject);
 
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
