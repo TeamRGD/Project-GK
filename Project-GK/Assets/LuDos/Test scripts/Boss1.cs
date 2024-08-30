@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine.Animations;
 using System.IO;
 using UnityEngine.UIElements;
+using ExitGames.Client.Photon;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
@@ -99,18 +100,26 @@ public class Boss1 : MonoBehaviourPunCallbacks
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
+        StartCoroutine(StartTime());
+    }
+
+    IEnumerator StartTime()
+    {
+        while (!isStarted)
+        {
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1)
+            {
+                isStarted = true;
+                photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
+                StartCoroutine(ExecuteBehaviorTree());
+                yield break;
+            }
+            yield return null;
+        }
     }
 
     void Update()
     {
-        // Master(Wi) PC에서만 해당 코루틴이 동작하도록. Master에서 동기화해줌.
-        if (PhotonNetwork.IsMasterClient && PlayerList.Count==1 && !isStarted) // 임시완
-        {
-            isStarted = true;
-            photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
-            StartCoroutine(ExecuteBehaviorTree());
-        }
-
 #if UNITY_EDITOR
         ForDebug();
 #endif
