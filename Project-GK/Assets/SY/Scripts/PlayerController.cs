@@ -219,6 +219,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Linecast(playerPosition, cameraPosition, out hit, collisionMask))
         {
             float hitDistance = Vector3.Distance(playerPosition, hit.point);
+            UnityEngine.Debug.DrawLine(playerPosition, hit.point);
             if (hit.collider.CompareTag("Wall")||hit.collider.CompareTag("BookCase")||hit.collider.CompareTag("Ground")) // 벽과 충돌했을 경우
             {
                 cameraHolder.transform.position = hit.point + Vector3.up * 1f;
@@ -313,7 +314,7 @@ public class PlayerController : MonoBehaviour
 
     void Save()
     {
-        if (Input.GetKey(KeyCode.F))
+        if (Input.GetKey(KeyCode.F)&&grounded)
         {
             if (!isSaving)
             {
@@ -330,7 +331,7 @@ public class PlayerController : MonoBehaviour
                             hitCollider.TryGetComponent<PlayerStateManager>(out targetPlayerState);
                             if (targetPlayerState != null && !targetPlayerState.GetIsAlive()) // isAlive가 false이면
                             {
-                                SetCanState(false);
+                                SetSavingState(true);
                                 StartCoroutine(SaveTime(0.3f));
                                 StartCoroutine(SaveProcess(targetPlayerState));
                                 break;
@@ -345,20 +346,20 @@ public class PlayerController : MonoBehaviour
             if (isSaving)
             {
                 UIManager_Player.Instance.SaveUI(0);
-                SetCanState(true);
+                SetSavingState(false);
                 currentSaveTime = 0.0f;
             }
         }
     }
 
-    void SetCanState(bool value)
+    public void SetSavingState(bool value)
     {
-        isSaving = !value;
-        animator.SetBool("isRescuing", !value);
-        animator.SetBool("rescue", !value);
-        SetCanMove(value);
-        playerAttack.SetCanAttack(value);
-        playerToolManager.SetCanChange(value);
+        isSaving = value;
+        animator.SetBool("isRescuing", value);
+        animator.SetBool("rescue", value);
+        SetCanMove(!value);
+        playerAttack.SetCanAttack(!value);
+        playerToolManager.SetCanChange(!value);
     }
 
     IEnumerator SaveTime(float time)
@@ -375,7 +376,7 @@ public class PlayerController : MonoBehaviour
 
             if (currentSaveTime >= 6.0f)
             {
-                SetCanState(true);
+                SetSavingState(false);
                 targetPlayerState.Revive();
                 currentSaveTime = 0.0f;
                 UIManager_Player.Instance.SaveUI(0);
@@ -384,7 +385,7 @@ public class PlayerController : MonoBehaviour
             UIManager_Player.Instance.SaveUI(currentSaveTime);
             yield return null;
         }
-        SetCanState(true);
+        SetSavingState(false);
         currentSaveTime = 0.0f;
     }
 
@@ -402,6 +403,11 @@ public class PlayerController : MonoBehaviour
     void IAmAggroRPC(string aggroing)
     {
         UIManager_Player.Instance.AggroAim(aggroing);
+    }
+
+    public bool GetIsGrounded()
+    {
+        return grounded;
     }
 
     // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정

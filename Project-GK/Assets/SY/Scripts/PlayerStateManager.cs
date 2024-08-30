@@ -54,9 +54,13 @@ public class PlayerStateManager : MonoBehaviour
 
     void Update()
     {
-        if (!isAlive)
+        if (!isAlive) // [임시완]
         {
             SetCanState(false);
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            currentUltimatePower = 100;
         }
     }
 
@@ -68,20 +72,11 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
             {
-                TakeDamage(3);
-                if (isAlive)
-                {
-                    animator.SetBool("getHit", true);
-                    StartCoroutine(GetHitAnimTime(0.2f));
-                }
+                GetHit();
             }
             else if (other.gameObject.CompareTag("ShockDamageCollider"))
             {
-                TakeDamage(10);
-                if (isAlive)
-                {
-                    OnGroggy();
-                }
+                OnGroggy();
             }
         }
     }
@@ -94,13 +89,21 @@ public class PlayerStateManager : MonoBehaviour
         {
             if (other.gameObject.CompareTag("DamageCollider"))
             {
-                TakeDamage(3);
-                if (isAlive)
-                {
-                    animator.SetBool("getHit", true);
-                    StartCoroutine(GetHitAnimTime(0.2f));
-                }
+                GetHit();
             }
+        }
+    }
+
+    void GetHit()
+    {
+        TakeDamage(3);
+        if (isAlive)
+        {
+            playerController.SetSavingState(false);
+            SetCanState(false);
+            animator.SetBool("getHit", true);
+            StartCoroutine(GetHitAnimTime(0.2f));
+            StartCoroutine(HitTime(1.0f));
         }
     }
 
@@ -108,6 +111,12 @@ public class PlayerStateManager : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         animator.SetBool("getHit", false);
+    }
+
+    IEnumerator HitTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        SetCanState(true);
     }
 
     public void TakeDamage(int damage)
@@ -144,12 +153,17 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnGroggy()
     {
-        isGroggy = true;
-        SetCanState(false);
-        animator.SetBool("isGroggy", true);
-        animator.SetBool("groggy", true);
-        StartCoroutine(GroggyAnimTime(0.2f));
-        StartCoroutine(GroggyTime(2.1f));
+        TakeDamage(10);
+        if (isAlive)
+        {
+            playerController.SetSavingState(false);
+            isGroggy = true;
+            SetCanState(false);
+            animator.SetBool("isGroggy", true);
+            animator.SetBool("groggy", true);
+            StartCoroutine(GroggyAnimTime(0.2f));
+            StartCoroutine(GroggyTime(2.2f));
+        }
     }
 
     IEnumerator GroggyTime(float time)

@@ -67,7 +67,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack()
     {
-        if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()<100) // 기본 공격
+        if (Input.GetMouseButtonDown(0) && CanAttack() && playerState.GetUltimatePower() < 100) // 기본 공격
         {
             animator.SetInteger("attackCount", attackCount);
             animator.SetBool("isAttacking", true);
@@ -84,7 +84,7 @@ public class PlayerAttack : MonoBehaviour
             lastAttackTime = Time.time;
             StartCoroutine(AttackTime(0.5f));
         }
-        else if (Input.GetMouseButtonDown(0)&&CanAttack()&&playerState.GetUltimatePower()==100) // 궁극기
+        else if (Input.GetMouseButtonDown(0) && CanAttack() && playerState.GetUltimatePower() == 100) // 궁극기
         {
             animator.SetBool("isUltimate", true);
             isUltimate = true;
