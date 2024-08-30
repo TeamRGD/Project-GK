@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: 308596128207647348}
   - component: {fileID: 6917032713131787163}
   - component: {fileID: 225326962371916975}
+  - component: {fileID: 8023308909163072651}
   m_Layer: 6
   m_Name: SM_stairs_fix
   m_TagString: Stair
@@ -266,3 +267,30 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.17674257, y: 0.27799082, z: 0.57913196}
   m_Center: {x: -0.16330338, y: 0.63144803, z: -0.00023518503}
+--- !u!54 &8023308909163072651
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5269413545870753454}
+  serializedVersion: 4
+  m_Mass: 1000
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
