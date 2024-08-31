@@ -1064,8 +1064,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             for (int i = 0; i < Areas.Count; i++)
             {
+                Collider areaCollider = Areas[i].GetComponent<Collider>();
                 if (i != untouchedArea)
                 {
+                    areaCollider.isTrigger = true;
                     Areas[i].transform.parent.tag = "DamageCollider";
                     Areas[i].tag = "DamageCollider";
                 }
@@ -1078,6 +1080,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (i != untouchedArea)
                 {
+                    Areas[i].GetComponent<Collider>().isTrigger = false;
                     Areas[i].transform.parent.tag = "Ground";
                     Areas[i].tag = "Ground";
                 }
@@ -1139,6 +1142,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         attackCount = 0;
         canChange2 = true;
         photonView.RPC("ChargeAttackCoroutineRPC", RpcTarget.AllBuffered);
+
+        yield return new WaitForSeconds(3.0f);
     }
     
     [PunRPC]
@@ -1332,7 +1337,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DamageAllMap()
     {
-        StartCoroutine(MakeDamageCollider(1, 40f, transform.position)); // 임시완 크기
+        StartCoroutine(MakeDamageCollider(1, 40f, new Vector3 (0,0,0))); // 임시완 크기
 
         canDisplay = true;
         collisionCount = 0;
