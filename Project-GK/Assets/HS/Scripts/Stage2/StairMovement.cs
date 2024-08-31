@@ -1,23 +1,31 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
 public class StairMovement : MonoBehaviour
 {
     bool isAppear;
+    [SerializeField] private float moveDistance = 3f; // 이동할 거리
+    [SerializeField] private float moveDuration = 1f; // 이동 시간
 
-     public void Move()
+    public void Move()
     {
-        if(isAppear)
+        Vector3 targetPosition = isAppear ? transform.position - new Vector3(moveDistance, 0, 0) : transform.position + new Vector3(moveDistance, 0, 0);
+        StartCoroutine(MoveStair(targetPosition));
+        isAppear = !isAppear;
+    }
+
+    private IEnumerator MoveStair(Vector3 targetPosition)
+    {
+        Vector3 startPosition = transform.position;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < moveDuration)
         {
-            isAppear = !isAppear;
-            transform.Translate(new Vector3(3, 0, 0), Space.Self);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / moveDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
-        else
-        {
-            isAppear = !isAppear;
-            transform.Translate(new Vector3(-3, 0, 0), Space.Self);
-        }
+
+        transform.position = targetPosition; // 이동 보정
     }
 }
