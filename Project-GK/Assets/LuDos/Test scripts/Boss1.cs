@@ -13,7 +13,7 @@ using ExitGames.Client.Photon;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
-    float maxHealth = 100;
+    float maxHealth = 34;
     float currentHealth;
 
     bool isFirstTimeBelow66 = true;
@@ -495,11 +495,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (isAggroFixed)
         {
-            aggroTarget = PlayerList[0];
+            aggroTarget = PlayerList[0].GetComponent<PlayerStateManager>().isAlive ? PlayerList[0] : PlayerList[1];
         }
         else
         {
-            aggroTarget = PlayerList[idx];
+            aggroTarget = PlayerList[idx].GetComponent<PlayerStateManager>().isAlive ? PlayerList[idx] : PlayerList[1 - idx];
         }
     }
 
@@ -549,6 +549,22 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
     }
 
+    IEnumerator JumpWithDuration(float duration, Vector3 startPosition, Vector3 targetPosition)
+    {
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            float height = Mathf.Sin(Mathf.PI * t) * 5.0f;
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
+            yield return null;
+        }
+
+        transform.position = targetPosition;
+    }
+
 
     IEnumerator LandAttackCoroutine()
     {
@@ -560,9 +576,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         targetPosition.y = 0.0f;
         Vector3 startPosition = transform.position;
 
-        float jumpDuration = 0.8f;
-        float elapsedTime = 0.0f;
-
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, targetPosition, 2.6f));
         yield return new WaitForSeconds(1.0f);
 
@@ -572,16 +585,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(0.8f);
 
-        while (elapsedTime < jumpDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / jumpDuration;
-            float height = Mathf.Sin(Mathf.PI * t) * 5.0f;
-            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
-            yield return null;
-        }
-
-        transform.position = targetPosition;
+        yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(4.5f, 0.1f, targetPosition, 2.0f));
         yield return new WaitForSeconds(3.0f);
@@ -952,9 +956,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
-        float jumpDuration = 0.8f;
-        float elapsedTime = 0.0f;
-
         yield return new WaitForSeconds(2.0f);
 
         if (PhotonNetwork.IsMasterClient)
@@ -963,16 +964,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(0.8f);
 
-        while (elapsedTime < jumpDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / jumpDuration;
-            float height = Mathf.Sin(Mathf.PI * t) * 5.0f;
-            transform.position = Vector3.Lerp(startPosition, targetPosition, t) + Vector3.up * height;
-            yield return null;
-        }
-
-        transform.position = targetPosition;
+        yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
 
         yield return new WaitForSeconds(3.0f);
     }
@@ -1136,14 +1128,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(9.0f);
 
-        StartCoroutine(CreateShockwave(10.0f, 0.1f, transform.position, 10.0f));
+        StartCoroutine(CreateShockwave(4.5f, 0.1f, transform.position, 10.0f));
+
+        yield return new WaitForSeconds(5.0f);
 
         attackedAreas.Clear();
         attackCount = 0;
         canChange2 = true;
         photonView.RPC("ChargeAttackCoroutineRPC", RpcTarget.AllBuffered);
-
-        yield return new WaitForSeconds(3.0f);
     }
     
     [PunRPC]
