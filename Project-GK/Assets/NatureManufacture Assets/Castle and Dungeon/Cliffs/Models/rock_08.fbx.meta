@@ -1,14 +1,14 @@
 fileFormatVersion: 2
 guid: a9ac7e56d4e0d6d4593ac9e3b0c1103c
 ModelImporter:
-  serializedVersion: 21202
+  serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: rock_atlas_01
-    second: {fileID: 2100000, guid: 64ac05e6bd4e850418e7311cef5e2f9a, type: 2}
+    second: {fileID: 2100000, guid: 9026d48af30b2ed48a56203d8a69e3c2, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -48,6 +48,7 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -75,6 +76,7 @@ ModelImporter:
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -107,6 +109,8 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
