@@ -13,7 +13,7 @@ using ExitGames.Client.Photon;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
-    float maxHealth = 34;
+    float maxHealth = 3;
     float currentHealth;
 
     bool isFirstTimeBelow66 = true;
@@ -65,6 +65,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     public List<GameObject> BookCases;
     public List<GameObject> BookCaseCollisions;
     public List<GameObject> Areas;
+    public List<GameObject> FootColliders;
 
     public Material GreenMaterial; // 임시완
     public Material RedMaterial; // 임시완
@@ -74,8 +75,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
     private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
     Renderer bookCaseRenderer;
 
-    public List<GameObject> PlayerList;
-    public GameObject aggroTarget;
+    [HideInInspector] public List<GameObject> PlayerList;
+    [HideInInspector] public GameObject aggroTarget;
 
     CipherDevice cipherDeviceScript;
     Animator animator;
@@ -983,15 +984,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         attackedAreas.Add(untouchedArea);
 
+        yield return new WaitForSeconds(3.0f); // 임시완. 이 시간에 회전하면 될듯
+
         Vector3 targetPosition = BookCaseCollisions[untouchedArea].transform.position; // Area position (0,0,0) 이기 때문에 BookCaseCollisions로 대체
         Vector3 targetDirection = transform.position - targetPosition;
-        targetDirection.y = 0;
 
-        if (targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-            transform.rotation = targetRotation;
-        }
+        LookAtTarget(targetDirection);
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 0, untouchedArea); // 코루틴 전 Area 동기화
 
@@ -1002,16 +1000,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
         }
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.7f);
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 2, untouchedArea); // 코루틴 후 Area 동기화
 
         yield return new WaitForSeconds(0.1f);
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 3, untouchedArea); // 코루틴 후 Area 동기화
-
-        yield return new WaitForSeconds(3.0f);
-
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
     }
 
@@ -1235,6 +1230,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         hasCollidedWithBookCase = false;
         collidedBookCaseIndex = -1;
 
+        photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.AllBuffered, 0);
+        yield return new WaitForSeconds(0.8f);
+
         while (!hasCollidedWithBookCase)
         {
             transform.position += targetDirection * Time.deltaTime * 0.4f;
@@ -1246,6 +1244,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
+                photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.AllBuffered, 1);
             }
             yield return new WaitForSeconds(1.0f);
             photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 2, selectedBookCaseIndex);
@@ -1257,6 +1256,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
+                photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.AllBuffered, 1);
             }
             yield return new WaitForSeconds(1.0f);
             isWrongBookCase = true;
@@ -1265,6 +1265,26 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return moveBackCoroutine = StartCoroutine(MoveBackToCenter());
 
         yield return new WaitForSeconds(3.0f);
+    }
+
+    [PunRPC]
+    void LightAndAttackBookCaseCoroutine(int idx)
+    {
+        if (idx == 0) // 임시완
+        {
+            for (int i = 0; i < FootColliders.Count; i++)
+            {
+                FootColliders[i].tag = "DamageCollider";
+            }
+        }
+
+        else if (idx == 1)
+        {
+            for (int i = 0; i < FootColliders.Count; i++)
+            {
+                FootColliders[i].tag = "Untagged";
+            }
+        }
     }
 
     [PunRPC]

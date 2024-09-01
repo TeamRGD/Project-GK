@@ -85,13 +85,13 @@ public class PlayerStateManager : MonoBehaviour
     {
         if (!PV.IsMine)
             return;
-        if (isAlive)
-        {
-            if (other.gameObject.CompareTag("DamageCollider"))
-            {
-                GetHit();
-            }
-        }
+        //if (isAlive)
+        //{
+        //    if (other.gameObject.CompareTag("DamageCollider"))
+        //    {
+        //        GetHit();
+        //    }
+        //}
     }
 
     void GetHit()
