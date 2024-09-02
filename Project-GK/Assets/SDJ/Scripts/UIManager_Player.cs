@@ -14,9 +14,9 @@ public class UIManager_Player : MonoBehaviour
     public Image ultBar;
 
     // for Inventory
-    public Image[] inventoryOutlines;
+    //public Image[] inventoryOutlines;
     public Image aim;
-    public AudioSource inventorySFX;
+    //public AudioSource inventorySFX;
 
     //for aggro
     public Image saveCirc;
@@ -44,11 +44,11 @@ public class UIManager_Player : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < inventoryOutlines.Length; i++)
-        {
-            inventoryOutlines[i].enabled = false;
-        }
-        inventoryOutlines[0].enabled = true;
+        //for (int i = 0; i < inventoryOutlines.Length; i++)
+        //{
+        //    inventoryOutlines[i].enabled = false;
+        //}
+        //inventoryOutlines[0].enabled = true;
     }
 
 
@@ -71,25 +71,25 @@ public class UIManager_Player : MonoBehaviour
     // Inventory
     public void SetInventory(int num)
     {
-        if (num == 0)
-        {
-            aim.enabled = true;
-        }
-        else
-        {
-            aim.enabled = false;
-        }
-        for (int i = 0; i < inventoryOutlines.Length; i++)
-        {
-            if (i == num)
-            {
-                inventoryOutlines[i].enabled = true;
-            } else
-            {
-                inventoryOutlines[i].enabled = false;
-            }
-        }
-        inventorySFX.Play();
+        //if (num == 0)
+        //{
+        //    aim.enabled = true;
+        //}
+        //else
+        //{
+        //    aim.enabled = false;
+        //}
+        //for (int i = 0; i < inventoryOutlines.Length; i++)
+        //{
+        //    if (i == num)
+        //    {
+        //        inventoryOutlines[i].enabled = true;
+        //    } else
+        //    {
+        //        inventoryOutlines[i].enabled = false;
+        //    }
+        //}
+        //inventorySFX.Play();
     }
 
     // Interaction
