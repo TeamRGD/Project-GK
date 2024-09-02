@@ -15,9 +15,7 @@ public class StairMovement : MonoBehaviour
         // 현재 이동 중인 코루틴이 있으면 중단
         if (currentMoveCoroutine != null)
         {
-
             transform.position = isAppear ? originTransform.position : destination.position;
-
             StopCoroutine(currentMoveCoroutine);
         }
 
