@@ -1,3 +1,4 @@
+using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,40 +10,44 @@ using UnityEngine.AI;
 public class Boss2 : MonoBehaviour
 {
     #region variables
-    private int maxHealth = 100;
-    private int currentHealth;
+    int maxHealth = 100;
+    int currentHealth;
+    float moveSpeed = 10.0f;
 
-    private int magicCircleCount = 0;
-    private int bossAttackCount = 0;
-    private int successCount = 0;
-    public int attackOrderCount = 0;
+    bool isFirstTimeBelow66 = true;
+    bool isFirstTimeBelow33 = true;
+    bool isFirstTimeBelow2 = true;
 
-    private bool isGroggy = false;
-    private bool isExecutingPattern = false;
-    private bool isExecutingAttack = false;
-    private bool hasExecutedInitialActions1 = false;
-    private bool hasExecutedInitialActions2 = false;
-    private bool hasExecutedInitialActions3 = false;
-    private bool hasHealthDroppedBelowThreshold = false;
+    int magicCircleCount = 0;
+    int bossAttackCount = 0;
+    int successCount = 0;
+    [HideInInspector] public int attackOrderCount = 0;
 
-    private bool canDisplay = true;
-    private bool canControlSpeed = false;
+    bool isGroggy = false;
+    bool isExecutingPattern = false;
+    bool isExecutingAttack = false;
+    bool hasExecutedInitialActions1 = false;
+    bool hasExecutedInitialActions2 = false;
+    bool hasExecutedInitialActions3 = false;
+    bool hasHealthDroppedBelowThreshold = false;
 
-    private List<Vector3> storedPositions = new List<Vector3>();
-    private List<System.Action> storedAttacks = new List<System.Action>();
+    bool canDisplay = true;
+    bool canControlSpeed = false;
+
+    List<Vector3> storedPositions = new List<Vector3>();
+    List<System.Action> storedAttacks = new List<System.Action>();
 
     public List<int> correctOrder = new List<int>();
-    private List<int> playerOrder = new List<int>();
+    List<int> playerOrder = new List<int>();
 
-    private GameObject player;
+    GameObject player;
     public GameObject targetIndicator;
 
-    private NavMeshAgent navMeshAgent;
-    private Animator animator;
+    Animator animator;
 
-    private BTNode pattern1Tree;
-    private BTNode pattern2Tree;
-    private BTNode pattern3Tree;
+    BTNode pattern1Tree;
+    BTNode pattern2Tree;
+    BTNode pattern3Tree;
     #endregion
 
     void Start()
@@ -54,7 +59,6 @@ public class Boss2 : MonoBehaviour
 
         currentHealth = maxHealth;
         //animator = GetComponent<Animator>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
@@ -89,14 +93,14 @@ public class Boss2 : MonoBehaviour
     {
         while (true)
         {
-            if (currentHealth > 66)
+            if (currentHealth == 66)
             {
                 if (!isExecutingPattern)
                 {
                     if (!hasExecutedInitialActions1)
                     {
                         MakeInvincible();
-                        SpinAndExtinguishTorches();
+                        yield return StartCoroutine(SpinAndExtinguishTorches());
                         LightMagicCircle();
                         LightBossEyesAndMouth();
 
@@ -106,19 +110,12 @@ public class Boss2 : MonoBehaviour
                     StartCoroutine(ExecutePattern(pattern1Tree));
                 }
             }
-            else if (currentHealth > 33)
+            else if (currentHealth == 33)
             {
                 if (!isExecutingPattern)
                 {
                     if (!hasExecutedInitialActions2)
                     {
-                        if (isGroggy)
-                        {
-                            StopCoroutine(ExecutePattern(pattern1Tree));
-                            isGroggy = false;
-                            navMeshAgent.isStopped = false;
-                        }
-
                         LightFourTorches();
                         yield return StartCoroutine(MoveAndAttack());
                         ExtinguishAllTorches();
@@ -133,7 +130,7 @@ public class Boss2 : MonoBehaviour
                     // StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
-            else if (currentHealth > 0)
+            else if (currentHealth == 2)
             {
                 if (!isExecutingPattern)
                 {
@@ -149,11 +146,18 @@ public class Boss2 : MonoBehaviour
                     StartCoroutine(ExecutePattern(pattern3Tree));
                 }
             }
-            else
+            else if (currentHealth == 0)
             {
-                StopCoroutine(ExecutePattern(pattern3Tree));
+
                 Die();
                 break;
+            }
+            else
+            {
+                if (!isGroggy)
+                {
+                    RandomBasicAttack();
+                }
             }
             yield return null;
         }
@@ -249,7 +253,6 @@ public class Boss2 : MonoBehaviour
 
         isGroggy = true; // 일단 이거 켜지면 로직은 실행 안됨
         //animator.SetTrigger("Groggy");
-        navMeshAgent.isStopped = true; // 이중 멈춤이면 없애도 됨
         return true;
     }
 
@@ -257,7 +260,6 @@ public class Boss2 : MonoBehaviour
     {
         Debug.Log("Die");
 
-        navMeshAgent.isStopped = true;
 
         // animator.SetTrigger("Die");
     }
@@ -305,12 +307,12 @@ public class Boss2 : MonoBehaviour
         //animator.SetTrigger("ShortDash");
 
         float dashTime = 0.5f;
-        float dashSpeed = 10.0f * navMeshAgent.speed;
+        float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
         {
-            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            transform.position += transform.forward * dashSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -335,12 +337,12 @@ public class Boss2 : MonoBehaviour
         transform.rotation = lookRotationA;
 
         float dashTime = 1.0f;
-        float dashSpeed = 10.0f * navMeshAgent.speed;
+        float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
         {
-            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            transform.position += transform.forward * dashSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -357,7 +359,7 @@ public class Boss2 : MonoBehaviour
 
         while (elapsedTime < dashTime)
         {
-            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            transform.position += transform.forward * dashSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -430,12 +432,12 @@ public class Boss2 : MonoBehaviour
         transform.rotation = lookRotation;
 
         float dashTime = 0.5f;
-        float dashSpeed = 10.0f * navMeshAgent.speed;
+        float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
         {
-            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            transform.position += transform.forward * dashSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -499,9 +501,10 @@ public class Boss2 : MonoBehaviour
         Debug.Log("MakeInvincible");
     }
 
-    void SpinAndExtinguishTorches() // 코루틴으로 구현해야할듯
+    IEnumerator SpinAndExtinguishTorches()
     {
         Debug.Log("SpinAndExtinguishTorches");
+        yield return new WaitForSeconds(1.0f);
     }
 
     void LightMagicCircle()
@@ -520,27 +523,41 @@ public class Boss2 : MonoBehaviour
         {
             Debug.Log("ControlSpeed");
 
+            float speedMultiplier = 1.0f;
+
             if (magicCircleCount == 5)
             {
-                navMeshAgent.speed *= 0.5f; // 속도 50%
+                speedMultiplier = 0.5f; // 속도 50%
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 6)
             {
-                navMeshAgent.speed *= 0.4f; // 속도 40%
+                speedMultiplier = 0.4f; // 속도 40%
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 7)
             {
-                navMeshAgent.speed *= 0.3f; // 속도 30%
+                speedMultiplier = 0.3f; // 속도 30%
                 canControlSpeed = false;
             }
+
+            // 애니메이션 속도 조절
+            if (animator != null)
+            {
+                animator.speed *= speedMultiplier;
+            }
+
+            AdjustMoveSpeed(speedMultiplier);
         }
         return true;
     }
 
-    // 패턴 2
+    void AdjustMoveSpeed(float multiplier)
+    {
+        moveSpeed *= multiplier;
+    }
 
+    // 패턴 2
     void LightFourTorches()
     {
         Debug.Log("LightFourTorches");
@@ -626,12 +643,12 @@ public class Boss2 : MonoBehaviour
         {
             float progress = elapsedTime / jumpDuration;
             float height = Mathf.Sin(Mathf.PI * progress) * jumpHeight; // 포물선 계산
-            navMeshAgent.Warp(Vector3.Lerp(startPosition, targetPosition, progress) + Vector3.up * height);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, progress) + Vector3.up * height;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        navMeshAgent.Warp(targetPosition); // 최종 위치로 이동
+        transform.position = targetPosition;
 
         yield return new WaitForSeconds(1.0f); // 점프 후 대기 시간
 
@@ -705,12 +722,12 @@ public class Boss2 : MonoBehaviour
         transform.rotation = lookRotation;
 
         float dashTime = 1.0f;
-        float dashSpeed = 10.0f * navMeshAgent.speed;
+        float dashSpeed = 10.0f; // 대쉬 속도
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
         {
-            navMeshAgent.Move(transform.forward * dashSpeed * Time.deltaTime);
+            transform.position += transform.forward * dashSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -810,7 +827,7 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         // 어떤 플레이어가 공격했는지 구분하여 playerOrder에 추가
     }

@@ -13,7 +13,7 @@ using ExitGames.Client.Photon;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
-    float maxHealth = 3;
+    float maxHealth = 100;
     float currentHealth;
 
     bool isFirstTimeBelow66 = true;
