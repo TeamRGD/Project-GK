@@ -24,7 +24,7 @@ public class PlayerStateManager : MonoBehaviour
 
     // Bool 값들
     public bool isAlive = true;
-    bool isGroggy = false;
+    bool onStun = false;
 
     // Component
     PhotonView PV;
@@ -76,7 +76,7 @@ public class PlayerStateManager : MonoBehaviour
             }
             else if (other.gameObject.CompareTag("ShockDamageCollider"))
             {
-                OnGroggy();
+                OnStun();
             }
         }
     }
@@ -103,7 +103,7 @@ public class PlayerStateManager : MonoBehaviour
             SetCanState(false);
             animator.SetBool("getHit", true);
             StartCoroutine(GetHitAnimTime(0.2f));
-            StartCoroutine(HitTime(1.2f));
+            StartCoroutine(HitTime(0.9f));
         }
     }
 
@@ -125,58 +125,63 @@ public class PlayerStateManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            OnDeath();
+            OnGroggy();
         }
         UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
     }
 
-    void OnDeath()
+    void OnGroggy()
     {
-        PV.RPC("OnDeathRPC", RpcTarget.AllBuffered);
+        PV.RPC("OnGroggyRPC", RpcTarget.AllBuffered);
     }
 
-    IEnumerator GroggyAnimTime(float time)
+    IEnumerator TriggerAnimTime(float time)
     {
         yield return new WaitForSeconds(time);
-        animator.SetBool("groggy", false);
+        animator.SetBool("trigger", false);
     }
 
     [PunRPC]
-    void OnDeathRPC()
+    void OnGroggyRPC()
     {
         SetCanState(false); // 상대 화면에서도 빠른 동작 멈춤을 위해 동기화 해줌.
-        animator.SetBool("onDeath", true);
-        animator.SetBool("groggy", true);
-        StartCoroutine(GroggyAnimTime(0.2f));
+        animator.SetBool("isGroggy", true);
+        animator.SetBool("trigger", true);
+        StartCoroutine(TriggerAnimTime(0.2f));
         isAlive = false;
     }
 
-    void OnGroggy()
+    void OnStun()
     {
         TakeDamage(10);
         if (isAlive)
         {
             playerController.SetSavingState(false);
-            isGroggy = true;
+            onStun = true;
             SetCanState(false);
-            animator.SetBool("isGroggy", true);
-            animator.SetBool("groggy", true);
-            StartCoroutine(GroggyAnimTime(0.2f));
-            StartCoroutine(GroggyTime(2.2f));
+            animator.SetBool("onStun", true);
+            StartCoroutine(OnStunAnimTime(0.2f));
+            StartCoroutine(StunTime(2.2f));
         }
     }
 
-    IEnumerator GroggyTime(float time)
+    IEnumerator OnStunAnimTime(float time)
     {
         yield return new WaitForSeconds(time);
-        animator.SetBool("isGroggy", false);
-        OnNotGroggy();
+        animator.SetBool("onStun", false);
+    }
+
+    IEnumerator StunTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.SetBool("onStun", false);
+        OnNotStun();
     }
     
-    void OnNotGroggy()
+    void OnNotStun()
     {
         SetCanState(true);
-        isGroggy = false;
+        onStun = false;
     }
 
     void SetCanState(bool value)
@@ -194,7 +199,7 @@ public class PlayerStateManager : MonoBehaviour
     [PunRPC]
     void ReviveRPC()
     {
-        animator.SetBool("onDeath", false);
+        animator.SetBool("isGroggy", false);
         isAlive = true;
         currentHealth = maxHealth;
         SetCanState(true);
@@ -269,8 +274,8 @@ public class PlayerStateManager : MonoBehaviour
         return currentUltimatePower;
     }
 
-    public bool GetIsGroggy()
+    public bool GetOnStun()
     {
-        return isGroggy;
+        return onStun;
     }
 }

@@ -357,7 +357,7 @@ public class PlayerController : MonoBehaviour
     {
         isSaving = value;
         animator.SetBool("isRescuing", value);
-        animator.SetBool("rescue", value);
+        animator.SetBool("trigger", value);
         SetCanMove(!value);
         playerAttack.SetCanAttack(!value);
         playerToolManager.SetCanChange(!value);
@@ -366,7 +366,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator SaveTime(float time)
     {
         yield return new WaitForSeconds(time);
-        animator.SetBool("rescue", false);
+        animator.SetBool("trigger", false);
     }
 
     IEnumerator SaveProcess(PlayerStateManager targetPlayerState)
