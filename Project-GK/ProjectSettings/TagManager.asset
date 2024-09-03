@@ -32,6 +32,8 @@ TagManager:
   - Puzzle3Cipher
   - CipherDevice
   - StairButton
+  - Stone
+  - PushableStone
   layers:
   - Default
   - TransparentFX

@@ -136,6 +136,14 @@ public class InteractionManager : MonoBehaviour
                 puzzle4Button.UseButton();
             }
         }
+
+        else if (hitInfo.collider.CompareTag("PushableStone"))
+        {
+            if (hitInfo.collider.TryGetComponent<PushableStone>(out PushableStone pushableStone))
+            {
+                pushableStone.Push(this.transform.position);
+            }
+        }
     }
 
     // 암호 입력의 경우 Y키 이므로 PlayerController에서 Y키로 받아오는 함수
