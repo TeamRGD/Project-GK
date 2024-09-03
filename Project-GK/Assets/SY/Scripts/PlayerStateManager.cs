@@ -96,7 +96,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void GetHit()
     {
-        TakeDamage(3);
+        TakeDamage(5);
         if (isAlive)
         {
             playerController.SetSavingState(false);
@@ -128,6 +128,7 @@ public class PlayerStateManager : MonoBehaviour
             OnGroggy();
         }
         UIManager_Player.Instance.ManageHealth(currentHealth, maxHealth);
+        Debug.Log(currentHealth);
     }
 
     void OnGroggy()
@@ -153,7 +154,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnStun()
     {
-        TakeDamage(10);
+        TakeDamage(5);
         if (isAlive)
         {
             playerController.SetSavingState(false);
