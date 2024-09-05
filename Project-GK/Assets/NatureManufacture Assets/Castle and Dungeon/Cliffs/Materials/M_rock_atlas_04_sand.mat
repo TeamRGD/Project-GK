@@ -41,6 +41,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: M_rock_atlas_04_sand
   m_Shader: {fileID: 4800000, guid: d226ffe19e7968b42a093d463d9b41c5, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _DISABLE_SSR_TRANSPARENT
@@ -69,6 +71,7 @@ Material:
   - TransparentBackface
   - RayTracingPrepass
   - MOTIONVECTORS
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -541,6 +544,7 @@ Material:
     - _BaseUsePlanarUV: 0
     - _Blend: 0
     - _BlendMode: 0
+    - _BlendModePreserveSpecular: 0
     - _BumpScale: 1
     - _COAT_IOR: 1.4
     - _COAT_ROUGHNESS: 0
@@ -564,7 +568,7 @@ Material:
     - _CoverSmoothnessRemapMax: 1
     - _CoverSmoothnessRemapMin: 0
     - _CoverTriplanarThreshold: 5
-    - _CoverUsePlanarUV: 1
+    - _CoverUsePlanarUV: 0
     - _Cover_Amount: 2
     - _Cover_Amount_Grow_Speed: 3
     - _Cover_Max_Angle: 36.5
