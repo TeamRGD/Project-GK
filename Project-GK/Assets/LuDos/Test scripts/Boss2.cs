@@ -37,11 +37,11 @@ public class Boss2 : MonoBehaviour
     List<Vector3> storedPositions = new List<Vector3>();
     List<System.Action> storedAttacks = new List<System.Action>();
 
-    public List<int> correctOrder = new List<int>();
+    [HideInInspector] public List<int> correctOrder = new List<int>();
     List<int> playerOrder = new List<int>();
 
     GameObject player;
-    public GameObject targetIndicator;
+    // public GameObject targetIndicator;
 
     Animator animator;
 
@@ -122,12 +122,8 @@ public class Boss2 : MonoBehaviour
 
                         hasExecutedInitialActions2 = true;
                     }
-                    if (!isExecutingPattern)
-                    {
-                        StartCoroutine(ExecutePattern(pattern2Tree));
-                    }
 
-                    // StartCoroutine(ExecutePattern(pattern2Tree));
+                    StartCoroutine(ExecutePattern(pattern2Tree));
                 }
             }
             else if (currentHealth == 2)
@@ -136,8 +132,7 @@ public class Boss2 : MonoBehaviour
                 {
                     if (!hasExecutedInitialActions3)
                     {
-                        StopCoroutine(ExecutePattern(pattern2Tree));
-
+                        // StopCoroutine(ExecutePattern(pattern2Tree));
                         Roar();
 
                         hasExecutedInitialActions3 = true;
@@ -220,17 +215,16 @@ public class Boss2 : MonoBehaviour
     IEnumerator ExecutePattern(BTNode patternTree)
     {
         isExecutingPattern = true;
-        // isGroggy = false;
 
         while (!isGroggy)
         {
             patternTree.Execute();
 
-            if (currentHealth <= 33 && !hasHealthDroppedBelowThreshold)
-            {
-                hasHealthDroppedBelowThreshold = true;
-                break;
-            }
+            //if (currentHealth <= 33 && !hasHealthDroppedBelowThreshold)
+            //{
+            //    hasHealthDroppedBelowThreshold = true;
+            //    break;
+            //}
 
             yield return null;
         }
@@ -251,8 +245,7 @@ public class Boss2 : MonoBehaviour
     {
         Debug.Log("SetGroggy");
 
-        isGroggy = true; // 일단 이거 켜지면 로직은 실행 안됨
-        //animator.SetTrigger("Groggy");
+        isGroggy = true;
         return true;
     }
 
@@ -264,7 +257,7 @@ public class Boss2 : MonoBehaviour
         // animator.SetTrigger("Die");
     }
 
-    // 기본 공격 (공격시 이펙트 구현해야함 + 타겟 설정해야함)
+    // 기본 공격
     bool RandomBasicAttack()
     {
         if (!isExecutingAttack)
@@ -567,8 +560,6 @@ public class Boss2 : MonoBehaviour
     {
         Debug.Log("MoveAndAttack");
 
-        isExecutingPattern = true;
-
         Vector3 center = new Vector3(0, 0, 0); // 중앙
         float radius = 45.0f; // 반지름
 
@@ -580,14 +571,12 @@ public class Boss2 : MonoBehaviour
             storedPositions.Add(targetPosition);
             storedAttacks.Add(randomAttack);
 
-            GameObject indicator = Instantiate(targetIndicator, targetPosition, Quaternion.identity);
+            // GameObject indicator = Instantiate(targetIndicator, targetPosition, Quaternion.identity);
 
             yield return JumpToPosition(targetPosition);
             randomAttack.Invoke();
             yield return new WaitForSeconds(3.0f);
         }
-
-        isExecutingPattern = false;
     }
 
 
