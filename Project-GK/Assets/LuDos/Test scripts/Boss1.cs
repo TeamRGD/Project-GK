@@ -153,10 +153,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 {
                     if (!hasExecutedInitialActions1)
                     {
-                        if (randomBasicAttackCoroutine != null)
-                        {
-                            StopRandomBasicAttack();
-                        }
+                        StopRandomBasicAttack();
                         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(ArmSlamAndGetEnergy());
@@ -172,10 +169,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 {
                     if (!hasExecutedInitialActions2)
                     {
-                        if (randomBasicAttackCoroutine != null)
-                        {
-                            StopRandomBasicAttack();
-                        }
+                        StopRandomBasicAttack();
                         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(JumpToCenter());
@@ -191,10 +185,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 {
                     if (!hasExecutedInitialActions3)
                     {
-                        if (randomBasicAttackCoroutine != null)
-                        {
-                            StopRandomBasicAttack();
-                        }
+                        StopRandomBasicAttack();
                         photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(Roar());
@@ -206,10 +197,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
             else if (currentHealth == 0)
             {
-                if (randomBasicAttackCoroutine != null)
-                {
-                    StopRandomBasicAttack();
-                }
+                StopRandomBasicAttack();
                 Die();
                 break;
             }
