@@ -82,8 +82,8 @@ public class PlayerController : MonoBehaviour
         //GameObject boss1 = GameObject.Find("Yggdrasil"); // [임시완]
         //boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
 
-        GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
-        boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
+        //GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
+        //boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
     }
 
     void Update()
