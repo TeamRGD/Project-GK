@@ -137,6 +137,14 @@ public class InteractionManager : MonoBehaviour
             }
         }
 
+        else if (hitInfo.collider.CompareTag("Lever"))
+        {
+            if (hitInfo.collider.TryGetComponent<LeverDown>(out LeverDown leverDown))
+            {
+                leverDown.UseLever();
+            }
+        }
+
         else if (hitInfo.collider.CompareTag("PushableStone"))
         {
             if (hitInfo.collider.TryGetComponent<PushableStone>(out PushableStone pushableStone))

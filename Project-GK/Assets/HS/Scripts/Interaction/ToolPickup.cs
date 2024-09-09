@@ -50,7 +50,8 @@ public class ToolPickup : MonoBehaviour
     {
         if (playerToolManager != null)
         {
-            playerToolManager.AddTool(idx); // 짚라인 idx: 2, 그 후 추가되는 것 idx: 3.
+            playerToolManager.AddTool(2); // 짚라인 idx: 2, 그 후 추가되는 것 idx: 3.
+            // 신동준 UI 추가 코드
             gameObject.SetActive(false);
         }
     }
