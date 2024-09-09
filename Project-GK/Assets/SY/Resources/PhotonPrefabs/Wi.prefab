@@ -1070,7 +1070,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   aim: {fileID: 6158319822806871963}
   grounded: 0
-  isSaving: 1
+  isFreeLooking: 0
   currentSaveTime: 0
   interactableLayer:
     serializedVersion: 2
