@@ -1,13 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PushableStone : MonoBehaviour
 {
     [SerializeField] private float pushSpeed = 2f; // 오브젝트가 밀릴 때의 속도
+    [SerializeField] float addAlpha = 0.5f; // ray 검출
     private Rigidbody rb;
     private Vector3 pushDirection;
     private bool isBeingPushed = false;
+    private bool isHit = false;
     private Coroutine moveCoroutine;
     private Vector3 boxCastHalfExtents; // BoxCast의 절반 크기
 
@@ -20,7 +21,7 @@ public class PushableStone : MonoBehaviour
         if (boxCollider != null)
         {
             // BoxCollider의 절반 크기를 boxCastHalfExtents로 설정
-            boxCastHalfExtents = boxCollider.size / 2f;
+            boxCastHalfExtents = boxCollider.size;
         }
         else
         {
@@ -65,9 +66,10 @@ public class PushableStone : MonoBehaviour
         {
             // 이동 중에는 Raycast를 무시하도록 설정
             rb.velocity = pushDirection * pushSpeed;
+            Debug.Log("이동 중");
 
             // 이동할 위치를 예측하여 BoxCast를 사용하여 충돌 감지
-            if (CheckCollisionInDirection(pushDirection))
+            if (CheckCollisionInDirection(pushDirection) && !isHit)
             {
                 rb.velocity = Vector3.zero;
                 isBeingPushed = false;
@@ -85,19 +87,23 @@ public class PushableStone : MonoBehaviour
     // 특정 방향으로 BoxCast를 사용하여 충돌을 확인하는 함수
     private bool CheckCollisionInDirection(Vector3 direction)
     {
-        float rayDistance = boxCastHalfExtents.magnitude + 0.1f; // BoxCast의 거리
+        float rayDistance = boxCastHalfExtents.magnitude + addAlpha; // BoxCast의 거리
         RaycastHit hit;
 
+        // LayerMask 설정
+        int layerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Interactable");
+
         // BoxCast 사용 (박스의 절반 크기를 boxCastHalfExtents로 설정)
-        if (Physics.BoxCast(transform.position, boxCastHalfExtents, direction, out hit, Quaternion.identity, rayDistance))
+        if (Physics.BoxCast(transform.position, boxCastHalfExtents, direction, out hit, Quaternion.identity, rayDistance, layerMask))
         {
             if (hit.collider.CompareTag("Stone") || hit.collider.CompareTag("PushableStone") || hit.collider.CompareTag("Others"))
             {
                 Debug.Log("충돌함");
+                isHit = true;
                 return true; // 충돌이 발생함
             }
         }
-
+        isHit = false;
         return false; // 충돌이 발생하지 않음
     }
 
@@ -110,6 +116,7 @@ public class PushableStone : MonoBehaviour
             {
                 StopCoroutine(moveCoroutine);
                 rb.velocity = Vector3.zero;
+                isHit = true;
                 isBeingPushed = false;
             }
         }
@@ -121,14 +128,26 @@ public class PushableStone : MonoBehaviour
         if (isBeingPushed)
         {
             // BoxCast의 중심점과 회전 없이 방향을 나타내는 변수 설정
-            Vector3 castCenter = transform.position + pushDirection.normalized * (boxCastHalfExtents.magnitude + 0.1f) / 2;
+            Vector3 castCenter = transform.position + pushDirection.normalized * (boxCastHalfExtents.magnitude + 0.1f);
             Quaternion castRotation = Quaternion.identity;
 
             // 충돌 영역 표시를 위한 색상 지정 (예: 빨간색)
             Gizmos.color = Color.red;
+            RaycastHit hit;
+            float rayDistance = boxCastHalfExtents.magnitude + addAlpha; // BoxCast의 거리
+            int layerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Interactable"); // 복합 레이어 설정
 
-            // BoxCast의 경계선을 그리기
-            Gizmos.DrawWireCube(castCenter, boxCastHalfExtents * 2f);
+            bool isHit = Physics.BoxCast(transform.position, boxCastHalfExtents, pushDirection, out hit, Quaternion.identity, rayDistance, layerMask);
+
+            if (isHit)
+            {
+                Gizmos.DrawWireCube(castCenter, boxCastHalfExtents * 2f); // 실제 박스의 크기
+                Gizmos.DrawRay(transform.position, pushDirection * rayDistance);
+            }
+            else
+            {
+                Gizmos.DrawRay(transform.position, pushDirection * rayDistance);
+            }
         }
     }
 }

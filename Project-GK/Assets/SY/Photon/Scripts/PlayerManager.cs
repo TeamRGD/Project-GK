@@ -10,17 +10,17 @@ public class PlayerManager : MonoBehaviour
     PhotonView PV;
     //private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(37, 24, -17); S2
     //private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(37, 5, 0); S2
-    //private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(25, 66, 0); //S3
-    //private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(25, 66, 0); //S3
-    private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(13, 1, 1); // Ygg
-    private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(13, 1, -1); // Ygg
+    private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(25, 66, 0); //S3
+    private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(25, 66, 0); //S3
+    //private UnityEngine.Vector3 startPositionWi = new UnityEngine.Vector3(13, 1, 1); // Ygg
+    //private UnityEngine.Vector3 startPositionZard = new UnityEngine.Vector3(13, 1, -1); // Ygg
 
     //private UnityEngine.Quaternion startRotationWi = UnityEngine.Quaternion.Euler(90, 90, 180); S2
     //private UnityEngine.Quaternion startRotationZard = UnityEngine.Quaternion.Euler(0, 90, 0); S2
-    //private UnityEngine.Quaternion startRotationWi = UnityEngine.Quaternion.Euler(0, -90, 0); //S3
-    //private UnityEngine.Quaternion startRotationZard = UnityEngine.Quaternion.Euler(0, -90, 0); //S3
-    private UnityEngine.Quaternion startRotationWi = UnityEngine.Quaternion.Euler(0, 270, 0);  // Ygg
-    private UnityEngine.Quaternion startRotationZard = UnityEngine.Quaternion.Euler(0, 270, 0);  // Ygg
+    private UnityEngine.Quaternion startRotationWi = UnityEngine.Quaternion.Euler(0, -90, 0); //S3
+    private UnityEngine.Quaternion startRotationZard = UnityEngine.Quaternion.Euler(0, -90, 0); //S3
+    //private UnityEngine.Quaternion startRotationWi = UnityEngine.Quaternion.Euler(0, 270, 0);  // Ygg
+    //private UnityEngine.Quaternion startRotationZard = UnityEngine.Quaternion.Euler(0, 270, 0);  // Ygg
 
     void Awake()
     {

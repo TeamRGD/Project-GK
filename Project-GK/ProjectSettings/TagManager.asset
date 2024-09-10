@@ -34,6 +34,7 @@ TagManager:
   - StairButton
   - Stone
   - PushableStone
+  - Lever
   layers:
   - Default
   - TransparentFX
@@ -41,7 +42,7 @@ TagManager:
   - Camera
   - Water
   - UI
-  - Interacatable
+  - Interactable
   - 
   - 
   - 
