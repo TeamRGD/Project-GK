@@ -5,10 +5,11 @@ public class PushableStone : MonoBehaviour
 {
     [SerializeField] private float pushSpeed = 2f; // 오브젝트가 밀릴 때의 속도
     [SerializeField] float addAlpha = 0.5f; // ray 검출
+    [SerializeField] float divideCastSize = 0.5f;
     private Rigidbody rb;
     private Vector3 pushDirection;
-    private bool isBeingPushed = false;
-    private bool isHit = false;
+    [SerializeField] bool isBeingPushed = false;
+    [SerializeField] bool isHit = false;
     private Coroutine moveCoroutine;
     private Vector3 boxCastHalfExtents; // BoxCast의 절반 크기
 
@@ -16,18 +17,8 @@ public class PushableStone : MonoBehaviour
     {
         TryGetComponent<Rigidbody>(out rb);
 
-        // BoxCollider의 절반 크기 설정 (BoxCast에서 두께로 사용)
         BoxCollider boxCollider = GetComponent<BoxCollider>();
-        if (boxCollider != null)
-        {
-            // BoxCollider의 절반 크기를 boxCastHalfExtents로 설정
-            boxCastHalfExtents = boxCollider.size;
-        }
-        else
-        {
-            // BoxCollider가 없으면 기본 크기 설정
-            boxCastHalfExtents = new Vector3(0.5f, 0.5f, 0.5f);
-        }
+        boxCastHalfExtents = transform.lossyScale * divideCastSize;
     }
 
     // 플레이어가 오브젝트를 밀 때 호출되는 함수
@@ -93,12 +84,26 @@ public class PushableStone : MonoBehaviour
         // LayerMask 설정
         int layerMask = LayerMask.GetMask("Default") | LayerMask.GetMask("Interactable");
 
-        // BoxCast 사용 (박스의 절반 크기를 boxCastHalfExtents로 설정)
-        if (Physics.BoxCast(transform.position, boxCastHalfExtents, direction, out hit, Quaternion.identity, rayDistance, layerMask))
+        // 방향에 따라 BoxCast 크기 설정 (left, right는 x축 기준, forward, back은 z축 기준)
+        Vector3 adjustedBoxCastHalfExtents = boxCastHalfExtents;
+
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.z))
+        {
+            // 좌우로 움직일 때는 x축 크기 조정
+            adjustedBoxCastHalfExtents = new Vector3(boxCastHalfExtents.x, boxCastHalfExtents.y, boxCastHalfExtents.z * 0.5f);
+        }
+        else
+        {
+            // 앞뒤로 움직일 때는 z축 크기 조정
+            adjustedBoxCastHalfExtents = new Vector3(boxCastHalfExtents.x * 0.5f, boxCastHalfExtents.y, boxCastHalfExtents.z);
+        }
+
+        // BoxCast 사용 (조정된 크기를 적용)
+        if (Physics.BoxCast(transform.position, adjustedBoxCastHalfExtents, direction, out hit, Quaternion.identity, rayDistance, layerMask))
         {
             if (hit.collider.CompareTag("Stone") || hit.collider.CompareTag("PushableStone") || hit.collider.CompareTag("Others"))
             {
-                Debug.Log("충돌함");
+                Debug.Log("충돌로 인해 이동이 불가능합니다");
                 isHit = true;
                 return true; // 충돌이 발생함
             }
@@ -106,6 +111,7 @@ public class PushableStone : MonoBehaviour
         isHit = false;
         return false; // 충돌이 발생하지 않음
     }
+
 
     void OnCollisionEnter(Collision collision)
     {
@@ -118,6 +124,7 @@ public class PushableStone : MonoBehaviour
                 rb.velocity = Vector3.zero;
                 isHit = true;
                 isBeingPushed = false;
+                Debug.Log("이동 중 다른 오브젝트와 충돌하여 움직임을 멈춥니다.");
             }
         }
     }
@@ -129,7 +136,6 @@ public class PushableStone : MonoBehaviour
         {
             // BoxCast의 중심점과 회전 없이 방향을 나타내는 변수 설정
             Vector3 castCenter = transform.position + pushDirection.normalized * (boxCastHalfExtents.magnitude + 0.1f);
-            Quaternion castRotation = Quaternion.identity;
 
             // 충돌 영역 표시를 위한 색상 지정 (예: 빨간색)
             Gizmos.color = Color.red;
@@ -141,12 +147,12 @@ public class PushableStone : MonoBehaviour
 
             if (isHit)
             {
-                Gizmos.DrawWireCube(castCenter, boxCastHalfExtents * 2f); // 실제 박스의 크기
+                Gizmos.DrawWireCube(castCenter, boxCastHalfExtents); // 실제 박스의 크기
                 Gizmos.DrawRay(transform.position, pushDirection * rayDistance);
             }
             else
             {
-                Gizmos.DrawRay(transform.position, pushDirection * rayDistance);
+                Gizmos.DrawRay(transform.position, pushDirection * 100f);
             }
         }
     }
