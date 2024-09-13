@@ -96,6 +96,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void GetHit()
     {
+        playerController.SetIsFreeLooking(false);
         TakeDamage(5);
         if (isAlive)
         {
@@ -154,6 +155,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnStun()
     {
+        playerController.SetIsFreeLooking(false);
         TakeDamage(5);
         if (isAlive)
         {

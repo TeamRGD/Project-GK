@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
     bool canMove = true;
     bool isWalking = false;
     bool isSaving = true;
-    public bool isFreeLooking = false;
+    bool isFreeLooking = false;
 
     // Other variable
     Vector3 smoothMoveVelocity;
@@ -93,12 +93,15 @@ public class PlayerController : MonoBehaviour
     {
         if (!playerState.GetIsAlive())
             aim.position = new Vector3(aim.position.x, -1000f, aim.position.z);
-        // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
-        if (!PV.IsMine || !canControl)
+        if (!PV.IsMine)
             return;
         Look();
-        Move();
-        Save();
+        // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
+        if (canControl)
+        {
+            Move();
+            Save();
+        }
     }
 
     void Move()
@@ -376,7 +379,7 @@ public class PlayerController : MonoBehaviour
 
     void Save()
     {
-        if (Input.GetKey(KeyCode.F)&&grounded)
+        if (Input.GetKey(KeyCode.F) && grounded)
         {
             if (!isSaving)
             {
@@ -432,6 +435,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SaveProcess(PlayerStateManager targetPlayerState)
     {
+        SetIsFreeLooking(false);
         while (isSaving)
         {
             currentSaveTime += Time.deltaTime;
@@ -470,6 +474,11 @@ public class PlayerController : MonoBehaviour
     public bool GetIsGrounded()
     {
         return grounded;
+    }
+
+    public void SetIsFreeLooking(bool value)
+    {
+        isFreeLooking = value;
     }
 
     // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정
