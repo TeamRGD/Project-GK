@@ -152,6 +152,14 @@ public class InteractionManager : MonoBehaviour
                 pushableStone.Push(this.transform.position);
             }
         }
+
+        else if (hitInfo.collider.CompareTag("BlockMove"))
+        {
+            if (hitInfo.collider.TryGetComponent<BlockMove>(out BlockMove blockMove))
+            {
+                blockMove.Move();
+            }
+        }
     }
 
     // 암호 입력의 경우 Y키 이므로 PlayerController에서 Y키로 받아오는 함수

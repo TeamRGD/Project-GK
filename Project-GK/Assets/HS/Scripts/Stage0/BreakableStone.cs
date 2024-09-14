@@ -10,8 +10,13 @@ public class BreakableStone : MonoBehaviour
     [SerializeField] private AudioClip breakSound; // 돌이 부서질 때 재생될 소리
     [SerializeField] private AudioSource audioSource; // 소리를 재생할 AudioSource
 
+    MeshDestroy meshDestroy;
+    Outline outline;
+
     void Start()
     {
+        meshDestroy = GetComponent<MeshDestroy>();
+        outline = GetComponent<Outline>();
         // 초기 체력을 설정
         currentHealth = maxHealth;
 
@@ -23,16 +28,16 @@ public class BreakableStone : MonoBehaviour
     }
 
     // Projectile과 충돌했을 때 호출되는 함수
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
         // 충돌한 오브젝트가 Projectile 태그를 가지고 있을 때
-        if (collision.gameObject.CompareTag("Projectile"))
+        if (other.gameObject.CompareTag("Projectile_Wi") || other.gameObject.CompareTag("Projectile_Zard"))
         {
             // 체력 감소
             TakeDamage(1);
 
             // 충돌한 Projectile 삭제
-            Destroy(collision.gameObject);
+            Destroy(other.gameObject);
         }
     }
 
@@ -43,12 +48,12 @@ public class BreakableStone : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Break();
+            StartCoroutine(Break());
         }
     }
 
     // 돌이 부서질 때의 처리
-    private void Break()
+    IEnumerator Break()
     {
         // 효과음을 재생
         if (breakSound != null && audioSource != null)
@@ -61,8 +66,12 @@ public class BreakableStone : MonoBehaviour
         {
             debrisPrefab[i].SetActive(true);
         }
-
+        outline.enabled = false;
+        meshDestroy.DestroyMesh();
         // 돌 오브젝트 파괴
+        yield return new WaitForSeconds(3f);
+
+        yield return null;
         Destroy(gameObject);
     }
 }

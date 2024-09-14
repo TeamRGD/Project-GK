@@ -35,6 +35,7 @@ TagManager:
   - Stone
   - PushableStone
   - Lever
+  - BlockMove
   layers:
   - Default
   - TransparentFX
