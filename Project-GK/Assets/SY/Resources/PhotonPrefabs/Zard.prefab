@@ -306,7 +306,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1018,16 +1018,16 @@ MonoBehaviour:
     Name: isUltimate
   - Type: 4
     SynchronizeType: 1
-    Name: rescue
-  - Type: 4
-    SynchronizeType: 1
     Name: getHit
   - Type: 4
     SynchronizeType: 1
     Name: onDeath
   - Type: 4
-    SynchronizeType: 1
-    Name: groggy
+    SynchronizeType: 0
+    Name: onStun
+  - Type: 4
+    SynchronizeType: 0
+    Name: trigger
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
@@ -1070,7 +1070,6 @@ MonoBehaviour:
     m_Bits: 4294967295
   aim: {fileID: 6158319822806871963}
   grounded: 0
-  isSaving: 1
   currentSaveTime: 0
   interactableLayer:
     serializedVersion: 2
