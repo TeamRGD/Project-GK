@@ -16013,6 +16013,8 @@ MonoBehaviour:
   saveText: {fileID: 1777305773}
   interactionNotice: {fileID: 1245116672}
   interactionNoticeForCipher: {fileID: 1451600063}
+  PauseContainer: {fileID: 0}
+  SettingsContainer: {fileID: 0}
 --- !u!4 &476556661
 Transform:
   m_ObjectHideFlags: 0
@@ -53998,7 +54000,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
