@@ -309,7 +309,7 @@ public class PlayerController : MonoBehaviour
         aim.position = Vector3.Lerp(aim.position, desiredPosition, smoothTime);
 
         // Interaction
-        if (SceneManager.GetActiveScene().name == "S2_Library_03" || SceneManager.GetActiveScene().name == "S3" || SceneManager.GetActiveScene().name == "S4")
+        if (SceneManager.GetActiveScene().name == "S1" || SceneManager.GetActiveScene().name == "S2_Library_03" || SceneManager.GetActiveScene().name == "S3" || SceneManager.GetActiveScene().name == "S4")
             CheckForInteractable(ray);
     }
 
