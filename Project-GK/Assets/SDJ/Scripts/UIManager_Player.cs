@@ -29,6 +29,10 @@ public class UIManager_Player : MonoBehaviour
     // SFX
 
 
+    // for Pausing
+    public GameObject PauseContainer;
+    public GameObject SettingsContainer;
+
     // set Singleton
     void Awake()
     {
@@ -152,5 +156,29 @@ public class UIManager_Player : MonoBehaviour
         {
             aim.color = Color.white;
         }
+    }
+
+    public void PauseOn()
+    {
+        PauseContainer.SetActive(true);
+        SettingsContainer.SetActive(false);
+    }
+
+    public void PauseOff()
+    {
+        PauseContainer.SetActive(false);
+        SettingsContainer.SetActive(false);
+    }
+
+    public void SettingsOn()
+    {
+        PauseContainer.SetActive(false);
+        SettingsContainer.SetActive(true);
+    }
+
+    public void SettingsOff()
+    {
+        PauseContainer.SetActive(true);
+        SettingsContainer.SetActive(false);
     }
 }
