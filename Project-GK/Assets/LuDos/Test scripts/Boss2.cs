@@ -11,12 +11,11 @@ using System.IO;
 public class Boss2 : MonoBehaviour
 {
     #region variables
-    int maxHealth = 100;
-    int currentHealth;
+    float maxHealth = 100;
+    float currentHealth;
     float moveSpeed = 10.0f;
 
     bool isFirstTimeBelow66 = true;
-    bool isFirstTimeBelow33 = true;
     bool isFirstTimeBelow2 = true;
 
     int magicCircleCount = 0;
@@ -31,15 +30,29 @@ public class Boss2 : MonoBehaviour
     bool hasExecutedInitialActions2 = false;
     bool hasExecutedInitialActions3 = false;
 
+    Coroutine randomBasicAttackCoroutine;
+    Coroutine indicatorCoroutine;
+    Coroutine shockwaveCoroutine;
+    Coroutine jumpToPositionCoroutine;
+    Coroutine currentAttackCoroutine;
+
     bool canDisplay = true;
     bool canControlSpeed = false;
     bool isInvincible = false;
+    bool isAggroFixed = false;
+    bool isFocus = false;
 
-    Coroutine randomBasicAttackCoroutine;
-    Coroutine jumpToPositionCoroutine;
-    Coroutine currentAttackCoroutine;
-    Coroutine indicatorCoroutine;
-    Coroutine shockwaveCoroutine;
+    bool isStarted = false;
+
+    public List<GameObject> AttackIndicators;
+    public List<GameObject> AttackFills;
+    public List<GameObject> DamageColliders;
+
+    public GameObject DashCollider;
+
+    public List<GameObject> MagicCircles;
+    public List<GameObject> Torches;
+    public List<GameObject> EyesAndMouse;
 
     List<Vector3> storedPositions = new List<Vector3>();
     List<IEnumerator> storedAttacks = new List<IEnumerator>();
@@ -47,11 +60,12 @@ public class Boss2 : MonoBehaviour
     [HideInInspector] public List<int> correctOrder = new List<int>();
     List<int> playerOrder = new List<int>();
 
-    GameObject player;
     [HideInInspector] public List<GameObject> PlayerList;
+    [HideInInspector] public GameObject aggroTarget;
 
     Animator animator;
     Rigidbody rb;
+    public GameObject ShockWave;
 
     GameObject currentIndicator;
     GameObject currentFill;
@@ -65,11 +79,6 @@ public class Boss2 : MonoBehaviour
 
     void Start()
     {
-        //if (targetIndicator != null)
-        //{
-        //    targetIndicator.SetActive(false);
-        //}
-
         currentHealth = maxHealth;
         //animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
@@ -77,6 +86,22 @@ public class Boss2 : MonoBehaviour
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
         StartCoroutine(ExecuteBehaviorTree());
+        StartCoroutine(StartTime());
+    }
+
+    IEnumerator StartTime()
+    {
+        while (!isStarted)
+        {
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1)
+            {
+                isStarted = true;
+                // photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
+                StartCoroutine(ExecuteBehaviorTree());
+                yield break;
+            }
+            yield return null;
+        }
     }
 
     void Update()
@@ -117,7 +142,7 @@ public class Boss2 : MonoBehaviour
                     {
                         StopRandomBasicAttack();
                         MakeInvincible();
-                        yield return StartCoroutine(SpinAndExtinguishTorches());
+                        yield return StartCoroutine(SpinAndExtinguishAllTorches());
                         LightMagicCircle();
                         LightBossEyesAndMouth();
                         hasExecutedInitialActions1 = true;
@@ -168,11 +193,18 @@ public class Boss2 : MonoBehaviour
             {
                 if (!isGroggy)
                 {
+                    // photonView.RPC("SetIsAggroFixed", RpcTarget.AllBuffered);
                     RandomBasicAttack();
                 }
             }
             yield return null;
         }
+    }
+
+    [PunRPC]
+    void SetIsAggroFixed()
+    {
+        isAggroFixed = false;
     }
 
     BTNode CreatePattern1Tree()
@@ -240,15 +272,6 @@ public class Boss2 : MonoBehaviour
         }
 
         isExecutingPattern = false;
-    }
-
-    public void TakeDamage(int amount)
-    {
-        currentHealth -= amount;
-        if (currentHealth < 0)
-        {
-            currentHealth = 0;
-        }
     }
 
     bool SetGroggy()
@@ -328,6 +351,8 @@ public class Boss2 : MonoBehaviour
                 currentIndicator.transform.localScale = new Vector3(width, currentIndicator.transform.localScale.y, maxLength);
                 currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, 0);
 
+                currentFill.transform.position = currentIndicator.transform.position - currentIndicator.transform.forward * (maxLength / 2);
+
                 float elapsedTime = 0f;
                 while (elapsedTime < duration)
                 {
@@ -336,6 +361,7 @@ public class Boss2 : MonoBehaviour
 
                     float currentLength = Mathf.Lerp(0, maxLength, t);
                     currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, currentLength);
+                    currentFill.transform.position = currentIndicator.transform.position - currentIndicator.transform.forward * ((maxLength - currentLength) / 2);
 
                     yield return null;
                 }
@@ -345,7 +371,7 @@ public class Boss2 : MonoBehaviour
                 PhotonNetwork.Destroy(currentFill);
                 currentFill = null;
 
-                StartCoroutine(MakeDamageCollider(idx, maxLength, position));
+                // StartCoroutine(MakeDamageCollider(idx, maxLength, position));
             }
             else if (idx == 1)
             {
@@ -424,6 +450,36 @@ public class Boss2 : MonoBehaviour
         }
     }
 
+    void LookAtTarget(Vector3 targetDirection) // 임시완. 회전 애니메이션 오면 코루틴으로 바꿀듯
+    {
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = targetRotation;
+        }
+    }
+
+    [PunRPC]
+    void SelectAggroTargetRPC(int idx)
+    {
+        if (isAggroFixed)
+        {
+            aggroTarget = PlayerList[0].GetComponent<PlayerStateManager>().isAlive ? PlayerList[0] : PlayerList[1];
+        }
+        else
+        {
+            aggroTarget = PlayerList[idx].GetComponent<PlayerStateManager>().isAlive ? PlayerList[idx] : PlayerList[1 - idx];
+        }
+    }
+
+    void SelectAggroTarget()
+    {
+        int idx = Random.Range(0, PlayerList.Count);
+        // photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered, idx);
+    }
+
     // 기본 공격
     bool RandomBasicAttack()
     {
@@ -435,26 +491,51 @@ public class Boss2 : MonoBehaviour
             switch (attackType)
             {
                 case 1:
-                    StartCoroutine(ShortDashAndSlash());
+                    randomBasicAttackCoroutine = StartCoroutine(ShortDashAndSlash());
                     break;
                 case 2:
-                    StartCoroutine(DoubleDash());
+                    randomBasicAttackCoroutine = StartCoroutine(DoubleDash());
                     break;
                 case 3:
-                    StartCoroutine(JawSlamWithShockwave());
+                    randomBasicAttackCoroutine = StartCoroutine(JawSlamWithShockwave());
                     break;
                 case 4:
-                    StartCoroutine(SpinAndTargetSmash());
+                    randomBasicAttackCoroutine = StartCoroutine(SpinAndTargetSmash());
                     break;
                 case 5:
-                    StartCoroutine(RoarAndSmash());
+                    randomBasicAttackCoroutine = StartCoroutine(RoarAndSmash());
                     break;
                 case 6:
-                    StartCoroutine(FocusAndLinearShockwave());
+                    randomBasicAttackCoroutine = StartCoroutine(FocusAndLinearShockwave());
                     break;
             }
         }
         return true;
+    }
+
+    [PunRPC]
+    void PlayerListSortRPC()  // 임시완
+    {
+        StartCoroutine(WaitTime());
+        PlayerList.Sort((player1, player2) => player1.name.CompareTo(player2.name));
+    }
+
+    IEnumerator WaitTime()
+    {
+        yield return new WaitForSeconds(1.0f);
+    }
+
+    void ActiveDashCollider(int idx)
+    {
+        if (idx == 0) // 임시완
+        {
+            DashCollider.tag = "DamageCollider";
+        }
+
+        else if (idx == 1)
+        {
+            DashCollider.tag = "Untagged";
+        }
     }
 
     IEnumerator ShortDashAndSlash()
@@ -463,8 +544,18 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
+        yield return new WaitForSeconds(1.0f);
+
+        SelectAggroTarget();
+        LookAtTarget(aggroTarget.transform.position - transform.position);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
+        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+
         // 짧은 대쉬
         //animator.SetTrigger("ShortDashAndSlash");
+
+        ActiveDashCollider(0);
 
         float dashTime = 0.5f;
         float dashSpeed = moveSpeed;
@@ -477,6 +568,8 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
+        ActiveDashCollider(1);
+
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -488,11 +581,15 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
-        // 첫 번째 돌진 (A 플레이어)
-        GameObject playerA = GetRandomPlayer();
-        Vector3 directionToPlayerA = (playerA.transform.position - transform.position).normalized;
-        Quaternion lookRotationA = Quaternion.LookRotation(directionToPlayerA);
-        transform.rotation = lookRotationA;
+        yield return new WaitForSeconds(1.0f);
+
+        aggroTarget = PlayerList[0];
+        LookAtTarget(aggroTarget.transform.position - transform.position);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
+        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+
+        ActiveDashCollider(0);
 
         float dashTime = 1.0f;
         float dashSpeed = moveSpeed;
@@ -507,13 +604,17 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(2.0f);
+        ActiveDashCollider(1);
 
-        // 두 번째 돌진 (B 플레이어)
-        GameObject playerB = GetRandomPlayer(exclude: playerA);
-        Vector3 directionToPlayerB = (playerB.transform.position - transform.position).normalized;
-        Quaternion lookRotationB = Quaternion.LookRotation(directionToPlayerB);
-        transform.rotation = lookRotationB;
+        yield return new WaitForSeconds(3.0f);
+
+        aggroTarget = PlayerList[1];
+        LookAtTarget(aggroTarget.transform.position - transform.position);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
+        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+
+        ActiveDashCollider(0);
 
         elapsedTime = 0.0f;
 
@@ -526,7 +627,9 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(2.0f);
+        ActiveDashCollider(1);
+
+        yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
     }
@@ -537,16 +640,22 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
+        yield return new WaitForSeconds(1.0f);
+
+        SelectAggroTarget();
+        LookAtTarget(aggroTarget.transform.position - transform.position);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 6.0f, 3.0f));
+        yield return new WaitForSeconds(2.2f); // 임시완
+
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
         //animator.SetTrigger("JawSlamWithShockwave");
-        yield return new WaitForSeconds(2.0f); // 캐스팅 시간
+        yield return new WaitForSeconds(2.0f); // 임시완
 
-        // 충격파
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(4.5f, 0.1f, targetPosition, 2.0f));
-
-        yield return new WaitForSeconds(1.0f);
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 6.0f, 2.0f));
+        yield return new WaitForSeconds(2.0f);
 
         isExecutingAttack = false;
     }
@@ -557,22 +666,24 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
-        // 시계 방향 회전 및 공격
-        //animator.SetTrigger("SpinAndTargetSmash_C");
         yield return new WaitForSeconds(1.0f);
 
-
-        // 반시계 방향 회전 및 공격
-        //animator.SetTrigger("SpinAndTargetSmash");
-        yield return new WaitForSeconds(1.0f);
-
-
-        // 다시 시계 방향 회전 및 공격
-        //animator.SetTrigger("SpinAndTargetSmash_C");
-        yield return new WaitForSeconds(1.0f);
-
-
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f)); // 임시완. 크기
+        yield return new WaitForSeconds(2.2f);
+        // animator.SetTrigger("SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f)); // 임시완. 크기
+        yield return new WaitForSeconds(2.2f);
+        // animator.SetTrigger("SpinAndTargetSmash");
+        yield return new WaitForSeconds(2.0f);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f)); // 임시완. 크기
+        yield return new WaitForSeconds(2.2f);
+        // animator.SetTrigger("SpinAndTargetSmash_C");
+        yield return new WaitForSeconds(2.0f);
+
+        yield return new WaitForSeconds(1.0f);
 
         isExecutingAttack = false;
     }
@@ -583,17 +694,20 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
-        //animator.SetTrigger("RoarAndSmash");
+        yield return new WaitForSeconds(1.0f);
+
+        // animator.SetTrigger("RoarAndSmash");
         yield return new WaitForSeconds(0.5f);
 
-        // 슬로우
-        SlowAllPlayers(0.3f, 2.0f); // 2초간 30% 슬로우
+        SlowAllPlayers(0.3f, 2.0f);
 
-        // 대쉬
-        GameObject targetPlayer = GetRandomPlayer();
-        Vector3 directionToPlayer = (targetPlayer.transform.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-        transform.rotation = lookRotation;
+        SelectAggroTarget();
+        LookAtTarget(aggroTarget.transform.position - transform.position);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
+        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+
+        ActiveDashCollider(0);
 
         float dashTime = 0.5f;
         float dashSpeed = moveSpeed;
@@ -606,7 +720,9 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(1.0f);
+        ActiveDashCollider(0);
+
+        yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
     }
@@ -617,40 +733,35 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
+        yield return new WaitForSeconds(1.0f);
+
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
         //animator.SetTrigger("FocusAndLinearShockwave");
-        yield return new WaitForSeconds(2.0f); // 정신 집중 시간 동안 받는 데미지 50% 감소
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
+        yield return StartCoroutine(DamageCoroutine(2.0f));
 
-        // 충격파
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(4.5f, 0.1f, targetPosition, 2.0f));
-        yield return new WaitForSeconds(1.0f);
+        shockwaveCoroutine = StartCoroutine(CreateLinearShockwave(1.5f, 0.1f, targetPosition, 2.0f)); // 임시완. 크기
+        yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
     }
 
-    GameObject GetRandomPlayer(GameObject exclude = null)
+    private IEnumerator DamageCoroutine(float duration)
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        List<GameObject> playerList = new List<GameObject>(players);
+        isFocus = true;
 
-        if (exclude != null)
-        {
-            playerList.Remove(exclude);
-        }
+        yield return new WaitForSeconds(duration);
 
-        int randomIndex = UnityEngine.Random.Range(0, playerList.Count);
-        return playerList[randomIndex];
+        isFocus = false;
     }
 
     void SlowAllPlayers(float slowAmount, float duration)
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject player in players)
+        foreach (GameObject player in PlayerList)
         {
-            // 플레이어의 슬로우 로직 추가
-            // 예시: player.GetComponent<PlayerController>().ApplySlow(slowAmount, duration);
+            player.GetComponent<PlayerController>().ApplySlow(slowAmount, duration);
         }
     }
 
@@ -677,28 +788,78 @@ public class Boss2 : MonoBehaviour
         }
     }
 
+    IEnumerator CreateLinearShockwave(float maxRadius, float startScale, Vector3 position, float speed)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Vector3 forwardOffset = transform.forward * 1.0f;
+            position += forwardOffset;
+            position.y = 0.15f; // 임시완
+
+            currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "LinearShockWave"), position, Quaternion.identity);
+
+            float currentScale = startScale;
+            Vector3 movementDirection = transform.forward;
+
+            while (currentScale < maxRadius)
+            {
+                currentShockwave.transform.position += movementDirection * speed * Time.deltaTime;
+                yield return null;
+            }
+
+            PhotonNetwork.Destroy(currentShockwave);
+            currentShockwave = null;
+        }
+    }
+
     // 패턴 1
     void MakeInvincible()
     {
-        Debug.Log("MakeInvincible");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            //photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
+        }
+
+        //photonView.RPC("MakeInvincibleRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void MakeInvincibleRPC()
+    {
         isInvincible = true;
     }
 
-    IEnumerator SpinAndExtinguishTorches()
+    IEnumerator SpinAndExtinguishAllTorches()
     {
         Debug.Log("SpinAndExtinguishTorches");
         //animator.SetTrigger("QuickSpin");
-        yield return new WaitForSeconds(1.0f);
+
+        yield return new WaitForSeconds(2.0f);
+
+        for (int i = 0; i < Torches.Count; i++)
+        {
+            Torches[i].SetActive(false);
+        }
     }
 
     void LightMagicCircle()
     {
         Debug.Log("LightMagicCircle");
+
+        for (int i = 0; i < MagicCircles.Count; i++)
+        {
+            MagicCircles[i].SetActive(true);
+        }
     }
 
     void LightBossEyesAndMouth()
     {
         Debug.Log("LightBossEyesAndMouth");
+
+        for (int i = 0; i < EyesAndMouse.Count; i++)
+        {
+            EyesAndMouse[i].SetActive(true);
+        }
     }
 
     bool ControlSpeed()
@@ -745,6 +906,11 @@ public class Boss2 : MonoBehaviour
     void LightFourTorches()
     {
         Debug.Log("LightFourTorches");
+
+        for (int i = 0; i < 4; i++)
+        {
+            Torches[2 * i].SetActive(true);
+        }
     }
 
     IEnumerator MoveAndAttack()
@@ -762,10 +928,8 @@ public class Boss2 : MonoBehaviour
             storedPositions.Add(targetPosition);
             storedAttacks.Add(randomAttack);
 
-            // GameObject indicator = Instantiate(targetIndicator, targetPosition, Quaternion.identity);
-
             yield return JumpToPosition(targetPosition);
-            yield return StartCoroutine(randomAttack); // 코루틴 실행
+            yield return StartCoroutine(randomAttack);
             yield return new WaitForSeconds(3.0f);
         }
     }
@@ -774,8 +938,14 @@ public class Boss2 : MonoBehaviour
     IEnumerator RoarAndExtinguishAllTorches()
     {
         Debug.Log("RoarAndExtinguishAllTorches");
+
         animator.SetTrigger("Roar");
         yield return new WaitForSeconds(3.0f);
+
+        for (int i = 0; i < Torches.Count; i++)
+        {
+            Torches[i].SetActive(false);
+        }
     }
 
     Vector3 GetRandomPosition(Vector3 center, float radius)
@@ -809,9 +979,11 @@ public class Boss2 : MonoBehaviour
 
     IEnumerator JumpToPosition(Vector3 targetPosition)
     {
+        LookAtTarget(targetPosition - transform.position);
+
         Vector3 startPosition = transform.position;
-        float jumpHeight = 10.0f; // 점프 높이
-        float jumpDuration = 2.0f; // 점프 시간
+        float jumpHeight = 10.0f;
+        float jumpDuration = 2.0f;
 
         float elapsedTime = 0.0f;
 
@@ -820,7 +992,7 @@ public class Boss2 : MonoBehaviour
         while (elapsedTime < jumpDuration)
         {
             float progress = elapsedTime / jumpDuration;
-            float height = Mathf.Sin(Mathf.PI * progress) * jumpHeight; // 포물선 계산
+            float height = Mathf.Sin(Mathf.PI * progress) * jumpHeight;
             transform.position = Vector3.Lerp(startPosition, targetPosition, progress) + Vector3.up * height;
             elapsedTime += Time.deltaTime;
             yield return null;
@@ -828,7 +1000,7 @@ public class Boss2 : MonoBehaviour
 
         transform.position = targetPosition;
 
-        yield return new WaitForSeconds(1.0f); // 점프 후 대기 시간
+        yield return new WaitForSeconds(1.0f);
     }
 
     IEnumerator JumpToStoredPosition()
@@ -877,7 +1049,7 @@ public class Boss2 : MonoBehaviour
     {
         Debug.Log("Roar");
         //animator.SetTrigger("Roar");
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(3.0f);
     }
     void SpeedUp()
     {
@@ -890,18 +1062,22 @@ public class Boss2 : MonoBehaviour
 
         isExecutingAttack = true;
 
-        //animator.SetTrigger("Dash");
+        yield return new WaitForSeconds(1.0f);
 
-        player = GameObject.FindWithTag("Player"); // player 랜덤으로 선택하는 로직 필요함
-        Debug.Log(player);
 
-        Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
-        transform.rotation = lookRotation;
+        SelectAggroTarget();
+        LookAtTarget(aggroTarget.transform.position - transform.position);
+
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
+        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+
+        ActiveDashCollider(0);
 
         float dashTime = 1.0f;
-        float dashSpeed = 10.0f; // 대쉬 속도
+        float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
+
+        //animator.SetTrigger("Dash");
 
         while (elapsedTime < dashTime)
         {
@@ -910,7 +1086,9 @@ public class Boss2 : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(4.0f);
+        ActiveDashCollider(1);
+
+        yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
     }
@@ -983,8 +1161,9 @@ public class Boss2 : MonoBehaviour
     {
         if (playerOrder[attackOrderCount] != 0)
         {
-            // 맵 전체에 데미지를 입히는 로직
             Debug.Log("DamageAllMap");
+
+            StartCoroutine(MakeDamageCollider(2, 40f, new Vector3(0, 0, 0))); // 임시완 크기
 
             attackOrderCount = 0;
             canDisplay = true;
@@ -1007,6 +1186,51 @@ public class Boss2 : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // 어떤 플레이어가 공격했는지 구분하여 playerOrder에 추가
+        if (collision.gameObject.CompareTag("Projectile_Wi"))
+        {
+            playerOrder.Add(0);
+        }
+        else if (collision.gameObject.CompareTag("Projectile_Zard"))
+        {
+            playerOrder.Add(1);
+        }
+    }
+
+    // Photon Code
+    public void TakeDamage(float amount)
+    {
+        // photonView.RPC("TakeDamageRPC", RpcTarget.All, amount);
+    }
+
+    [PunRPC]
+    void TakeDamageRPC(float amount)
+    {
+        if (!isInvincible)
+        {
+            if (isFocus)
+            {
+                currentHealth -= 0.5f * amount;
+            }
+            else
+            {
+                currentHealth -= amount;
+            }
+
+            if (isFirstTimeBelow66 && currentHealth <= 66 && currentHealth > 33)
+            {
+                currentHealth = 66;
+                isFirstTimeBelow66 = false;
+            }
+            else if (isFirstTimeBelow2 && currentHealth <= 2 && currentHealth > 0)
+            {
+                currentHealth = 2;
+                isFirstTimeBelow2 = false;
+            }
+            else if (currentHealth < 0)
+            {
+                currentHealth = 0;
+            }
+            // UI
+        }
     }
 }

@@ -20,7 +20,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float distanceFromPlayer, minDistanceFromPlayer;
     [SerializeField] LayerMask collisionMask;
     [SerializeField] Transform aim;
-    
+
+    float originalWalkSpeed;
+    float originalSprintSpeed;
 
     // Component
     Rigidbody rb;
@@ -87,6 +89,9 @@ public class PlayerController : MonoBehaviour
 
         //GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
         //boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
+
+        originalWalkSpeed = walkSpeed;
+        originalSprintSpeed = sprintSpeed;
     }
 
     void Update()
@@ -495,5 +500,21 @@ public class PlayerController : MonoBehaviour
             walkSpeed = value;
             sprintSpeed = value;
         }
+    }
+
+    public void ApplySlow(float slowAmount, float duration)
+    {
+        StartCoroutine(SlowCoroutine(slowAmount, duration));
+    }
+
+    private IEnumerator SlowCoroutine(float slowAmount, float duration)
+    {
+        walkSpeed *= slowAmount;
+        sprintSpeed *= slowAmount;
+
+        yield return new WaitForSeconds(duration);
+
+        walkSpeed = originalWalkSpeed;
+        sprintSpeed = originalSprintSpeed;
     }
 }

@@ -47,10 +47,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
     bool canChange1 = true;
     bool canChange2 = true;
     bool canDisplay = true;
-    bool isStarted = false;
     [HideInInspector] public bool IsCorrect = false;
     bool isInvincible = false;
     bool isAggroFixed = false;
+
+    bool isStarted = false;
 
     [HideInInspector] public int Code;
     int playerIdx = 0;

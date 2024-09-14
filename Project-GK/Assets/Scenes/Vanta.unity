@@ -1309,7 +1309,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6067487121785995400, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
       propertyPath: m_Name
-      value: Boss2_Vanta
+      value: Vanta
       objectReference: {fileID: 0}
     - target: {fileID: 6881460439763360306, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
       propertyPath: m_LocalScale.x
@@ -1426,6 +1426,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackOrderCount: 0
   correctOrder: 
+  PlayerList: []
 --- !u!95 &123627478
 Animator:
   serializedVersion: 5
@@ -22024,6 +22025,8 @@ MonoBehaviour:
   saveText: {fileID: 1902208051}
   interactionNotice: {fileID: 360317455}
   interactionNoticeForCipher: {fileID: 1215488030}
+  PauseContainer: {fileID: 0}
+  SettingsContainer: {fileID: 0}
 --- !u!4 &1582803663
 Transform:
   m_ObjectHideFlags: 0
