@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.IO;
 
-public class Boss2 : MonoBehaviour
+public class Boss2 : MonoBehaviourPunCallbacks
 {
     #region variables
     float maxHealth = 100;
@@ -85,7 +85,6 @@ public class Boss2 : MonoBehaviour
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
         pattern3Tree = CreatePattern3Tree();
-        StartCoroutine(ExecuteBehaviorTree());
         StartCoroutine(StartTime());
     }
 
@@ -96,7 +95,7 @@ public class Boss2 : MonoBehaviour
             if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1)
             {
                 isStarted = true;
-                // photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
+                photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
                 StartCoroutine(ExecuteBehaviorTree());
                 yield break;
             }
@@ -193,7 +192,7 @@ public class Boss2 : MonoBehaviour
             {
                 if (!isGroggy)
                 {
-                    // photonView.RPC("SetIsAggroFixed", RpcTarget.AllBuffered);
+                    photonView.RPC("SetIsAggroFixed", RpcTarget.AllBuffered);
                     RandomBasicAttack();
                 }
             }
@@ -297,9 +296,15 @@ public class Boss2 : MonoBehaviour
     void Die()
     {
         Debug.Log("Die");
-        isInvincible = true;
+        photonView.RPC("DieRPC", RpcTarget.AllBuffered);
 
         // animator.SetTrigger("Die");
+    }
+
+    [PunRPC]
+    void DieRPC()
+    {
+        isInvincible = true;
     }
 
     IEnumerator MakeDamageCollider(int idx, float maxLength, Vector3 position)
@@ -477,7 +482,7 @@ public class Boss2 : MonoBehaviour
     void SelectAggroTarget()
     {
         int idx = Random.Range(0, PlayerList.Count);
-        // photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered, idx);
+        photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered, idx);
     }
 
     // 기본 공격
@@ -525,7 +530,7 @@ public class Boss2 : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
     }
 
-    void ActiveDashCollider(int idx)
+    void ActiveDashCollider(int idx) // 임시완 끝나면 동기화 함수로 변경하기
     {
         if (idx == 0) // 임시완
         {
@@ -575,6 +580,12 @@ public class Boss2 : MonoBehaviour
         isExecutingAttack = false;
     }
 
+    [PunRPC]
+    void SetAggroTarget(int idx)
+    {
+        aggroTarget = PlayerList[idx];
+    }
+
     IEnumerator DoubleDash()
     {
         Debug.Log("DoubleDash");
@@ -583,7 +594,8 @@ public class Boss2 : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
-        aggroTarget = PlayerList[0];
+        photonView.RPC("SetAggroTarget", RpcTarget.AllBuffered, 0);
+        //aggroTarget = PlayerList[0];
         LookAtTarget(aggroTarget.transform.position - transform.position);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
@@ -608,7 +620,8 @@ public class Boss2 : MonoBehaviour
 
         yield return new WaitForSeconds(3.0f);
 
-        aggroTarget = PlayerList[1];
+        photonView.RPC("SetAggroTarget", RpcTarget.AllBuffered, 1);
+        //aggroTarget = PlayerList[1];
         LookAtTarget(aggroTarget.transform.position - transform.position);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
@@ -750,14 +763,28 @@ public class Boss2 : MonoBehaviour
 
     private IEnumerator DamageCoroutine(float duration)
     {
-        isFocus = true;
+        photonView.RPC("SetIsFocus", RpcTarget.AllBuffered, true);
+        //isFocus = true;
 
         yield return new WaitForSeconds(duration);
 
-        isFocus = false;
+        photonView.RPC("SetIsFocus", RpcTarget.AllBuffered, false);
+        //isFocus = false;
+    }
+
+    [PunRPC]
+    void SetIsFocus(bool value)
+    {
+        isFocus = value;
     }
 
     void SlowAllPlayers(float slowAmount, float duration)
+    {
+        photonView.RPC("ApplySlowRPC", RpcTarget.AllBuffered, slowAmount, duration);
+    }
+
+    [PunRPC]
+    void ApplySlowRPC(float slowAmount, float duration)
     {
         foreach (GameObject player in PlayerList)
         {
@@ -796,7 +823,7 @@ public class Boss2 : MonoBehaviour
             position += forwardOffset;
             position.y = 0.15f; // 임시완
 
-            currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "LinearShockWave"), position, Quaternion.identity);
+            currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "LinearShockWave"), position, Quaternion.identity); // 넣어줘야 함.
 
             float currentScale = startScale;
             Vector3 movementDirection = transform.forward;
@@ -820,7 +847,7 @@ public class Boss2 : MonoBehaviour
             //photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
         }
 
-        //photonView.RPC("MakeInvincibleRPC", RpcTarget.AllBuffered);
+        photonView.RPC("MakeInvincibleRPC", RpcTarget.AllBuffered);
     }
 
     [PunRPC]
@@ -838,9 +865,17 @@ public class Boss2 : MonoBehaviour
 
         for (int i = 0; i < Torches.Count; i++)
         {
-            Torches[i].SetActive(false);
+            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, i, false);
+            //Torches[i],SetActive(false);
         }
     }
+
+    [PunRPC]
+    void SetActiveRPC(List<GameObject> gameObjects, int idx, bool value)
+    {
+        gameObjects[idx].SetActive(value);
+    }
+
 
     void LightMagicCircle()
     {
@@ -848,7 +883,8 @@ public class Boss2 : MonoBehaviour
 
         for (int i = 0; i < MagicCircles.Count; i++)
         {
-            MagicCircles[i].SetActive(true);
+            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, MagicCircles, i, true);
+            //MagicCircles[i].SetActive(true);
         }
     }
 
@@ -858,7 +894,8 @@ public class Boss2 : MonoBehaviour
 
         for (int i = 0; i < EyesAndMouse.Count; i++)
         {
-            EyesAndMouse[i].SetActive(true);
+            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, EyesAndMouse, i, true);
+            //EyesAndMouse[i].SetActive(true);
         }
     }
 
@@ -909,7 +946,8 @@ public class Boss2 : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            Torches[2 * i].SetActive(true);
+            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, 2 * i, true);
+            //Torches[2 * i].SetActive(true);
         }
     }
 
@@ -944,7 +982,8 @@ public class Boss2 : MonoBehaviour
 
         for (int i = 0; i < Torches.Count; i++)
         {
-            Torches[i].SetActive(false);
+            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, i, false);
+            //Torches[i].SetActive(false);
         }
     }
 
@@ -1104,7 +1143,7 @@ public class Boss2 : MonoBehaviour
         return true;
     }
 
-    bool DisplayAttackOrder()
+    bool DisplayAttackOrder() // 세부 구현 후 동기화 되도록 수정 필요.
     {
         if (canDisplay)
         {
@@ -1197,9 +1236,14 @@ public class Boss2 : MonoBehaviour
     }
 
     // Photon Code
+    public bool GetIsInvincible()
+    {
+        return isInvincible;
+    }
+
     public void TakeDamage(float amount)
     {
-        // photonView.RPC("TakeDamageRPC", RpcTarget.All, amount);
+        photonView.RPC("TakeDamageRPC", RpcTarget.All, amount);
     }
 
     [PunRPC]

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Properties;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Projectile : MonoBehaviour
 {
@@ -31,11 +32,23 @@ public class Projectile : MonoBehaviour
             {
                 PhotonNetwork.Destroy(gameObject);
                 PV.TryGetComponent<PlayerStateManager>(out playerState);
-                Boss1 boss1 = other.GetComponentInParent<Boss1>();
-                if (!boss1.GetIsInvincible())
+                if (SceneManager.GetActiveScene().name == "Yggdrasil")
                 {
-                    boss1.TakeDamage(attackPower);
-                    playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                    Boss1 boss1 = other.GetComponentInParent<Boss1>();
+                    if (!boss1.GetIsInvincible())
+                    {
+                        boss1.TakeDamage(attackPower);
+                        playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                    }
+                }
+                else if (SceneManager.GetActiveScene().name == "Vanta")
+                {
+                    Boss2 boss2 = other.GetComponent<Boss2>(); // 부위별 collider 달리면 수정하기.
+                    if (!boss2.GetIsInvincible())
+                    {
+                        boss2.TakeDamage(attackPower);
+                        playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                    }
                 }
             }
         }

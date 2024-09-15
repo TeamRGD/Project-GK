@@ -1311,6 +1311,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vanta
       objectReference: {fileID: 0}
+    - target: {fileID: 6067487121785995400, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 6881460439763360306, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
       propertyPath: m_LocalScale.x
       value: 60
@@ -1379,6 +1383,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6067487121785995400, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
       insertIndex: -1
       addedObject: {fileID: 123627480}
+    - targetCorrespondingSourceObject: {fileID: 6067487121785995400, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 123627482}
+    - targetCorrespondingSourceObject: {fileID: 6067487121785995400, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 123627481}
   m_SourcePrefab: {fileID: 100100000, guid: 7fa6ca8a06021a348b9368ca182e3861, type: 3}
 --- !u!1 &123627475 stripped
 GameObject:
@@ -1425,8 +1435,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackOrderCount: 0
+  AttackIndicators: []
+  AttackFills: []
+  DamageColliders: []
+  DashCollider: {fileID: 0}
+  MagicCircles: []
+  Torches: []
+  EyesAndMouse: []
   correctOrder: 
   PlayerList: []
+  aggroTarget: {fileID: 0}
+  ShockWave: {fileID: 0}
 --- !u!95 &123627478
 Animator:
   serializedVersion: 5
@@ -1469,6 +1488,45 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.08338064, y: 0.10114824, z: 0.11172397}
   m_Center: {x: 0.00039203168, y: 0.049426362, z: -0.0009794116}
+--- !u!114 &123627481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 123627475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
+--- !u!114 &123627482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 123627475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 123627481}
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &126250710
 GameObject:
   m_ObjectHideFlags: 0

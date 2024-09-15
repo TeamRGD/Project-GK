@@ -282,10 +282,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void SetGroggyRPC()
     {
-        isGroggy = true;
-
-        StartCoroutine(GroggyTime(10.0f));
-
         for (int i = 0; i < PlayerList.Count; i++)
         {
             PlayerList[i].GetComponent<PlayerController>().IAmAggro("PlayerNone");
@@ -297,6 +293,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool SetGroggy()
     {
+        isGroggy = true;
+        StartCoroutine(GroggyTime(10.0f));
         photonView.RPC("SetGroggyRPC", RpcTarget.AllBuffered);
         if (PhotonNetwork.IsMasterClient)
         {
@@ -321,7 +319,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void DieRPC() // 임시완
+    void DieRPC()
     {
         isInvincible = true;
 
@@ -528,7 +526,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void PlayerListSortRPC()  // 임시완
+    void PlayerListSortRPC()
     {
         StartCoroutine(WaitTime());
         PlayerList.Sort((player1, player2) => player1.name.CompareTo(player2.name));
@@ -991,12 +989,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(0.7f);
 
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 2, untouchedArea); // 코루틴 후 Area 동기화
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
 
         yield return new WaitForSeconds(0.1f);
 
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 2, untouchedArea); // 코루틴 후 Area 동기화
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 3, untouchedArea); // 코루틴 후 Area 동기화
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
     }
 
     [PunRPC]
@@ -1025,19 +1023,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         else if (idx == 1)
         {
-            foreach (var entry in originalAreaMaterials)
-            {
-                entry.Key.material = entry.Value;
-            }
-            originalAreaMaterials.Clear();
-
-            attackCount++;
-
-            isExecutingAreaAttack = false;
-        }
-
-        else if (idx == 2) // 임시완
-        {
             for (int i = 0; i < Areas.Count; i++)
             {
                 Collider areaCollider = Areas[i].GetComponent<Collider>();
@@ -1050,7 +1035,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
         }
 
-        else if (idx == 3)
+        else if (idx == 2) // 임시완
         {
             for (int i = 0; i < Areas.Count; i++)
             {
@@ -1061,6 +1046,19 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     Areas[i].tag = "Ground";
                 }
             }
+        }
+
+        else if (idx == 3)
+        {
+            foreach (var entry in originalAreaMaterials)
+            {
+                entry.Key.material = entry.Value;
+            }
+            originalAreaMaterials.Clear();
+
+            attackCount++;
+
+            isExecutingAreaAttack = false;
         }
     }
 
