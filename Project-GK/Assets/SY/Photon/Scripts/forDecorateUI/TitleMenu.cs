@@ -28,8 +28,24 @@ public class TitleMenu : MonoBehaviour
         buttonContainer.DOAnchorPosY(0f, 0.5f).SetEase(Ease.OutBack);
     }
 
-    public void OnHoverEnter()
+    public void OnHoverEnterCursorAnim(Image cursor)
     {
         hoverEnterSFX.Play();
+        cursor.DOFade(1f, 0.1f).SetEase(Ease.OutSine);
+    }
+
+    public void OnHoverEnterUnderLineAnim(Image underLine)
+    {
+        underLine.rectTransform.DOScaleX(1f, 0.1f).SetEase(Ease.OutSine);
+    }
+
+    public void OnHoverExitCursorAnim(Image cursor)
+    {
+        cursor.DOFade(0f, 0.1f).SetEase(Ease.OutSine);
+    }
+
+    public void OnHoverExitUnderLineAnim(Image underLine)
+    {
+        underLine.rectTransform.DOScaleX(0f, 0.1f).SetEase(Ease.OutSine);
     }
 }

@@ -93,7 +93,7 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom("Room Code: " + Random.Range(100000, 999999).ToString("000000"));
+        PhotonNetwork.CreateRoom(Random.Range(100000, 999999).ToString("000000"));
         PhotonNetwork.NickName = "Wi";
         MenuManager.Instance.OpenMenu("Loading");
     }
