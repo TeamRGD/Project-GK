@@ -122,6 +122,7 @@ MonoBehaviour:
   - ApplySlowRPC
   - SetActiveRPC
   - SetAggroTarget
+  - SetIsFocus
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

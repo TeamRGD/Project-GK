@@ -538,7 +538,7 @@ Material:
     - _BaseEmissionMaskTreshold: 4.2
     - _BaseEmissionMaskTreshold_1: 3
     - _BaseMetallic: 1
-    - _BaseNormalScale: 0
+    - _BaseNormalScale: 0.31
     - _BaseSmoothnessRemapMax: 1
     - _BaseSmoothnessRemapMin: 0
     - _BaseTriplanarThreshold: 5
@@ -582,7 +582,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _CullModeForward: 2
-    - _CurvatureBlend: 0.177
+    - _CurvatureBlend: 0.445
     - _Cutoff: 0.5
     - _DepthOffsetEnable: 0
     - _DetailAlbedoScale: 0
@@ -900,7 +900,7 @@ Material:
     - _BaseColorMap0_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _BaseLeaksColorMultiply: {r: 0.41509408, g: 0.41509408, b: 0.41509408, a: 0.74509805}
-    - _BaseTilingOffset: {r: 1.6, g: 3, b: 0, a: 0}
+    - _BaseTilingOffset: {r: 3.24, g: 3, b: 0, a: 0}
     - _COAT_COLOR: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.6784314, g: 0.6784314, b: 0.6784314, a: 1}
     - _CoverBaseColor: {r: 1, g: 1, b: 1, a: 0}

@@ -917,7 +917,7 @@ Material:
     - _CoverBaseColor: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 0}
     - _CoverDirection: {r: 0, g: 1, b: 0, a: 0}
     - _CoverLeaksColorMultiply: {r: 0, g: 0, b: 0, a: 0}
-    - _CoverTilingOffset: {r: 8, g: 8, b: 0, a: 0}
+    - _CoverTilingOffset: {r: 10.57, g: 8, b: 0, a: 0}
     - _DetailTilingOffset: {r: 0, g: 0, b: 0, a: 0}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DiffusionProfileAsset0: {r: 0, g: 0, b: 0, a: 0}
@@ -939,7 +939,7 @@ Material:
     - _NoiseTiling: {r: 1, g: 1, b: 0, a: 0}
     - _REFLECTIONS_COLOR: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 0, b: 0, a: 0}
-    - _ShapeTilingOffset: {r: 2, g: 3.23, b: 0, a: 0}
+    - _ShapeTilingOffset: {r: 3.59, g: 3.6, b: 0, a: 0}
     - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _TRANSPARENCY: {r: 1, g: 1, b: 1, a: 1}
