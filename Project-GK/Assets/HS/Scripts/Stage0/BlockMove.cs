@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BlockMove : MonoBehaviour
 {
+    [SerializeField] Puzzle0Manager puzzle0Manager;
     [SerializeField] private float moveDuration = 2f;
     [SerializeField] float moveXAmount;
     [SerializeField] float moveYAmount;
@@ -39,5 +40,7 @@ public class BlockMove : MonoBehaviour
 
         // 정확하게 목표 위치로 설정
         transform.position = targetPosition;
+
+        puzzle0Manager.PuzzleProgress();
     }
 }

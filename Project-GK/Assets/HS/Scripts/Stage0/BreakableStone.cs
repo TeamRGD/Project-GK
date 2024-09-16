@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BreakableStone : MonoBehaviour
 {
+    [SerializeField] Puzzle0Manager puzzle0Manager;
     [SerializeField] private int maxHealth = 5; // 돌의 최대 체력
     private int currentHealth; // 돌의 현재 체력
 
@@ -72,6 +73,9 @@ public class BreakableStone : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         yield return null;
+
+        puzzle0Manager.PuzzleProgress();
+
         Destroy(gameObject);
     }
 }
