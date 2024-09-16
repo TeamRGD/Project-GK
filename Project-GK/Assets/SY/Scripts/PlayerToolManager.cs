@@ -27,6 +27,8 @@ public class PlayerToolManager : MonoBehaviour
         UpdateToolVisibility();
         tools.Add(entireTools[0]);
         tools.Add(entireTools[1]);
+        tools.Add(entireTools[2]);
+        UIManager_Player.Instance.SetInventory(0, tools);
     }
 
     void Update()
@@ -46,13 +48,13 @@ public class PlayerToolManager : MonoBehaviour
     void SwitchToNextTool()
     {
         PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
-        UIManager_Player.Instance.SetInventory(currentToolIndex);
+        //UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     void SwitchToPreviousTool()
     {
         PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
-        UIManager_Player.Instance.SetInventory(currentToolIndex);
+        //UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     [PunRPC]
@@ -60,6 +62,7 @@ public class PlayerToolManager : MonoBehaviour
     {
         currentToolIndex = (currentToolIndex + 1) % tools.Count;
         UpdateToolVisibility();
+        UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     [PunRPC]
@@ -67,6 +70,7 @@ public class PlayerToolManager : MonoBehaviour
     {
         currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
         UpdateToolVisibility();
+        UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     void UpdateToolVisibility()

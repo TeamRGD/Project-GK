@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +15,11 @@ public class UIManager_Player : MonoBehaviour
     public Image ultBar;
 
     // for Inventory
+    public Sprite[] itemImages;
     //public Image[] inventoryOutlines;
+    public Image leftTool;
+    public Image currentTool;
+    public Image rightTool;
     public Image aim;
     //public AudioSource inventorySFX;
 
@@ -25,13 +30,6 @@ public class UIManager_Player : MonoBehaviour
     // for Interaction
     public GameObject interactionNotice;
     public GameObject interactionNoticeForCipher;
-
-    // SFX
-
-
-    // for Pausing
-    public GameObject PauseContainer;
-    public GameObject SettingsContainer;
 
     // set Singleton
     void Awake()
@@ -73,26 +71,42 @@ public class UIManager_Player : MonoBehaviour
     }
 
     // Inventory
-    public void SetInventory(int num)
+    public void SetInventory(int num, List<GameObject> tools)
     {
-        //if (num == 0)
-        //{
-        //    aim.enabled = true;
-        //}
-        //else
-        //{
-        //    aim.enabled = false;
-        //}
-        //for (int i = 0; i < inventoryOutlines.Length; i++)
-        //{
-        //    if (i == num)
-        //    {
-        //        inventoryOutlines[i].enabled = true;
-        //    } else
-        //    {
-        //        inventoryOutlines[i].enabled = false;
-        //    }
-        //}
+        //print(tools.Count);
+        if (num == 0)
+        {
+            aim.enabled = true;
+        }
+        else
+        {
+            aim.enabled = false;
+        }
+        int leftIndex = num - 1;
+        int rightIndex = num + 1;
+        if (num == 0)
+        {
+            leftIndex = tools.Count - 1;
+        }
+        else if (num == tools.Count - 1)
+        {
+            rightIndex = 0;
+        }
+        for (int i = 0; i < tools.Count; i++)
+        {
+            if (itemImages[i].name == tools[leftIndex].name)
+            {
+                leftTool.sprite = itemImages[i];
+            }
+            if (itemImages[i].name == tools[num].name)
+            {
+                currentTool.sprite = itemImages[i];
+            }
+            if (itemImages[i].name == tools[rightIndex].name)
+            {
+                rightTool.sprite = itemImages[i];
+            }
+        }
         //inventorySFX.Play();
     }
 
@@ -156,29 +170,5 @@ public class UIManager_Player : MonoBehaviour
         {
             aim.color = Color.white;
         }
-    }
-
-    public void PauseOn()
-    {
-        PauseContainer.SetActive(true);
-        SettingsContainer.SetActive(false);
-    }
-
-    public void PauseOff()
-    {
-        PauseContainer.SetActive(false);
-        SettingsContainer.SetActive(false);
-    }
-
-    public void SettingsOn()
-    {
-        PauseContainer.SetActive(false);
-        SettingsContainer.SetActive(true);
-    }
-
-    public void SettingsOff()
-    {
-        PauseContainer.SetActive(true);
-        SettingsContainer.SetActive(false);
     }
 }
