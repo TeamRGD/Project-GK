@@ -2110,9 +2110,9 @@ MonoBehaviour:
   manaBar: {fileID: 376219274}
   ultBar: {fileID: 402003506}
   itemImages:
-  - {fileID: 21300000, guid: 5d7c64eda1735084f89ba36a1a0b9505, type: 3}
-  - {fileID: 21300000, guid: 425a709a46792b84ab0e78349f40bae5, type: 3}
-  - {fileID: 21300000, guid: 27fc2e0bffbe60849b145da92ac40f74, type: 3}
+  - {fileID: 21300000, guid: d99e42e2d64fd20478313ec9d913b8f5, type: 3}
+  - {fileID: 21300000, guid: ad4abb272c198864199823bb87b4e1d8, type: 3}
+  - {fileID: 21300000, guid: e2b6e505f78e816468da4d75cd0b036e, type: 3}
   leftTool: {fileID: 1859277641}
   currentTool: {fileID: 650144305}
   rightTool: {fileID: 1436305537}
