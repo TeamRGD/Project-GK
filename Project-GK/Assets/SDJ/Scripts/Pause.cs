@@ -1,5 +1,7 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Pause : MonoBehaviour
@@ -57,5 +59,16 @@ public class Pause : MonoBehaviour
         pauseContainer.SetActive(false);
         settingsContainer.SetActive(false);
         leaveGameContainer.SetActive(false);
+    }
+
+    public void OnHoverEnter(TMP_Text innerText)
+    {
+        print(innerText.text);
+        innerText.DOFade(1f, 0.2f).SetEase(Ease.OutSine);
+    }
+
+    public void OnHoverExit(TMP_Text innerText)
+    {
+        innerText.DOFade(0.1f, 0.2f).SetEase(Ease.OutSine);
     }
 }

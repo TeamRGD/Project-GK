@@ -18,7 +18,7 @@ public class UIManager_Ygg : MonoBehaviour
     public Image bossHealthBar;
 
     // Variables being used in pattern1 logic
-    public TextMeshProUGUI hint;
+    public CanvasGroup hint;
     public bool isCorrectedPrevCode;
     public TextMeshProUGUI aggroText;
     public int patternCode;
