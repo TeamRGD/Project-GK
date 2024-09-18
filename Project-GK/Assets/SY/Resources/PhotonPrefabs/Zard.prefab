@@ -1130,7 +1130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 3597697435051772679, guid: 8146d7a3d8f587f42be190c577a431b8, type: 3}
-  projectileSpawnPoint: {fileID: 0}
+  projectileSpawnPoint: {fileID: 3040021275842269047}
   aim: {fileID: 6158319822806871963}
   playerBody: {fileID: 5241704465359754820}
 --- !u!114 &1739636680670462014

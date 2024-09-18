@@ -22078,13 +22078,15 @@ MonoBehaviour:
   healthBar: {fileID: 299761256}
   manaBar: {fileID: 2066519411}
   ultBar: {fileID: 1616312037}
+  itemImages: []
+  leftTool: {fileID: 0}
+  currentTool: {fileID: 0}
+  rightTool: {fileID: 0}
   aim: {fileID: 1330171439}
   saveCirc: {fileID: 1782476624}
   saveText: {fileID: 1902208051}
   interactionNotice: {fileID: 360317455}
   interactionNoticeForCipher: {fileID: 1215488030}
-  PauseContainer: {fileID: 0}
-  SettingsContainer: {fileID: 0}
 --- !u!4 &1582803663
 Transform:
   m_ObjectHideFlags: 0
@@ -22110,7 +22112,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1583101759}
   - component: {fileID: 1583101758}
-  - component: {fileID: 1583101757}
   - component: {fileID: 1583101760}
   - component: {fileID: 1583101761}
   m_Layer: 0
@@ -22120,14 +22121,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!81 &1583101757
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1583101756}
-  m_Enabled: 1
 --- !u!20 &1583101758
 Camera:
   m_ObjectHideFlags: 0
@@ -23008,7 +23001,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 1
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
