@@ -39,8 +39,8 @@ public class Zipline : MonoBehaviour
     {
         // 플레이어의 위치를 지정된 attachPosition으로 이동
         playerTransform.position = attachPosition;
-        playerTransform.parent = this.gameObject.transform;
         playerController.SetCanMove(false);
+        playerController.SetCanLook(false);
         // 만약 매달리는 애니메이션이 필요하다면, 애니메이션 트리거 추가 가능
         Debug.Log("아래도 실행함");
     }

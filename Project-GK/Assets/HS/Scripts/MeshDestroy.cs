@@ -13,7 +13,7 @@ public class MeshDestroy : MonoBehaviour
     public int CutCascades = 1;
     public float ExplodeForce = 0;
 
-    private float destroyTime = 2f;
+    private float destroyTime = 1f;
 
     // Start is called before the first frame update
     void Start()
