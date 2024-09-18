@@ -12,5 +12,6 @@ public class Puzzle0Manager : MonoBehaviour
         objectSequence[sequenceLevel].enabled = false;
         sequenceLevel += 1;
         objectSequence[sequenceLevel].enabled = true;
+        Debug.Log("sequenceLevel: " + sequenceLevel);
     }
 }

@@ -56,6 +56,7 @@ public class BreakableStone : MonoBehaviour
     // 돌이 부서질 때의 처리
     IEnumerator Break()
     {
+        puzzle0Manager.PuzzleProgress();
         // 효과음을 재생
         if (breakSound != null && audioSource != null)
         {
@@ -72,9 +73,8 @@ public class BreakableStone : MonoBehaviour
         // 돌 오브젝트 파괴
         yield return new WaitForSeconds(3f);
 
-        yield return null;
 
-        puzzle0Manager.PuzzleProgress();
+        yield return null;
 
         Destroy(gameObject);
     }
