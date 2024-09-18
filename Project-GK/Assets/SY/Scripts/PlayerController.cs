@@ -222,6 +222,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.LeftAlt))
         {
             isFreeLooking = false;
+            cameraHolder.transform.localRotation = originalCameraRotation;
         }
         if (canLook)
         {
@@ -304,13 +305,6 @@ public class PlayerController : MonoBehaviour
             {
                 cameraHolder.transform.position = cameraPosition + Vector3.up; // 부드러운 움직임
             }
-        }
-
-        // Alt 키를 뗐을 때 카메라가 원래 회전으로 돌아감
-        // Have to fix
-        if (!isFreeLooking)
-        {
-            cameraHolder.transform.localRotation = Quaternion.Slerp(cameraHolder.transform.localRotation, originalCameraRotation, 0.01f);
         }
     }
 
