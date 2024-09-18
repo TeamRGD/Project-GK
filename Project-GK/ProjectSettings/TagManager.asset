@@ -36,6 +36,7 @@ TagManager:
   - PushableStone
   - Lever
   - BlockMove
+  - Zipline
   layers:
   - Default
   - TransparentFX

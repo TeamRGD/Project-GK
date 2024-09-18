@@ -160,6 +160,15 @@ public class InteractionManager : MonoBehaviour
                 blockMove.Move();
             }
         }
+
+        else if (hitInfo.collider.CompareTag("Zipline"))
+        {
+            if (hitInfo.collider.TryGetComponent<Zipline>(out Zipline zipline))
+            {
+                Debug.Log("인터렉션 매니저 실행");
+                zipline.AttachPlayer(this.transform, playerController);
+            }
+        }
     }
 
     // 암호 입력의 경우 Y키 이므로 PlayerController에서 Y키로 받아오는 함수
