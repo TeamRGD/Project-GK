@@ -23,12 +23,12 @@ public class EnterRoomMenu : MonoBehaviour
 
     public void OnHoverBack()
     {
-        backButtonSFX.Play();
+        //backButtonSFX.Play();
     }
 
     public void OnHoverStart()
     {
-        doneButtonSFX.Play();
+        //doneButtonSFX.Play();
     }
 
     public void OnValueChange()

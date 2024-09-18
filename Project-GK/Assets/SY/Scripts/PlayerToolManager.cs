@@ -47,12 +47,16 @@ public class PlayerToolManager : MonoBehaviour
 
     void SwitchToNextTool()
     {
+        if(!PV.IsMine)
+            return;
         PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
         //UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     void SwitchToPreviousTool()
     {
+        if(!PV.IsMine)
+            return;
         PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
         //UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
@@ -95,6 +99,8 @@ public class PlayerToolManager : MonoBehaviour
 
     public void AddTool(int idx)
     {
+        if(!PV.IsMine)
+            return;
         PV.RPC("AddToolRPC", RpcTarget.AllBuffered, idx);
     }
 
@@ -107,6 +113,8 @@ public class PlayerToolManager : MonoBehaviour
 
     public void UseTool(int idx)
     {
+        if(!PV.IsMine)
+            return;
         PV.RPC("UseToolRPC", RpcTarget.AllBuffered, idx);
     }
 

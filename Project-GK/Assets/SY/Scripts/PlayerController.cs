@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
     float verticalLookRotation;
     public float currentSaveTime = 0.0f;
     Quaternion originalCameraRotation;
+    int currentSceneIdx = 0;
 
     // Raycast variable
     [SerializeField] LayerMask interactableLayer;
@@ -107,7 +108,14 @@ public class PlayerController : MonoBehaviour
             Move();
             Save();
         }
+
+        if (Input.GetKeyDown(KeyCode.N) && PhotonNetwork.IsMasterClient)
+        {
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            PhotonNetwork.LoadLevel(currentSceneIndex + 1);
+        }
     }
+
 
     void Move()
     {
@@ -467,6 +475,8 @@ public class PlayerController : MonoBehaviour
 
     public void IAmAggro(string aggroing)
     {
+        if(!PV.IsMine)
+            return;
         PV.RPC("IAmAggroRPC", RpcTarget.AllBuffered, aggroing);
     }
 

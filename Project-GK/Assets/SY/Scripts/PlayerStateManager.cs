@@ -134,6 +134,8 @@ public class PlayerStateManager : MonoBehaviour
 
     void OnGroggy()
     {
+        if(!PV.IsMine)
+            return;
         PV.RPC("OnGroggyRPC", RpcTarget.AllBuffered);
     }
 
@@ -196,6 +198,8 @@ public class PlayerStateManager : MonoBehaviour
 
     public void Revive() // 상대 PC에서 해당 함수를 실행하기 때문에, 본인 PC에서 소생되기 위해 모든 것을 동기화 함수에 넣어줌.
     {
+        if(!PV.IsMine)
+            return;
         PV.RPC("ReviveRPC", RpcTarget.AllBuffered);
     }
 

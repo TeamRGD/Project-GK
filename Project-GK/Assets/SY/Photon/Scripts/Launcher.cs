@@ -102,7 +102,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         foreach (RoomInfo roomInfo in roomInfos)
         {
-            if (roomInfo.Name == "Room Code: " + roomCodeInputField.text)
+            if (roomInfo.Name == roomCodeInputField.text)
             {
                 Debug.Log("Success");
                 JoinRoom(roomInfo);
