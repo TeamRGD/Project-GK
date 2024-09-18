@@ -490,6 +490,11 @@ public class PlayerController : MonoBehaviour
         isFreeLooking = value;
     }
 
+    public void SetCanLook(bool value)
+    {
+        canLook = value;
+    }
+
     // 최현승 추가 코드(PushableObject.cs에 사용됨) 문제시 파괴 예정
     public void SetSpeed(float value)
     {
