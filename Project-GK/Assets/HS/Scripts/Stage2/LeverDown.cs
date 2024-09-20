@@ -32,6 +32,8 @@ public class LeverDown : MonoBehaviour
             {
                 // 컷씬 실행 문구
             }
+
+            this.gameObject.layer = 0;
         }
     }
 

@@ -42,5 +42,6 @@ public class BlockMove : MonoBehaviour
         transform.position = targetPosition;
 
         puzzle0Manager.PuzzleProgress();
+        this.gameObject.layer = 0;
     }
 }
