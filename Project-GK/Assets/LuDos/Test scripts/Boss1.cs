@@ -467,7 +467,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed)
+    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed) // 동기화 필요
     {
         targetDirection.y = 0;
 
@@ -507,7 +507,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     }
 
 
-    IEnumerator SitAndLookAtTarget(Vector3 targetDirection, float rotationSpeed)
+    IEnumerator SitAndLookAtTarget(Vector3 targetDirection, float rotationSpeed) // 동기화 필요
     {
         targetDirection.y = 0;
 
