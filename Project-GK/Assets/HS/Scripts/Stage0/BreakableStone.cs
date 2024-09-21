@@ -8,7 +8,6 @@ public class BreakableStone : MonoBehaviour
     private int currentHealth; // 돌의 현재 체력
 
     [SerializeField] private GameObject[] debrisPrefab; // 돌이 부서질 때 나타날 잔해 프리팹
-    [SerializeField] private AudioClip breakSound; // 돌이 부서질 때 재생될 소리
     [SerializeField] private AudioSource audioSource; // 소리를 재생할 AudioSource
 
     MeshDestroy meshDestroy;
@@ -58,23 +57,26 @@ public class BreakableStone : MonoBehaviour
     {
         puzzle0Manager.PuzzleProgress();
         // 효과음을 재생
-        if (breakSound != null && audioSource != null)
+        if (audioSource != null && audioSource.clip != null)
         {
-            audioSource.PlayOneShot(breakSound);
+            audioSource.Play();
+            Debug.Log("소리 남");
+        }
+        else
+        {
+            Debug.Log("소리 안 남");
         }
 
         // 잔해 생성
-        for (int i=0; i< debrisPrefab.Length; i++)
+        for (int i = 0; i < debrisPrefab.Length; i++)
         {
             debrisPrefab[i].SetActive(true);
         }
         outline.enabled = false;
         meshDestroy.DestroyMesh();
+
         // 돌 오브젝트 파괴
         yield return new WaitForSeconds(3f);
-
-
-        yield return null;
 
         Destroy(gameObject);
     }
