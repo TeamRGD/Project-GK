@@ -467,13 +467,72 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
     }
 
-    void LookAtTarget(Vector3 targetDirection) // 임시완. 회전 애니메이션 오면 코루틴으로 바꿀듯
+    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed)
     {
         targetDirection.y = 0;
 
         if (targetDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
+            float angleDifference = Vector3.SignedAngle(transform.forward, targetDirection, Vector3.up);
+
+            if (angleDifference > 0)
+            {
+                animator.SetTrigger("TurnLeft");
+            }
+            else
+            {
+                animator.SetTrigger("TurnRight");
+            }
+
+            while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+                yield return null;
+            }
+
+            transform.rotation = targetRotation;
+
+            if (isInvincible)
+            {
+                animator.SetTrigger("Invincible");
+            }
+            else
+            {
+                animator.SetTrigger("Idle");
+            }
+        }
+    }
+
+
+    IEnumerator SitAndLookAtTarget(Vector3 targetDirection, float rotationSpeed)
+    {
+        targetDirection.y = 0;
+
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
+            float angleDifference = Vector3.SignedAngle(transform.forward, targetDirection, Vector3.up);
+
+            if (angleDifference > 0)
+            {
+                animator.SetTrigger("SitTurnLeft");
+            }
+            else
+            {
+                animator.SetTrigger("SitTurnRight");
+            }
+
+            while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+                yield return null;
+            }
+
             transform.rotation = targetRotation;
         }
     }
@@ -589,7 +648,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         SelectAggroTarget();
 
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 8.0f, 3.0f));
         yield return new WaitForSeconds(2.2f);
@@ -622,7 +681,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < 5; i++)
         {
-            LookAtTarget(aggroTarget.transform.position - transform.position);
+            yield return StartCoroutine(SitAndLookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
 
             if (i == 4)
             {
@@ -670,7 +729,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         SelectAggroTarget();
 
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 3.0f));
         yield return new WaitForSeconds(2.3f);
@@ -695,7 +754,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         SelectAggroTarget();
 
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
         yield return new WaitForSeconds(2.3f);
@@ -976,7 +1035,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         Vector3 targetPosition = BookCaseCollisions[untouchedArea].transform.position; // Area position (0,0,0) 이기 때문에 BookCaseCollisions로 대체
         Vector3 targetDirection = transform.position - targetPosition;
 
-        LookAtTarget(targetDirection);
+        yield return StartCoroutine(LookAtTarget(targetDirection, 20.0f));
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 0, untouchedArea); // 코루틴 전 Area 동기화
 
@@ -1212,7 +1271,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
 
         Vector3 targetDirection = targetPosition - transform.position;
-        LookAtTarget(targetDirection);
+        yield return StartCoroutine(LookAtTarget(targetDirection, 20.0f));
 
         hasCollidedWithBookCase = false;
         collidedBookCaseIndex = -1;
