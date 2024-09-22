@@ -482,11 +482,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (angleDifference > 0)
             {
-                animator.SetTrigger("TurnLeft");
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnLeft");
             }
             else
             {
-                animator.SetTrigger("TurnRight");
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnRight");
             }
 
             while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
@@ -500,11 +500,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (isInvincible)
             {
-                animator.SetTrigger("Invincible");
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
             }
             else
             {
-                animator.SetTrigger("Idle");
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Idle");
             }
         }
     }
@@ -522,11 +522,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (angleDifference > 0)
             {
-                animator.SetTrigger("SitTurnLeft");
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "SitTurnLeft");
             }
             else
             {
-                animator.SetTrigger("SitTurnRight");
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "SitTurnRight");
             }
 
             while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
