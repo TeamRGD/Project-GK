@@ -13,8 +13,10 @@ using ExitGames.Client.Photon;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
-    float maxHealth = 100;
+    float maxHealth = 3;
     float currentHealth;
+    float rotSpeed = 75.0f;
+    float sitRotSpeed = 50.0f;
 
     bool isFirstTimeBelow66 = true;
     bool isFirstTimeBelow33 = true;
@@ -310,6 +312,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Idle");
+            yield return new WaitForSeconds(3.0f);
         }
         if (!isInvincible)
         {
@@ -374,7 +377,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            position.y = 0.15f; // 임시완
+            position.y = 0.15f;
 
             if (idx == 0)
             {
@@ -623,7 +626,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         targetPosition.y = 0.0f;
         Vector3 startPosition = transform.position;
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, targetPosition, 2.6f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, targetPosition + transform.forward * 4.0f, 2.6f));
         yield return new WaitForSeconds(1.0f);
 
         if (PhotonNetwork.IsMasterClient)
@@ -634,7 +637,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
 
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(4.5f, 0.1f, targetPosition, 2.0f));
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(4.4f, 0.1f, targetPosition + transform.forward * 4.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -648,19 +651,18 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         SelectAggroTarget();
 
-        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 8.0f, 3.0f));
-        yield return new WaitForSeconds(2.2f);
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 8.0f, 2.3f));
 
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
         }
-        yield return new WaitForSeconds(1.3f);
+        yield return new WaitForSeconds(2.5f);
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 8.0f, 2.0f));
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
     }
@@ -681,12 +683,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < 5; i++)
         {
-            yield return StartCoroutine(SitAndLookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
+            yield return StartCoroutine(SitAndLookAtTarget(aggroTarget.transform.position - transform.position, sitRotSpeed));
 
             if (i == 4)
             {
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 8.0f - transform.right * 4.0f, 2.0f));
-                yield return new WaitForSeconds(1.3f);
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 8.0f - transform.right * 1.0f, 2.5f));
+                yield return new WaitForSeconds(1.0f);
 
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -696,8 +698,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
             else if (i == 0 || i == 2)
             {
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f - transform.right * 4.0f, 2.0f));
-                yield return new WaitForSeconds(1.3f);
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f - transform.right * 1.0f, 2.0f));
+                yield return new WaitForSeconds(0.9f);
 
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -707,8 +709,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
             else
             {
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f + transform.right * 4.0f, 2.0f));
-                yield return new WaitForSeconds(1.3f);
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f + transform.right * 1.0f, 2.0f));
+                yield return new WaitForSeconds(0.9f);
 
                 if (PhotonNetwork.IsMasterClient)
                 {
@@ -729,16 +731,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         SelectAggroTarget();
 
-        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 3.0f));
-        yield return new WaitForSeconds(2.3f);
+        yield return new WaitForSeconds(1.4f);
 
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "LegStomp");
         }
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(1.7f);
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 2.0f));
         yield return new WaitForSeconds(3.0f);
@@ -754,17 +756,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         SelectAggroTarget();
 
-        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, 20.0f));
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 10.0f + transform.right * 2.0f, 3.0f));
-        yield return new WaitForSeconds(2.3f);
+        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 5.5f + transform.right * 1.0f, 3.0f));
+        yield return new WaitForSeconds(1.3f);
 
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "PalmStrike");
         }
-        yield return new WaitForSeconds(0.7f);
-
+        yield return new WaitForSeconds(1.7f);
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -1030,12 +1031,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         attackedAreas.Add(untouchedArea);
 
-        yield return new WaitForSeconds(3.0f); // 임시완. 이 시간에 회전하면 될듯
+        yield return new WaitForSeconds(1.0f);
 
         Vector3 targetPosition = BookCaseCollisions[untouchedArea].transform.position; // Area position (0,0,0) 이기 때문에 BookCaseCollisions로 대체
         Vector3 targetDirection = transform.position - targetPosition;
 
-        yield return StartCoroutine(LookAtTarget(targetDirection, 20.0f));
+        yield return StartCoroutine(LookAtTarget(targetDirection, rotSpeed));
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 0, untouchedArea); // 코루틴 전 Area 동기화
 
@@ -1046,7 +1047,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
         }
 
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(2.0f);
 
         photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
 
@@ -1094,7 +1095,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             }
         }
 
-        else if (idx == 2) // 임시완
+        else if (idx == 2)
         {
             for (int i = 0; i < Areas.Count; i++)
             {
@@ -1189,7 +1190,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            position.y = 0.15f; // 임시완
+            position.y = 0.15f;
 
             currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "ShockWave"), position, Quaternion.identity);
 
@@ -1254,11 +1255,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 1, selectedBookCaseIndex);
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "InvincibletoDash");
-        }
-
         Vector3 targetPosition;
 
         if (playerIdx == 0)
@@ -1271,7 +1267,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
 
         Vector3 targetDirection = targetPosition - transform.position;
-        yield return StartCoroutine(LookAtTarget(targetDirection, 20.0f));
+        yield return StartCoroutine(LookAtTarget(targetDirection, rotSpeed));
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "InvincibletoDash");
+        }
 
         hasCollidedWithBookCase = false;
         collidedBookCaseIndex = -1;
@@ -1316,7 +1317,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     [PunRPC]
     void LightAndAttackBookCaseCoroutine(int idx)
     {
-        if (idx == 0) // 임시완
+        if (idx == 0)
         {
             for (int i = 0; i < FootColliders.Count; i++)
             {
@@ -1395,7 +1396,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     bool DamageAllMap()
     {
-        StartCoroutine(MakeDamageCollider(1, 40f, new Vector3 (0,0,0))); // 임시완 크기
+        StartCoroutine(MakeDamageCollider(1, 40f, new Vector3 (0,0,0)));
 
         canDisplay = true;
         collisionCount = 0;
