@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public class PlayerGroundCheck : MonoBehaviour
 {
     PlayerController playerController;
     Rigidbody rb;
+    PhotonView PV;
 
     // Tag 열거형 정의
     public enum TagType
@@ -28,6 +30,7 @@ public class PlayerGroundCheck : MonoBehaviour
     {
         playerController = GetComponentInParent<PlayerController>();
         TryGetComponent<Rigidbody>(out rb);
+        TryGetComponent<PhotonView>(out PV);
     }
 
     bool IsTagValid(string tag)
@@ -37,6 +40,8 @@ public class PlayerGroundCheck : MonoBehaviour
     
     void OnCollisionEnter(Collision collision)
     {
+        if (!PV.IsMine)
+            return;
         if(IsTagValid(collision.transform.tag))
         {
             playerController.SetGroundedState(true);

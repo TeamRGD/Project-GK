@@ -10,6 +10,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class PlayerController : MonoBehaviour
 {
@@ -47,7 +48,7 @@ public class PlayerController : MonoBehaviour
     float verticalLookRotation;
     public float currentSaveTime = 0.0f;
     Quaternion originalCameraRotation;
-    int currentSceneIdx = 0;
+
 
     // Raycast variable
     [SerializeField] LayerMask interactableLayer;
@@ -112,8 +113,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.N) && PhotonNetwork.IsMasterClient)
         {
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            PhotonNetwork.LoadLevel(currentSceneIndex + 1);
+            PV.RPC("LoadLevelRPC", RpcTarget.All, currentSceneIndex);
         }
+    }
+
+    [PunRPC]
+    void LoadLevelRPC(int currentSceneIndex)
+    {
+        PhotonNetwork.LoadLevel(currentSceneIndex + 1);
     }
 
 
@@ -318,6 +325,23 @@ public class PlayerController : MonoBehaviour
         // Interaction
         if (SceneManager.GetActiveScene().name == "S1" || SceneManager.GetActiveScene().name == "S2_Library_03" || SceneManager.GetActiveScene().name == "S3" || SceneManager.GetActiveScene().name == "S4")
             CheckForInteractable(ray);
+
+        // Ping
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject pingMarker = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "TestPing"), hit.point, Quaternion.identity);
+                StartCoroutine(DestroyPing(pingMarker));
+            }
+        }
+    }
+
+    IEnumerator DestroyPing(GameObject ping)
+    {
+        yield return new WaitForSeconds(3f);
+        PhotonNetwork.Destroy(ping);
     }
 
     void CheckForInteractable(Ray ray)
