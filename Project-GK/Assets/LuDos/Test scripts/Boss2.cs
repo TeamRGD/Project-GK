@@ -14,6 +14,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     float maxHealth = 100;
     float currentHealth;
     float moveSpeed = 10.0f;
+    float rotSpeed = 75.0f;
 
     bool isFirstTimeBelow66 = true;
     bool isFirstTimeBelow2 = true;
@@ -455,14 +456,42 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
-    void LookAtTarget(Vector3 targetDirection) // 임시완. 회전 애니메이션 오면 코루틴으로 바꿀듯
+    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed) // 동기화 필요
     {
         targetDirection.y = 0;
 
         if (targetDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
+            float angleDifference = Vector3.SignedAngle(transform.forward, targetDirection, Vector3.up);
+
+            if (angleDifference > 0)
+            {
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnLeft");
+            }
+            else
+            {
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnRight");
+            }
+
+            while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+                yield return null;
+            }
+
             transform.rotation = targetRotation;
+
+            if (isInvincible)
+            {
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
+            }
+            else
+            {
+                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Idle");
+            }
         }
     }
 
@@ -552,7 +581,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
 
         SelectAggroTarget();
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
@@ -596,7 +625,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetAggroTarget", RpcTarget.AllBuffered, 0);
         //aggroTarget = PlayerList[0];
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
@@ -622,7 +651,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetAggroTarget", RpcTarget.AllBuffered, 1);
         //aggroTarget = PlayerList[1];
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
@@ -656,7 +685,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
 
         SelectAggroTarget();
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 6.0f, 3.0f));
         yield return new WaitForSeconds(2.2f); // 임시완
@@ -715,7 +744,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         SlowAllPlayers(0.3f, 2.0f);
 
         SelectAggroTarget();
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
@@ -1018,7 +1047,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator JumpToPosition(Vector3 targetPosition)
     {
-        LookAtTarget(targetPosition - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         Vector3 startPosition = transform.position;
         float jumpHeight = 10.0f;
@@ -1105,7 +1134,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
 
         SelectAggroTarget();
-        LookAtTarget(aggroTarget.transform.position - transform.position);
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
