@@ -29,6 +29,7 @@ public class UIManager_Player : MonoBehaviour
 
     // for Interaction
     public GameObject interactionNotice;
+    public GameObject interactionNoticeForHold;
     public GameObject interactionNoticeForCipher;
 
     // set Singleton
@@ -121,6 +122,18 @@ public class UIManager_Player : MonoBehaviour
     {
         interactionNotice.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
         interactionNotice.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
+    }
+
+    public void EnableInteractionNoticeForHold()
+    {
+        interactionNoticeForHold.GetComponent<CanvasGroup>().DOFade(1, 0.1f).SetEase(Ease.OutSine);
+        interactionNoticeForHold.GetComponent<RectTransform>().DOAnchorPosY(-70f, 0.1f).SetEase(Ease.OutBack);
+    }
+
+    public void DisableInteractionNoticeForHold()
+    {
+        interactionNoticeForHold.GetComponent<CanvasGroup>().DOFade(0, 0.1f).SetEase(Ease.InSine);
+        interactionNoticeForHold.GetComponent<RectTransform>().DOAnchorPosY(0f, 0.1f).SetEase(Ease.InSine);
     }
 
     public void EnableInteractionNoticeForCipher(bool down)
