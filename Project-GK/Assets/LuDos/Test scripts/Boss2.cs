@@ -53,7 +53,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     public List<GameObject> MagicCircles;
     public List<GameObject> Torches;
-    public List<GameObject> EyesAndMouse;
+    public List<GameObject> FootMesh;
+    // public List<GameObject> EyesAndMouse;
 
     List<Vector3> storedPositions = new List<Vector3>();
     List<IEnumerator> storedAttacks = new List<IEnumerator>();
@@ -144,7 +145,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
                         MakeInvincible();
                         yield return StartCoroutine(SpinAndExtinguishAllTorches());
                         LightMagicCircle();
-                        LightBossEyesAndMouth();
                         hasExecutedInitialActions1 = true;
                     }
 
@@ -312,21 +312,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (idx == 0)
-            {
-                currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
-
-                float width = 0.5f;
-                currentDamageCollider.transform.localScale = new Vector3(width, currentDamageCollider.transform.localScale.y, maxLength);
-
-                yield return new WaitForSeconds(0.1f);
-
-                PhotonNetwork.Destroy(currentDamageCollider);
-                currentDamageCollider = null;
-            }
+            if (idx == 0) { }
             else if (idx == 1)
             {
-                // 과녁 모양 콜라이더
+                // 임시완. 과녁 모양 콜라이더
             }
             else
             {
@@ -346,7 +335,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            position.y = 0.15f; // 임시완
+            position.y = 0.15f;
 
             if (idx == 0)
             {
@@ -376,12 +365,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
                 currentIndicator = null;
                 PhotonNetwork.Destroy(currentFill);
                 currentFill = null;
-
-                // StartCoroutine(MakeDamageCollider(idx, maxLength, position));
             }
             else if (idx == 1)
             {
-                // 과녁 모양 콜라이더
+                // 임시완. 과녁 모양 콜라이더
             }
             else
             {
@@ -572,11 +559,40 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
+    void LightFoots(int idx) // 임시완
+    {
+        if (currentHealth == 66 || (currentHealth <= 33 && currentHealth > 2))
+        {
+            if (idx == 0)
+            {
+                for (int i = 0; i < FootMesh.Count; i++)
+                {
+                    // FootMesh[i].SetActive(true); // 빛나는 메쉬 넣어서 껐다 켤듯
+                }
+            }
+            else if (idx == 1)
+            {
+                for (int i = 0; i < FootMesh.Count; i++)
+                {
+                    // FootMesh[i].SetActive(false);
+                }
+            }
+        }
+        else
+        {
+            if (true) // FootMesh가 켜져있다면 끄기
+            {
+
+            }
+        }
+    }
+
     IEnumerator ShortDashAndSlash()
     {
         Debug.Log("ShortDashAndSlash");
 
         isExecutingAttack = true;
+        LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -604,6 +620,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         ActiveDashCollider(1);
 
+        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 10.0f, transform.position + transform.forward * 4.0f, 1.0f)); // 임시완
+        yield return new WaitForSeconds(1.0f); // 임시완. 시간 정하기
+
+        LightFoots(1);
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -620,6 +640,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Debug.Log("DoubleDash");
 
         isExecutingAttack = true;
+        LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -671,6 +692,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         ActiveDashCollider(1);
 
+        LightFoots(1);
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -681,6 +703,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Debug.Log("JawSlamWithShockwave");
 
         isExecutingAttack = true;
+        LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -699,6 +722,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 6.0f, 2.0f));
         yield return new WaitForSeconds(2.0f);
 
+        LightFoots(1);
+        yield return new WaitForSeconds(2.0f);
+
         isExecutingAttack = false;
     }
 
@@ -707,6 +733,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Debug.Log("SpinAndTargetAttack");
 
         isExecutingAttack = true;
+        LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -725,6 +752,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         // animator.SetTrigger("SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
+        LightFoots(1);
         yield return new WaitForSeconds(1.0f);
 
         isExecutingAttack = false;
@@ -735,6 +763,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Debug.Log("RoarAndDash");
 
         isExecutingAttack = true;
+        LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -746,7 +775,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
 
         ActiveDashCollider(0);
@@ -762,8 +791,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        ActiveDashCollider(0);
+        ActiveDashCollider(1);
 
+        LightFoots(1);
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -774,6 +804,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Debug.Log("FocusAndSmash");
 
         isExecutingAttack = true;
+        LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -781,12 +812,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
         targetPosition.y = 0.0f;
 
         //animator.SetTrigger("FocusAndLinearShockwave");
-        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
         yield return StartCoroutine(DamageCoroutine(2.0f));
 
         shockwaveCoroutine = StartCoroutine(CreateLinearShockwave(1.5f, 0.1f, targetPosition, 2.0f)); // 임시완. 크기
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(2.0f);
 
+        LightFoots(0);
+        yield return new WaitForSeconds(1.0f);
         isExecutingAttack = false;
     }
 
@@ -825,7 +858,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            position.y = 0.15f; // 임시완
+            position.y = 0.15f;
 
             currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "ShockWave"), position, Quaternion.identity);
 
@@ -850,7 +883,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             Vector3 forwardOffset = transform.forward * 1.0f;
             position += forwardOffset;
-            position.y = 0.15f; // 임시완
+            position.y = 0.15f;
 
             currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "LinearShockWave"), position, Quaternion.identity); // 넣어줘야 함.
 
@@ -895,7 +928,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         for (int i = 0; i < Torches.Count; i++)
         {
             photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, i, false);
-            //Torches[i],SetActive(false);
+            Torches[i].SetActive(false);
         }
     }
 
@@ -913,24 +946,13 @@ public class Boss2 : MonoBehaviourPunCallbacks
         for (int i = 0; i < MagicCircles.Count; i++)
         {
             photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, MagicCircles, i, true);
-            //MagicCircles[i].SetActive(true);
-        }
-    }
-
-    void LightBossEyesAndMouth()
-    {
-        Debug.Log("LightBossEyesAndMouth");
-
-        for (int i = 0; i < EyesAndMouse.Count; i++)
-        {
-            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, EyesAndMouse, i, true);
-            //EyesAndMouse[i].SetActive(true);
+            MagicCircles[i].SetActive(true);
         }
     }
 
     bool ControlSpeed()
     {
-        if (canControlSpeed) // 마법진에서 canControlSpeed = true; 해줘야함
+        if (canControlSpeed) // 임시완. 마법진에서 canControlSpeed = true; 해줘야함
         {
             Debug.Log("ControlSpeed");
 
@@ -976,7 +998,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         for (int i = 0; i < 4; i++)
         {
             photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, 2 * i, true);
-            //Torches[2 * i].SetActive(true);
+            Torches[2 * i].SetActive(true);
         }
     }
 
@@ -984,8 +1006,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         Debug.Log("MoveAndAttack");
 
-        Vector3 center = new Vector3(0, 0, 0); // 중앙
-        float radius = 45.0f; // 반지름
+        Vector3 center = new Vector3(0, 0, 0);
+        float radius = 45.0f;
 
         for (int n = 0; n < 8; n++)
         {
@@ -1012,7 +1034,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         for (int i = 0; i < Torches.Count; i++)
         {
             photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, i, false);
-            //Torches[i].SetActive(false);
+            Torches[i].SetActive(false);
         }
     }
 
@@ -1180,7 +1202,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             playerOrder = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
             // correctOrder = new List<int> { 1, 1, 1, 1, 2, 2, 2, 2 };
-            correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 실험용
+            correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 임시완. 실험용
             Shuffle(correctOrder);
 
             DisplayOrderOnUI(correctOrder);
@@ -1205,7 +1227,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     void DisplayOrderOnUI(List<int> order)
     {
-        // UI에 표시
+        // 임시완. UI에 표시
     }
 
     bool CheckPlayerAttackOrder()

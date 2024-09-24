@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: -331886251958661141}
   - component: {fileID: 6569824736412304352}
   m_Layer: 0
-  m_Name: ShockWave
-  m_TagString: DamageCollider
+  m_Name: ShockWave_shock
+  m_TagString: ShockDamageCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
