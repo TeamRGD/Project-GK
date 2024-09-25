@@ -64,7 +64,7 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other) // 수정 필요. 콜라이더를 여러 부분에 해뒀기 때문에 중복으로 TakeDamage가 적용됨.
+    void OnTriggerEnter(Collider other) 
     {
         if (!PV.IsMine)
             return;
@@ -79,19 +79,6 @@ public class PlayerStateManager : MonoBehaviour
                 OnStun();
             }
         }
-    }
-
-    void OnCollisionEnter(Collision other)
-    {
-        if (!PV.IsMine)
-            return;
-        //if (isAlive)
-        //{
-        //    if (other.gameObject.CompareTag("DamageCollider"))
-        //    {
-        //        GetHit();
-        //    }
-        //}
     }
 
     void GetHit()
