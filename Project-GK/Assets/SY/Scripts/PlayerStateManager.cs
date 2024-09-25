@@ -70,7 +70,7 @@ public class PlayerStateManager : MonoBehaviour
             return;
         if (isAlive)
         {
-            if (other.gameObject.CompareTag("DamageCollider") || other.gameObject.CompareTag("ShockWave"))
+            if (other.gameObject.CompareTag("DamageCollider"))
             {
                 GetHit();
             }

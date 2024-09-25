@@ -86,11 +86,16 @@ public class PlayerController : MonoBehaviour
         interactionManager = FindObjectOfType<InteractionManager>();
 
         // Boss에 Player 배정
-        //GameObject boss1 = GameObject.Find("Yggdrasil"); // [임시완]
-        //boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
-
-        //GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
-        //boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
+        if(SceneManager.GetActiveScene().name == "Yggdrasil")
+        {
+            GameObject boss1 = GameObject.Find("Yggdrasil"); // [임시완]
+            boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
+        }
+        else if (SceneManager.GetActiveScene().name == "Vanta")
+        {
+            GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
+            boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
+        }
 
         originalWalkSpeed = walkSpeed;
         originalSprintSpeed = sprintSpeed;
