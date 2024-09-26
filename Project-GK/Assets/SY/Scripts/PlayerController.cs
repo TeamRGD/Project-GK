@@ -33,14 +33,15 @@ public class PlayerController : MonoBehaviour
     PlayerToolManager playerToolManager;
     PlayerStateManager playerState;
 
-    // Bool variable
-    public bool grounded;
-    bool canControl = true;
-    bool canLook = true;
-    bool canMove = true;
+    // Bool variable    
+    bool grounded;
+    bool canControl = false;
+    bool canLook = false;
+    bool canMove = false;
     bool isWalking = false;
     bool isSaving = true;
     bool isFreeLooking = false;
+    bool isStarted = false;
 
     // Other variable
     Vector3 smoothMoveVelocity;
@@ -48,7 +49,6 @@ public class PlayerController : MonoBehaviour
     float verticalLookRotation;
     public float currentSaveTime = 0.0f;
     Quaternion originalCameraRotation;
-
 
     // Raycast variable
     [SerializeField] LayerMask interactableLayer;
@@ -99,6 +99,31 @@ public class PlayerController : MonoBehaviour
 
         originalWalkSpeed = walkSpeed;
         originalSprintSpeed = sprintSpeed;
+        if (PV.IsMine)
+        {
+            StartCoroutine(StartTime());
+        }
+    }
+
+    IEnumerator StartTime()
+    {
+        while (!isStarted)
+        {
+            PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
+            if (playerManagers.Length == 2)
+            {
+                GameObject loadingUI = GameObject.Find("Loading");
+                loadingUI.SetActive(false);
+                playerToolManager.SetCanChange(true);
+                playerAttack.SetCanAttack(true);
+                canControl = true;
+                canLook = true;
+                canMove = true;
+                isStarted = true;
+                yield break;
+            }
+            yield return null;
+        }
     }
 
     void Update()

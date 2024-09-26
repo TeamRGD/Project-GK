@@ -22,7 +22,7 @@ public class PlayerAttack : MonoBehaviour
 
     // Information variable
     int attackCount = 0;
-    bool canAttack = true; // 외부에서 설정해주는 값 (Rescue activity & Tool change)
+    bool canAttack = false; // 외부에서 설정해주는 값 (Rescue activity & Tool change)
     float lastAttackTime;
     float attackCool = 0.5f;
     float projectileSpeed = 20f;

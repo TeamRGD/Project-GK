@@ -14,7 +14,7 @@ public class PlayerToolManager : MonoBehaviour
 
     // Information variable
     private int currentToolIndex = 0;
-    private bool canChange = true;
+    private bool canChange = false;
 
     void Awake()
     {

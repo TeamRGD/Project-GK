@@ -58,10 +58,6 @@ public class PlayerStateManager : MonoBehaviour
         {
             SetCanState(false);
         }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            currentUltimatePower = 100;
-        }
     }
 
     void OnTriggerEnter(Collider other) 
