@@ -9,19 +9,27 @@ public class GuardManager : MonoBehaviour
     private Transform targetPoint; // 다음 순찰 포인트
 
     public float detectionTime = 2f; // 플레이어가 시야에 노출된 시간을 관리하는 변수
-    private float playerDetectionCounter = 0f; // 플레이어가 시야에 있는 시간
-    public float viewAngle = 45f; // 경비병의 시야각
+    [SerializeField] private float playerDetectionCounter = 0f; // 플레이어가 시야에 있는 시간
+    public float viewAngle = 360f; // 경비병의 시야각 (원형 시야)
+    public float sphereRadius = 1f; // SphereCast의 반경
     public float immediateDistance = 2f; // 즉시 게임 종료 범위
     public float gradualDistance = 5f; // 일정 시간 후 게임 종료 범위
 
+    public Transform rayOrigin; // Ray 발사 위치를 위한 자식 오브젝트 Transform
     private GameObject playerWi; // PlayerWi 태그를 가진 플레이어
     private GameObject playerZard; // PlayerZard 태그를 가진 플레이어
-    public Transform resetLocationWi; // 게임 종료 시 플레이어가 이동할 위치
-    public Transform resetLocationZard; // 게임 종료 시 플레이어가 이동할 위치
+    public Transform resetLocationWi; // 게임 종료 시 PlayerWi가 이동할 위치
+    public Transform resetLocationZard; // 게임 종료 시 PlayerZard가 이동할 위치
     private bool playerInSight = false; // 플레이어가 시야에 있는지 여부
 
     void Start()
     {
+        if (patrolPoints.Length == 0)
+        {
+            Debug.LogError("Patrol points are not set.");
+            return;
+        }
+
         targetPoint = patrolPoints[currentPointIndex]; // 첫 번째 순찰 포인트 설정
 
         // 각각의 플레이어 오브젝트 찾기
@@ -64,15 +72,15 @@ public class GuardManager : MonoBehaviour
     {
         if (player == null) return; // 플레이어가 없는 경우 건너뜀
 
-        Vector3 directionToPlayer = player.transform.position - transform.position; // 경비병에서 플레이어로 향하는 벡터 계산
-        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+        Vector3 directionToPlayer = player.transform.position - rayOrigin.position;
         float distanceToPlayer = directionToPlayer.magnitude;
 
-        // 시야각 내에 있는지 확인
-        if (angleToPlayer < viewAngle / 2)
+        // 방향과 거리 계산
+        if (distanceToPlayer <= gradualDistance)
         {
+            // SphereCast를 통해 플레이어를 감지
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, directionToPlayer, out hit, gradualDistance))
+            if (Physics.SphereCast(rayOrigin.position, sphereRadius, directionToPlayer.normalized, out hit, gradualDistance))
             {
                 if (hit.collider.CompareTag(player.tag))
                 {
@@ -80,6 +88,7 @@ public class GuardManager : MonoBehaviour
                     if (distanceToPlayer <= immediateDistance)
                     {
                         EndGame();
+                        return;
                     }
                     // 점진적 감지 범위 내에 있으면 대기 후 게임 종료
                     else if (distanceToPlayer <= gradualDistance)
@@ -89,19 +98,17 @@ public class GuardManager : MonoBehaviour
 
                         if (playerDetectionCounter >= detectionTime) // 일정 시간 이상 노출되면
                         {
-                            EndGame(); // 게임 종료
+                            EndGame();
+                            return;
                         }
                     }
-                }
-                else
-                {
-                    playerDetectionCounter = 0f; // 시야에서 벗어나면 초기화
+                    else
+                    {
+                        playerDetectionCounter = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
+
+                    }
                 }
             }
-        }
-        else
-        {
-            playerDetectionCounter = 0f; // 시야 범위 밖이면 초기화
         }
     }
 
@@ -110,16 +117,25 @@ public class GuardManager : MonoBehaviour
         Debug.Log("Game Over! The guard has caught a player.");
 
         // 두 플레이어를 지정된 위치로 이동시킴
-        playerWi.transform.root.position = resetLocationWi.position;
+        if (playerWi != null)
+            playerWi.transform.root.position = resetLocationWi.position;
         if (playerZard != null)
             playerZard.transform.root.position = resetLocationZard.position;
+
+        playerDetectionCounter = 0f;
     }
 
     void OnDrawGizmos() // 경비병 시야를 시각적으로 확인하기 위해 Gizmo 사용
     {
+        if (rayOrigin == null) return;
+
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, transform.forward * gradualDistance);
+
+        // SphereCast 시야를 시각화
+        Gizmos.DrawWireSphere(rayOrigin.position, gradualDistance);
+
+        // 즉시 종료 범위 시각화
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, transform.forward * immediateDistance);
+        Gizmos.DrawWireSphere(rayOrigin.position, immediateDistance);
     }
 }

@@ -17,6 +17,7 @@ public class BlockMove : MonoBehaviour
     // y 좌표를 일정 시간 동안 이동시키는 코루틴
     IEnumerator MoveYOverTime()
     {
+        this.gameObject.layer = 0;
         // 시작 위치 저장
         Vector3 startPosition = transform.position;
         // 목표 위치 설정
