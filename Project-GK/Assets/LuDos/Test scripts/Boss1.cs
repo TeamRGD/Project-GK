@@ -111,10 +111,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
             {
                 isStarted = true;
-                photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
+                photonView.RPC("PlayerListSortRPC", RpcTarget.All);
                 StartCoroutine(ExecuteBehaviorTree());
                 yield break;
             }
@@ -157,7 +157,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     if (!hasExecutedInitialActions1)
                     {
                         StopRandomBasicAttack();
-                        photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
+                        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(ArmSlamAndGetEnergy());
                         hasExecutedInitialActions1 = true;
@@ -173,7 +173,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     if (!hasExecutedInitialActions2)
                     {
                         StopRandomBasicAttack();
-                        photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
+                        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(JumpToCenter());
                         hasExecutedInitialActions2 = true;
@@ -189,7 +189,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     if (!hasExecutedInitialActions3)
                     {
                         StopRandomBasicAttack();
-                        photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Exit");
+                        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(Roar());
                         hasExecutedInitialActions3 = true;
@@ -208,7 +208,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (!isGroggy)
                 {
-                    photonView.RPC("SetIsAggroFixed", RpcTarget.AllBuffered);
+                    photonView.RPC("SetIsAggroFixed", RpcTarget.All);
                     RandomBasicAttack();
                 }
             }
@@ -297,10 +297,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         isGroggy = true;
         StartCoroutine(GroggyTime(10.0f));
-        photonView.RPC("SetGroggyRPC", RpcTarget.AllBuffered);
+        photonView.RPC("SetGroggyRPC", RpcTarget.All);
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Groggy");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Groggy");
         }
 
         return true;
@@ -311,7 +311,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(time);
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Idle");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Idle");
             yield return new WaitForSeconds(3.0f);
         }
         if (!isInvincible)
@@ -330,17 +330,17 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (currentState.IsName("Groggy"))
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "GroggytoDeath");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "GroggytoDeath");
         }
         else
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Death");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Death");
         }
     }
 
     void Die()
     {
-        photonView.RPC("DieRPC", RpcTarget.AllBuffered);
+        photonView.RPC("DieRPC", RpcTarget.All);
     }
 
     IEnumerator MakeDamageCollider(int idx, float maxLength, Vector3 position)
@@ -482,11 +482,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (angleDifference > 0)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnLeft");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "TurnLeft");
             }
             else
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnRight");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "TurnRight");
             }
 
             while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
@@ -500,11 +500,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (isInvincible)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
             }
             else
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Idle");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Idle");
             }
         }
     }
@@ -522,11 +522,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (angleDifference > 0)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "SitTurnLeft");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "SitTurnLeft");
             }
             else
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "SitTurnRight");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "SitTurnRight");
             }
 
             while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
@@ -556,7 +556,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     void SelectAggroTarget()
     {
         int idx = Random.Range(0, PlayerList.Count);
-        photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered, idx);
+        photonView.RPC("SelectAggroTargetRPC", RpcTarget.All, idx);
     }
 
     bool RandomBasicAttack()
@@ -631,7 +631,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "JumpAndLand");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "JumpAndLand");
         }
         yield return new WaitForSeconds(0.8f);
 
@@ -657,7 +657,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "BothArmSlam");
         }
         yield return new WaitForSeconds(2.5f);
 
@@ -677,7 +677,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "IdletoSit");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "IdletoSit");
         }
         yield return new WaitForSeconds(1.0f);
 
@@ -692,7 +692,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "LeftArmHardSlam");
+                    photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmHardSlam");
                 }
                 yield return new WaitForSeconds(3.0f);
             }
@@ -703,7 +703,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "LeftArmSlam");
+                    photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmSlam");
                 }
                 yield return new WaitForSeconds(3.0f);
             }
@@ -714,7 +714,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "RightArmSlam");
+                    photonView.RPC("SetTriggerRPC", RpcTarget.All, "RightArmSlam");
                 }
                 yield return new WaitForSeconds(3.0f);
             }
@@ -738,7 +738,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "LegStomp");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "LegStomp");
         }
         yield return new WaitForSeconds(1.7f);
 
@@ -763,7 +763,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "PalmStrike");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "PalmStrike");
         }
         yield return new WaitForSeconds(1.7f);
         yield return new WaitForSeconds(3.0f);
@@ -776,10 +776,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
         }
 
-        photonView.RPC("MakeInvincibleRPC", RpcTarget.AllBuffered);
+        photonView.RPC("MakeInvincibleRPC", RpcTarget.All);
     }
     [PunRPC] void MakeInvincibleRPC()
     {
@@ -790,7 +790,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "ArmSlamAndGetEnergy");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "ArmSlamAndGetEnergy");
         }
         
         yield return new WaitForSeconds(8.0f);
@@ -865,10 +865,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
                 // Light ON
                 int[] bookIndicesArray = bookIndices.ToArray();
-                photonView.RPC("ChangeBooksToGreenRPC", RpcTarget.AllBuffered, bookIndicesArray, bookcaseIndex);
+                photonView.RPC("ChangeBooksToGreenRPC", RpcTarget.All, bookIndicesArray, bookcaseIndex);
             }
         }
-        photonView.RPC("UpdateHintUI", RpcTarget.AllBuffered);
+        photonView.RPC("UpdateHintUI", RpcTarget.All);
         return true;
     }
 
@@ -882,7 +882,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (canChange1)
         {
-            photonView.RPC("FixAggroTargetAndDisplayRPC", RpcTarget.AllBuffered);
+            photonView.RPC("FixAggroTargetAndDisplayRPC", RpcTarget.All);
         }
         return true;
     }
@@ -910,7 +910,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (canChange1)
         {
             SelectAggroTarget();
-            photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.AllBuffered, 0, 0);
+            photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.All, 0, 0);
             
             Code = 0;
             for (int i = 0; i < 4; i++)
@@ -919,10 +919,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 //Debug.Log("Index: " + string.Join(", ", bookcaseIndices[i] + 1));
                 //Debug.Log("Index: " + string.Join(", ", numBooksOfBookCase[i]));
             }
-            photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.AllBuffered, 1, Code);
+            photonView.RPC("ActivateCipherDevice1RPC", RpcTarget.All, 1, Code);
             canChange1 = false;
         }
-        photonView.RPC("PlayerAggroUI",RpcTarget.AllBuffered);
+        photonView.RPC("PlayerAggroUI",RpcTarget.All);
         return true;
     }
 
@@ -961,7 +961,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         canChange1 = true;
         IsCorrect = false;
         successCount++;
-        photonView.RPC("ResetBookLightsAndAggroRPC", RpcTarget.AllBuffered);
+        photonView.RPC("ResetBookLightsAndAggroRPC", RpcTarget.All);
 
         return true;
     }
@@ -992,7 +992,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             StopCoroutine(moveBackCoroutine);
         }
-        photonView.RPC("ReleaseInvincibilityAndGroggyRPC", RpcTarget.AllBuffered);
+        photonView.RPC("ReleaseInvincibilityAndGroggyRPC", RpcTarget.All);
 
         return SetGroggy();
     }
@@ -1008,7 +1008,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "JumpAndLand");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "JumpAndLand");
         }
         yield return new WaitForSeconds(0.8f);
 
@@ -1038,23 +1038,23 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return StartCoroutine(LookAtTarget(targetDirection, rotSpeed));
 
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 0, untouchedArea); // 코루틴 전 Area 동기화
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.All, 0, untouchedArea); // 코루틴 전 Area 동기화
 
         yield return new WaitForSeconds(3.0f);
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "BothArmSlam");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "BothArmSlam");
         }
 
         yield return new WaitForSeconds(2.0f);
 
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 1, untouchedArea); // 코루틴 후 Area 동기화
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.All, 1, untouchedArea); // 코루틴 후 Area 동기화
 
         yield return new WaitForSeconds(0.1f);
 
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 2, untouchedArea); // 코루틴 후 Area 동기화
-        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.AllBuffered, 3, untouchedArea); // 코루틴 후 Area 동기화
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.All, 2, untouchedArea); // 코루틴 후 Area 동기화
+        photonView.RPC("AttackAreasCoroutineRPC", RpcTarget.All, 3, untouchedArea); // 코루틴 후 Area 동기화
     }
 
     [PunRPC]
@@ -1134,7 +1134,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (canChange2)
         {
             Code = ConvertListToInt(attackedAreas);
-            photonView.RPC("ActivateCipherDevice2RPC",RpcTarget.AllBuffered, Code);
+            photonView.RPC("ActivateCipherDevice2RPC",RpcTarget.All, Code);
         }
         return true;
     }
@@ -1165,7 +1165,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "ChargeAndShockWave");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "ChargeAndShockWave");
         }
 
         yield return new WaitForSeconds(9.0f);
@@ -1177,7 +1177,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         attackedAreas.Clear();
         attackCount = 0;
         canChange2 = true;
-        photonView.RPC("ChargeAttackCoroutineRPC", RpcTarget.AllBuffered);
+        photonView.RPC("ChargeAttackCoroutineRPC", RpcTarget.All);
     }
     
     [PunRPC]
@@ -1214,7 +1214,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Roar");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
         }
         yield return new WaitForSeconds(4.0f);
     }
@@ -1229,7 +1229,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (canDisplay)
         {
-            photonView.RPC("DisplayBookCaseOrderRPC", RpcTarget.AllBuffered);
+            photonView.RPC("DisplayBookCaseOrderRPC", RpcTarget.All);
             canDisplay = false;
         }
         return true;
@@ -1249,11 +1249,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         selectedBookCaseIndex = Random.Range(0, 7);
 
-        photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 0, selectedBookCaseIndex);
+        photonView.RPC("UpdateUI", RpcTarget.All, 0, selectedBookCaseIndex);
 
         yield return new WaitForSeconds(5.0f);
 
-        photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 1, selectedBookCaseIndex);
+        photonView.RPC("UpdateUI", RpcTarget.All, 1, selectedBookCaseIndex);
 
         Vector3 targetPosition;
 
@@ -1271,13 +1271,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "InvincibletoDash");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "InvincibletoDash");
         }
 
         hasCollidedWithBookCase = false;
         collidedBookCaseIndex = -1;
 
-        photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.AllBuffered, 0);
+        photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 0);
         yield return new WaitForSeconds(0.8f);
 
         while (!hasCollidedWithBookCase)
@@ -1290,20 +1290,20 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
-                photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.AllBuffered, 1);
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "CrashAtBookCase");
+                photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 1);
             }
             yield return new WaitForSeconds(1.0f);
-            photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 2, selectedBookCaseIndex);
+            photonView.RPC("UpdateUI", RpcTarget.All, 2, selectedBookCaseIndex);
             collisionCount++;
         }
         else
         {
-            photonView.RPC("UpdateUI", RpcTarget.AllBuffered, 3, selectedBookCaseIndex);
+            photonView.RPC("UpdateUI", RpcTarget.All, 3, selectedBookCaseIndex);
             if (PhotonNetwork.IsMasterClient)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "CrashAtBookCase");
-                photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.AllBuffered, 1);
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "CrashAtBookCase");
+                photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 1);
             }
             yield return new WaitForSeconds(1.0f);
             isWrongBookCase = true;
@@ -1369,7 +1369,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "StaggeringBack");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "StaggeringBack");
         }
 
         Vector3 startPosition = transform.position;
@@ -1388,7 +1388,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
         }
 
         isExecutingBookAttack = false;

@@ -94,10 +94,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
             {
                 isStarted = true;
-                photonView.RPC("PlayerListSortRPC", RpcTarget.AllBuffered);
+                photonView.RPC("PlayerListSortRPC", RpcTarget.All);
                 StartCoroutine(ExecuteBehaviorTree());
                 yield break;
             }
@@ -193,7 +193,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             {
                 if (!isGroggy)
                 {
-                    photonView.RPC("SetIsAggroFixed", RpcTarget.AllBuffered);
+                    photonView.RPC("SetIsAggroFixed", RpcTarget.All);
                     RandomBasicAttack();
                 }
             }
@@ -297,9 +297,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void Die()
     {
         Debug.Log("Die");
-        photonView.RPC("DieRPC", RpcTarget.AllBuffered);
+        photonView.RPC("DieRPC", RpcTarget.All);
 
-        // animator.SetTrigger("Die");
+        // photonView.RPC("SetTriggerRPC", RpcTarget.All, "Die");
     }
 
     [PunRPC]
@@ -455,11 +455,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             if (angleDifference > 0)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnLeft");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "TurnLeft");
             }
             else
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "TurnRight");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "TurnRight");
             }
 
             while (Quaternion.Angle(transform.rotation, targetRotation) > 0.01f)
@@ -473,11 +473,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             if (isInvincible)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
             }
             else
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Idle");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Idle");
             }
         }
     }
@@ -498,7 +498,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void SelectAggroTarget()
     {
         int idx = Random.Range(0, PlayerList.Count);
-        photonView.RPC("SelectAggroTargetRPC", RpcTarget.AllBuffered, idx);
+        photonView.RPC("SelectAggroTargetRPC", RpcTarget.All, idx);
     }
 
     // 기본 공격
@@ -559,7 +559,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
-    void LightFoots(int idx) // 임시완
+    void LightFoots(int idx) // 임시완 // 구현 다하고 말씀주세요-!
     {
         if (currentHealth == 66 || (currentHealth <= 33 && currentHealth > 2))
         {
@@ -644,7 +644,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        photonView.RPC("SetAggroTarget", RpcTarget.AllBuffered, 0);
+        photonView.RPC("SetAggroTarget", RpcTarget.All, 0);
         //aggroTarget = PlayerList[0];
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
@@ -670,7 +670,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(3.0f);
 
-        photonView.RPC("SetAggroTarget", RpcTarget.AllBuffered, 1);
+        photonView.RPC("SetAggroTarget", RpcTarget.All, 1);
         //aggroTarget = PlayerList[1];
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
@@ -825,12 +825,12 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     private IEnumerator DamageCoroutine(float duration)
     {
-        photonView.RPC("SetIsFocus", RpcTarget.AllBuffered, true);
+        photonView.RPC("SetIsFocus", RpcTarget.All, true);
         //isFocus = true;
 
         yield return new WaitForSeconds(duration);
 
-        photonView.RPC("SetIsFocus", RpcTarget.AllBuffered, false);
+        photonView.RPC("SetIsFocus", RpcTarget.All, false);
         //isFocus = false;
     }
 
@@ -842,7 +842,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     void SlowAllPlayers(float slowAmount, float duration)
     {
-        photonView.RPC("ApplySlowRPC", RpcTarget.AllBuffered, slowAmount, duration);
+        photonView.RPC("ApplySlowRPC", RpcTarget.All, slowAmount, duration);
     }
 
     [PunRPC]
@@ -906,10 +906,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            //photonView.RPC("SetTriggerRPC", RpcTarget.AllBuffered, "Invincible");
+            //photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
         }
 
-        photonView.RPC("MakeInvincibleRPC", RpcTarget.AllBuffered);
+        photonView.RPC("MakeInvincibleRPC", RpcTarget.All);
     }
 
     [PunRPC]
@@ -927,8 +927,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < Torches.Count; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, i, false);
-            Torches[i].SetActive(false);
+            photonView.RPC("SetActiveRPC", RpcTarget.All, Torches, i, false);
         }
     }
 
@@ -945,8 +944,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < MagicCircles.Count; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, MagicCircles, i, true);
-            MagicCircles[i].SetActive(true);
+            photonView.RPC("SetActiveRPC", RpcTarget.All, MagicCircles, i, true);
         }
     }
 
@@ -997,8 +995,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < 4; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, 2 * i, true);
-            Torches[2 * i].SetActive(true);
+            photonView.RPC("SetActiveRPC", RpcTarget.All, Torches, 2 * i, true);
         }
     }
 
@@ -1033,7 +1030,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < Torches.Count; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.AllBuffered, Torches, i, false);
+            photonView.RPC("SetActiveRPC", RpcTarget.All, Torches, i, false);
             Torches[i].SetActive(false);
         }
     }
