@@ -103,18 +103,23 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (!playerState.GetIsAlive())
-            aim.position = new Vector3(aim.position.x, -1000f, aim.position.z);
         if (!PV.IsMine)
             return;
+        if (!playerState.GetIsAlive())
+            aim.position = new Vector3(aim.position.x, -1000f, aim.position.z);
         Look();
-        // 자신만 제어할 수 있도록, 기절 상태가 아닌 경우에
+
         if (canControl)
         {
             Move();
             Save();
         }
 
+        ForDebug();
+    }
+
+    void ForDebug()
+    {
         if (Input.GetKeyDown(KeyCode.N) && PhotonNetwork.IsMasterClient)
         {
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
