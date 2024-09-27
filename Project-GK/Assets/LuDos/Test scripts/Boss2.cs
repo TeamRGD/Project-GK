@@ -316,6 +316,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
             else if (idx == 1)
             {
                 // 임시완. 과녁 모양 콜라이더
+                currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
+
+                currentDamageCollider.transform.localScale = new Vector3(maxLength, currentDamageCollider.transform.localScale.y, maxLength);
+
+                yield return new WaitForSeconds(0.1f);
+
+                PhotonNetwork.Destroy(currentDamageCollider);
+                currentDamageCollider = null;
             }
             else
             {
@@ -368,7 +376,26 @@ public class Boss2 : MonoBehaviourPunCallbacks
             }
             else if (idx == 1)
             {
-                // 임시완. 과녁 모양 콜라이더
+                currentIndicator = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackIndicator" + idx.ToString()), position, Quaternion.identity);
+
+                currentIndicator.transform.localScale = new Vector3(maxLength, currentIndicator.transform.localScale.y, maxLength);
+
+                float elapsedTime = 0f;
+                while (elapsedTime < duration)
+                {
+                    elapsedTime += Time.deltaTime;
+                    float t = elapsedTime / duration;
+
+                    float currentScale = Mathf.Lerp(0, maxLength, t);
+                    currentFill.transform.localScale = new Vector3(currentScale, currentFill.transform.localScale.y, currentScale);
+
+                    yield return null;
+                }
+
+                PhotonNetwork.Destroy(currentIndicator);
+                currentIndicator = null;
+
+                StartCoroutine(MakeDamageCollider(idx, maxLength, position));
             }
             else
             {
@@ -567,22 +594,25 @@ public class Boss2 : MonoBehaviourPunCallbacks
             {
                 for (int i = 0; i < FootMesh.Count; i++)
                 {
-                    // FootMesh[i].SetActive(true); // 빛나는 메쉬 넣어서 껐다 켤듯
+                    FootMesh[i].SetActive(true);
                 }
             }
             else if (idx == 1)
             {
                 for (int i = 0; i < FootMesh.Count; i++)
                 {
-                    // FootMesh[i].SetActive(false);
+                    FootMesh[i].SetActive(false);
                 }
             }
         }
         else
         {
-            if (true) // FootMesh가 켜져있다면 끄기
+            for (int i = 0; i < FootMesh.Count; i++)
             {
-
+                if (FootMesh[i].activeSelf)
+                {
+                    FootMesh[i].SetActive(false);
+                }
             }
         }
     }
