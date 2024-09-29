@@ -27824,6 +27824,37 @@ Transform:
   - {fileID: 1224752973}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -148.512, z: 0}
+--- !u!1 &1431826465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1431826466}
+  m_Layer: 0
+  m_Name: RetryPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1431826466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431826465}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.000000021855694, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 16, y: 68, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1443596758
 GameObject:
   m_ObjectHideFlags: 0
@@ -32412,6 +32443,73 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1 &1692364132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1692364133}
+  - component: {fileID: 1692364135}
+  - component: {fileID: 1692364134}
+  m_Layer: 0
+  m_Name: DieCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1692364133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692364132}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.27, y: -42.28, z: -20.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450653398620376}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1692364134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692364132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd62545465de86e458997772a0107f8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RetryPosition: {fileID: 1431826466}
+--- !u!65 &1692364135
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692364132}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 35, y: 1.29, z: 35}
+  m_Center: {x: 1.22, y: -0.6, z: 19.16}
 --- !u!1 &1694803956
 GameObject:
   m_ObjectHideFlags: 0
@@ -42118,6 +42216,7 @@ Transform:
   - {fileID: 1831532730255234113}
   - {fileID: 7007181107616859341}
   - {fileID: 4260722635077529934}
+  - {fileID: 1692364133}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 7.107, z: 0}
 --- !u!4 &590561472731871214
@@ -42224,6 +42323,7 @@ GameObject:
   - component: {fileID: 7185231395526330800}
   - component: {fileID: 4912343527279894698}
   - component: {fileID: 7185231395526330801}
+  - component: {fileID: 7185231395526330802}
   m_Layer: 0
   m_Name: stone_element_20c_LOD86
   m_TagString: Untagged
@@ -43733,6 +43833,7 @@ GameObject:
   - component: {fileID: 8065838857200169742}
   - component: {fileID: 7030774795967257030}
   - component: {fileID: 8065838857200169743}
+  - component: {fileID: 8065838857200169744}
   m_Layer: 0
   m_Name: stone_element_20c_LOD85
   m_TagString: Untagged
@@ -47271,6 +47372,7 @@ GameObject:
   - component: {fileID: 9171381172616777900}
   - component: {fileID: 4452028384686354104}
   - component: {fileID: 9171381172616777901}
+  - component: {fileID: 9171381172616777902}
   m_Layer: 0
   m_Name: stone_element_20c_LOD84
   m_TagString: Untagged
@@ -48738,6 +48840,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.3477087, y: 3.149412, z: 1.0869428}
   m_Center: {x: -0.00000071525574, y: -0.0000006556511, z: 0}
+--- !u!65 &7185231395526330802
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651032764461457115}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.19, y: 3.21, z: 4.58}
+  m_Center: {x: -3, y: -0, z: 2.53}
 --- !u!33 &7211414436501465156
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -49649,6 +49772,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.3477087, y: 3.1494129, z: 1.0869428}
   m_Center: {x: -0.00000071525574, y: 0.00000029802328, z: 0}
+--- !u!65 &8065838857200169744
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904270113726450715}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.24, y: 3.24, z: 5.43}
+  m_Center: {x: -3.01, y: -0, z: -1.81}
 --- !u!4 &8067442650102017232
 Transform:
   m_ObjectHideFlags: 0
@@ -50732,6 +50876,7 @@ GameObject:
   - component: {fileID: 5244089310625205642}
   - component: {fileID: 5185366921415952152}
   - component: {fileID: 9019893049977670259}
+  - component: {fileID: 9019893049977670260}
   m_Layer: 0
   m_Name: stone_element_20c_LOD87
   m_TagString: Untagged
@@ -50760,6 +50905,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.3477097, y: 3.1494133, z: 1.0869437}
   m_Center: {x: -0.00000035762784, y: 0.000000059604588, z: 4.8176954e-14}
+--- !u!65 &9019893049977670260
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9019893049977670258}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.29, y: 2.77, z: 4.98}
+  m_Center: {x: -3.04, y: 0.53, z: -1.41}
 --- !u!1 &9076626114813004049
 GameObject:
   m_ObjectHideFlags: 0
@@ -50885,6 +51051,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.347709, y: 3.149414, z: 1.0869434}
   m_Center: {x: -2.842171e-14, y: 0.0000016689303, z: -6.1941893e-15}
+--- !u!65 &9171381172616777902
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6040325738678647207}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.24, y: 2.77, z: 2.67}
+  m_Center: {x: -2.65, y: -0, z: 2.38}
 --- !u!1001 &9206927898856316624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50994,6 +51181,7 @@ SceneRoots:
   - {fileID: 1431400188}
   - {fileID: 1272051366}
   - {fileID: 1321259666748229766}
+  - {fileID: 1431826466}
   - {fileID: 1178092270}
   - {fileID: 1254956823}
   - {fileID: 827250486}
