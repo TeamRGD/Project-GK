@@ -110,7 +110,7 @@ public class PlayerController : MonoBehaviour
         while (!isStarted)
         {
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
-            if (playerManagers.Length == 2)
+            if (playerManagers.Length == 1)
             {
                 GameObject loadingUI = GameObject.Find("Loading");
                 loadingUI.SetActive(false);
