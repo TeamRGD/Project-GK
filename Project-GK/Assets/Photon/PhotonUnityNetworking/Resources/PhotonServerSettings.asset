@@ -125,6 +125,10 @@ MonoBehaviour:
   - SetIsFocus
   - LoadNextScene
   - LoadLevelRPC
+  - ActiveDashColliderRPC
+  - ControlSpeedRPC
+  - DisplayOrderOnUI
+  - LightFootsRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
