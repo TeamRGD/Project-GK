@@ -19,7 +19,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     bool isFirstTimeBelow66 = true;
     bool isFirstTimeBelow2 = true;
 
-    int magicCircleCount = 0;
+    [HideInInspector] public int magicCircleCount = 0;
     int bossAttackCount = 0;
     int successCount = 0;
     [HideInInspector] public int attackOrderCount = 0;
@@ -38,7 +38,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     Coroutine currentAttackCoroutine;
 
     bool canDisplay = true;
-    bool canControlSpeed = false;
+    [HideInInspector] public bool canControlSpeed = false;
     bool isInvincible = false;
     bool isAggroFixed = false;
     bool isFocus = false;

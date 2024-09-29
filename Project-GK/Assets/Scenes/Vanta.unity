@@ -1565,7 +1565,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00b6bae90f42dc64f8aeddd10801dd76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  magicCircleCount: 0
   attackOrderCount: 0
+  canControlSpeed: 0
   AttackIndicators:
   - {fileID: 8244578177886748486, guid: d378c38c9462d7f48a46dc6142990057, type: 3}
   - {fileID: 6197301155000544402, guid: 26ca77827efb6be4696423fb9e52dbae, type: 3}
@@ -2588,7 +2590,7 @@ GameObject:
   m_Component:
   - component: {fileID: 196258623}
   m_Layer: 0
-  m_Name: TorchSet2
+  m_Name: TorchSet7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2833,7 +2835,7 @@ GameObject:
   - component: {fileID: 210018247}
   - component: {fileID: 210018249}
   m_Layer: 0
-  m_Name: TorchLight7
+  m_Name: TorchLight2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3188,7 +3190,7 @@ GameObject:
   - component: {fileID: 230525549}
   - component: {fileID: 230525551}
   m_Layer: 0
-  m_Name: TorchLight2
+  m_Name: TorchLight7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6996,7 +6998,7 @@ GameObject:
   m_Component:
   - component: {fileID: 484674909}
   m_Layer: 0
-  m_Name: TorchSet1
+  m_Name: TorchSet8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9319,7 +9321,7 @@ GameObject:
   m_Component:
   - component: {fileID: 702390971}
   m_Layer: 0
-  m_Name: TorchSet5
+  m_Name: TorchSet4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12279,10 +12281,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic circle
       objectReference: {fileID: 0}
+    - target: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 984264327}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 904008855}
@@ -13009,10 +13018,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic circle
       objectReference: {fileID: 0}
+    - target: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 957384262}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 957384261}
@@ -13050,6 +13066,20 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &957384262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769475649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 1531729722}
 --- !u!4 &957901159 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0f180886c2f2bc945aa6675ccefa7670, type: 3}
@@ -13240,6 +13270,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
   m_PrefabInstance: {fileID: 904008853}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &984264327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984264326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 1904646381}
+  - {fileID: 1892435158}
+  - {fileID: 230525548}
 --- !u!1 &985880789
 GameObject:
   m_ObjectHideFlags: 0
@@ -13252,7 +13298,7 @@ GameObject:
   - component: {fileID: 985880790}
   - component: {fileID: 985880792}
   m_Layer: 0
-  m_Name: TorchLight6
+  m_Name: TorchLight3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13686,7 +13732,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1009796314}
   m_Layer: 0
-  m_Name: TorchSet7
+  m_Name: TorchSet2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13815,10 +13861,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic circle
       objectReference: {fileID: 0}
+    - target: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1028824034}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1028824033}
@@ -13856,6 +13909,21 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &1028824034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100573607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 1904646381}
+  - {fileID: 1892435158}
 --- !u!1001 &1037184381
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15244,7 +15312,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1085731447}
   m_Layer: 0
-  m_Name: TorchSet4
+  m_Name: TorchSet5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16572,7 +16640,7 @@ GameObject:
   - component: {fileID: 1224752972}
   - component: {fileID: 1224752974}
   m_Layer: 0
-  m_Name: TorchLight8
+  m_Name: TorchLight1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17758,10 +17826,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic circle
       objectReference: {fileID: 0}
+    - target: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1296586163}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1296586162}
@@ -17799,6 +17874,20 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &1296586163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 726557287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 210018246}
 --- !u!1 &1296753833
 GameObject:
   m_ObjectHideFlags: 0
@@ -18131,6 +18220,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1298817399}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1298817398}
@@ -18168,6 +18260,21 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &1298817399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736889601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 210018246}
+  - {fileID: 985880789}
 --- !u!1 &1299373363
 GameObject:
   m_ObjectHideFlags: 0
@@ -20345,7 +20452,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1431400188}
   m_Layer: 0
-  m_Name: TorchSet8
+  m_Name: TorchSet1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22047,7 +22154,7 @@ GameObject:
   - component: {fileID: 1531729723}
   - component: {fileID: 1531729725}
   m_Layer: 0
-  m_Name: TorchLight5
+  m_Name: TorchLight4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24065,7 +24172,7 @@ GameObject:
   - component: {fileID: 1643831675}
   - component: {fileID: 1643831677}
   m_Layer: 0
-  m_Name: TorchLight1
+  m_Name: TorchLight8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24736,10 +24843,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic circle
       objectReference: {fileID: 0}
+    - target: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1723682726}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1723682725}
@@ -24777,6 +24891,21 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &1723682726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466251911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 985880789}
+  - {fileID: 1531729722}
 --- !u!1001 &1725011699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25585,7 +25714,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1775737848}
   m_Layer: 0
-  m_Name: TorchSet3
+  m_Name: TorchSet6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26944,7 +27073,7 @@ GameObject:
   - component: {fileID: 1892435159}
   - component: {fileID: 1892435161}
   m_Layer: 0
-  m_Name: TorchLight3
+  m_Name: TorchLight6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27388,7 +27517,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1900542149}
   m_Layer: 0
-  m_Name: TorchSet6
+  m_Name: TorchSet3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27670,7 +27799,7 @@ GameObject:
   - component: {fileID: 1904646382}
   - component: {fileID: 1904646384}
   m_Layer: 0
-  m_Name: TorchLight4
+  m_Name: TorchLight5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28267,10 +28396,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic circle
       objectReference: {fileID: 0}
+    - target: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1925107694}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1925107693}
@@ -28308,6 +28444,21 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &1925107694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711141038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 1224752971}
+  - {fileID: 1643831674}
 --- !u!1 &1930366956
 GameObject:
   m_ObjectHideFlags: 0
@@ -30444,10 +30595,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic circle
       objectReference: {fileID: 0}
+    - target: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2088015556}
     - targetCorrespondingSourceObject: {fileID: 3574362967237534929, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2088015555}
@@ -30485,6 +30643,20 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &2088015556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635411219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f6a34eaabf2c841973642a15953c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  connectedTorches:
+  - {fileID: 230525548}
 --- !u!1 &2092381302
 GameObject:
   m_ObjectHideFlags: 0
