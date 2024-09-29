@@ -58,6 +58,7 @@ public class PushableObject : MonoBehaviour
                 {
                     isPlayerNearby = true;
                     playerTransform = other.transform;
+                    UIManager_Player.Instance.EnableInteractionNoticeForHold();
                 }
             }
         }
@@ -79,6 +80,7 @@ public class PushableObject : MonoBehaviour
 
                     isPlayerNearby = false;
                     playerTransform = null;
+                    UIManager_Player.Instance.DisableInteractionNoticeForHold();
                 }
                 players.Remove(playerController);
             }

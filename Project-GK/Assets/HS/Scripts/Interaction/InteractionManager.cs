@@ -165,8 +165,7 @@ public class InteractionManager : MonoBehaviour
         {
             if (hitInfo.collider.TryGetComponent<Zipline>(out Zipline zipline))
             {
-                Debug.Log("인터렉션 매니저 실행");
-                zipline.AttachPlayer(this.transform, playerController);
+                zipline.Interact(this.transform, playerController);
             }
         }
     }

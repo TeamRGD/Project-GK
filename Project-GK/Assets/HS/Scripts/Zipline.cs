@@ -7,8 +7,30 @@ public class Zipline : MonoBehaviour
     private bool player1Interacted = false; // 플레이어 1 상호작용 여부
     private bool player2Interacted = false; // 플레이어 2 상호작용 여부
 
+    [SerializeField] private GameObject ZiplineItem;
+    [SerializeField] private GameObject ZiplineOutline;
+
     [SerializeField] private Transform player1AttachPoint; // 플레이어 1이 매달릴 위치
     [SerializeField] private Transform player2AttachPoint; // 플레이어 2가 매달릴 위치
+
+    public void Interact(Transform playerTransform, PlayerController playerController)
+    {
+        if (ZiplineOutline.activeSelf) // 아웃라인이 켜져있을 때
+        {
+            AttachZipline();
+            ZiplineOutline.SetActive(false);
+            ZiplineItem.SetActive(true);
+        }
+        else
+        {
+            AttachPlayer(playerTransform, playerController);
+        }
+    }
+
+    public void AttachZipline()
+    {
+
+    }
 
     // 플레이어가 오브젝트와 상호작용할 때 해당 플레이어를 오브젝트의 특정 위치로 이동시키는 함수
     public void AttachPlayer(Transform playerTransform, PlayerController playerController)
