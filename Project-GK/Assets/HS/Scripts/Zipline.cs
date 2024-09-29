@@ -13,27 +13,30 @@ public class Zipline : MonoBehaviour
     [SerializeField] private Transform player1AttachPoint; // 플레이어 1이 매달릴 위치
     [SerializeField] private Transform player2AttachPoint; // 플레이어 2가 매달릴 위치
 
-    public void Interact(Transform playerTransform, PlayerController playerController)
+    public void Interact(Transform playerTransform, PlayerController playerController, PlayerToolManager playerTool)
     {
-        if (ZiplineOutline.activeSelf) // 아웃라인이 켜져있을 때
+        if (ZiplineOutline.activeSelf && playerTool.GetCurrentToolIndex()==2) // 아웃라인이 켜져있을 때       
         {
             AttachZipline();
-            ZiplineOutline.SetActive(false);
-            ZiplineItem.SetActive(true);
+            playerTool.UseTool(2);
         }
-        else
+        else if (ZiplineItem.activeSelf)
         {
             AttachPlayer(playerTransform, playerController);
         }
     }
 
-    public void AttachZipline()
+    private void AttachZipline()
     {
+        TryGetComponent<PlayerToolManager>(out PlayerToolManager playerToolManager);
 
+
+        ZiplineOutline.SetActive(false);
+        ZiplineItem.SetActive(true);
     }
 
     // 플레이어가 오브젝트와 상호작용할 때 해당 플레이어를 오브젝트의 특정 위치로 이동시키는 함수
-    public void AttachPlayer(Transform playerTransform, PlayerController playerController)
+    private void AttachPlayer(Transform playerTransform, PlayerController playerController)
     {
         if (playerController.gameObject.CompareTag("PlayerWi") && !player1Interacted)
         {

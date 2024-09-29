@@ -27,6 +27,7 @@ public class Puzzle2Book : MonoBehaviour
     public IEnumerator ActivateCipher() // 정답 입력 페이지 열기
     {
         cameraTrigger.ActivateCameraMoving();
+        playerController.SetCanLook(false);
         yield return new WaitForSeconds(cameraTrigger.transitionSpeed + cameraTrigger.waitTime);
 
         UIManagerInteraction.Instance.ActivateCipher(1);
@@ -39,6 +40,7 @@ public class Puzzle2Book : MonoBehaviour
     public void DeactivateCipher()  // 정답 입력 페이지 닫기
     {
         UIManagerInteraction.Instance.DeactivateCipher();
+        playerController.SetCanLook(true);
     }
 
     public void DisableAndEnableNew() // 암호 정답 이후

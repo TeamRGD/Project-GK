@@ -4,6 +4,7 @@ using Photon.Pun;
 public class InteractionManager : MonoBehaviour
 {
     PlayerController playerController;
+    PlayerToolManager playerTool;
     PhotonView PV;
     Puzzle2Book puzzle2Book;
     Puzzle3Cipher puzzle3Cipher;
@@ -15,6 +16,7 @@ public class InteractionManager : MonoBehaviour
     {
         TryGetComponent<PhotonView>(out PV);
         playerController = GetComponentInChildren<PlayerController>();
+        playerTool = GetComponent<PlayerToolManager>();
         cameraTrigger = FindAnyObjectByType<CameraTrigger>();
         puzzle2Book = FindAnyObjectByType<Puzzle2Book>();
         puzzle3Cipher = FindAnyObjectByType<Puzzle3Cipher>();
@@ -165,7 +167,7 @@ public class InteractionManager : MonoBehaviour
         {
             if (hitInfo.collider.TryGetComponent<Zipline>(out Zipline zipline))
             {
-                zipline.Interact(this.transform, playerController);
+                zipline.Interact(this.transform, playerController, playerTool);
             }
         }
     }
