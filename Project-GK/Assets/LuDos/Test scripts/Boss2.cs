@@ -466,7 +466,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
-    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed) // 동기화 필요
+    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed) 
     {
         targetDirection.y = 0;
 
@@ -569,7 +569,13 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
     }
 
-    void ActiveDashCollider(int idx) // 임시완 끝나면 동기화 함수로 변경하기
+    void ActiveDashCollider(int idx)
+    {
+        photonView.RPC("ActiveDashColliderRPC", RpcTarget.All, idx);
+    }
+
+    [PunRPC]
+    void ActiveDashColliderRPC(int idx)
     {
         if (idx == 0)
         {
@@ -582,7 +588,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
-    void LightFoots(int idx) // 동기화 함수로 변경하기
+    void LightFoots(int idx)
     {
         if (currentHealth == 66 || (currentHealth <= 33 && currentHealth > 2))
         {
@@ -590,14 +596,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
             {
                 for (int i = 0; i < FootMesh.Count; i++)
                 {
-                    FootMesh[i].SetActive(true);
+                    photonView.RPC("LightFootsRPC", RpcTarget.All, i, true);
                 }
             }
             else if (idx == 1)
             {
                 for (int i = 0; i < FootMesh.Count; i++)
                 {
-                    FootMesh[i].SetActive(false);
+                    photonView.RPC("LightFootsRPC", RpcTarget.All, i, false);
                 }
             }
         }
@@ -607,10 +613,16 @@ public class Boss2 : MonoBehaviourPunCallbacks
             {
                 if (FootMesh[i].activeSelf)
                 {
-                    FootMesh[i].SetActive(false);
+                    photonView.RPC("LightFootsRPC", RpcTarget.All, i, false);
                 }
             }
         }
+    }
+
+    [PunRPC]
+    void LightFootsRPC(int i, bool value)
+    {
+        FootMesh[i].SetActive(value);
     }
 
     IEnumerator ShortDashAndSlash()
@@ -628,7 +640,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완
 
-        animator.SetTrigger("ShortDashAndSlash");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "ShortDashAndSlash");
 
         ActiveDashCollider(0);
 
@@ -681,7 +693,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
-        animator.SetTrigger("PrepareForDash");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "PrepareForDash");
 
         while (elapsedTime < dashTime)
         {
@@ -690,7 +702,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        animator.SetTrigger("DashtoIdle");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "DashtoIdle");
 
         ActiveDashCollider(1);
 
@@ -706,7 +718,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         elapsedTime = 0.0f;
 
-        animator.SetTrigger("PrepareForDash");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "PrepareForDash");
 
         while (elapsedTime < dashTime)
         {
@@ -715,7 +727,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        animator.SetTrigger("DashtoIdle");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "DashtoIdle");
 
         ActiveDashCollider(1);
 
@@ -743,7 +755,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
-        animator.SetTrigger("JawSlamWithShockwave");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "JawSlamWithShockwave");
         yield return new WaitForSeconds(2.0f); // 임시완
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 6.0f, 2.0f));
@@ -766,17 +778,17 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f)); // 임시완
         yield return new WaitForSeconds(2.2f);
-        animator.SetTrigger("SpinAndTargetSmash_C");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f)); // 임시완
         yield return new WaitForSeconds(2.2f);
-        animator.SetTrigger("SpinAndTargetSmash");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash");
         yield return new WaitForSeconds(2.0f);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f)); // 임시완
         yield return new WaitForSeconds(2.2f);
-        animator.SetTrigger("SpinAndTargetSmash_C");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(1);
@@ -794,7 +806,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        animator.SetTrigger("Roar");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
         yield return new WaitForSeconds(0.5f);
 
         SlowAllPlayers(0.3f, 2.0f);
@@ -838,7 +850,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
-        animator.SetTrigger("FocusAndLinearShockWave");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "FocusAndLinearShockWave");
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
         yield return StartCoroutine(DamageCoroutine(2.0f));
 
@@ -922,7 +934,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator SpinAndExtinguishAllTorches()
     {
         Debug.Log("SpinAndExtinguishTorches");
-        animator.SetTrigger("QuickSpin");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "QuickSpin");
 
         yield return new WaitForSeconds(2.0f);
 
@@ -959,31 +971,37 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             if (magicCircleCount == 5)
             {
-                animator.SetTrigger("Hit");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
                 speedMultiplier = 0.5f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 6)
             {
-                animator.SetTrigger("Hit");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
                 speedMultiplier = 0.4f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 7)
             {
-                animator.SetTrigger("Hit");
+                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
                 speedMultiplier = 0.3f;
                 canControlSpeed = false;
             }
 
             if (animator != null)
             {
-                animator.speed *= speedMultiplier;
+                photonView.RPC("ControlSpeedRPC", RpcTarget.All, speedMultiplier);
             }
 
             AdjustMoveSpeed(speedMultiplier);
         }
         return true;
+    }
+
+    [PunRPC]
+    void ControlSpeedRPC(float speedMultiplier)
+    {
+        animator.speed *= speedMultiplier;
     }
 
     void AdjustMoveSpeed(float multiplier)
@@ -1028,7 +1046,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         Debug.Log("RoarAndExtinguishAllTorches");
 
-        animator.SetTrigger("Roar");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
         yield return new WaitForSeconds(3.0f);
 
         for (int i = 0; i < Torches.Count; i++)
@@ -1077,7 +1095,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         float elapsedTime = 0.0f;
 
-        animator.SetTrigger("Jump");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Jump");
 
         while (elapsedTime < jumpDuration)
         {
@@ -1138,7 +1156,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator Roar()
     {
         Debug.Log("Roar");
-        animator.SetTrigger("Roar");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
         yield return new WaitForSeconds(3.0f);
     }
     void SpeedUp()
@@ -1167,7 +1185,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
-        animator.SetTrigger("Dash");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Dash");
 
         while (elapsedTime < dashTime)
         {
@@ -1205,7 +1223,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 임시완. 실험용
             Shuffle(correctOrder);
 
-            DisplayOrderOnUI(correctOrder);
+            photonView.RPC("DisplayOrderOnUI",RpcTarget.All, correctOrder);
 
             attackOrderCount = 0;
 
@@ -1225,9 +1243,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
     void DisplayOrderOnUI(List<int> order)
     {
-        // 동기화 필요
         UIManager_Vanta.Instance.ResetAttackNode(order);
     }
 
@@ -1332,5 +1350,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             UIManager_Vanta.Instance.ManageHealth(currentHealth, maxHealth);
         }
+    }
+
+    [PunRPC]
+    void SetTriggerRPC(string name)
+    {
+        animator.SetTrigger(name);
     }
 }
