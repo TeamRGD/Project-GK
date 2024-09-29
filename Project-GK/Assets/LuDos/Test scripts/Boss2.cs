@@ -283,6 +283,15 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         UIManager_Vanta.Instance.DisableAttackNode();
         isGroggy = true;
+
+        foreach (GameObject torch in Torches)
+        {
+            if (!torch.activeSelf)
+            {
+                torch.SetActive(true);
+            }
+        }
+
         StartCoroutine(GroggyTime(10.0f));
         photonView.RPC("SetGroggyRPC", RpcTarget.All);
         if (PhotonNetwork.IsMasterClient)
