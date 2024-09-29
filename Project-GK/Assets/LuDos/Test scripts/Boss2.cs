@@ -562,7 +562,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     void ActiveDashCollider(int idx) // 임시완 끝나면 동기화 함수로 변경하기
     {
-        if (idx == 0) // 임시완
+        if (idx == 0)
         {
             DashCollider.tag = "DamageCollider";
         }
@@ -573,7 +573,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
-    void LightFoots(int idx) // 임시완 // 구현 다하고 말씀주세요-!
+    void LightFoots(int idx) // 동기화 함수로 변경하기
     {
         if (currentHealth == 66 || (currentHealth <= 33 && currentHealth > 2))
         {
@@ -617,10 +617,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+        yield return new WaitForSeconds(1.3f); // 임시완
 
-        // 짧은 대쉬
-        //animator.SetTrigger("ShortDashAndSlash");
+        animator.SetTrigger("ShortDashAndSlash");
 
         ActiveDashCollider(0);
 
@@ -638,7 +637,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         ActiveDashCollider(1);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 10.0f, transform.position + transform.forward * 4.0f, 1.0f)); // 임시완
-        yield return new WaitForSeconds(1.0f); // 임시완. 시간 정하기
+        yield return new WaitForSeconds(1.0f); // 임시완
 
         LightFoots(1);
         yield return new WaitForSeconds(3.0f);
@@ -662,11 +661,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
 
         photonView.RPC("SetAggroTarget", RpcTarget.All, 0);
-        //aggroTarget = PlayerList[0];
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+        yield return new WaitForSeconds(1.3f); // 임시완
 
         ActiveDashCollider(0);
 
@@ -674,7 +672,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
-        //animator.SetTrigger("PrepareForDash");
+        animator.SetTrigger("PrepareForDash");
 
         while (elapsedTime < dashTime)
         {
@@ -683,24 +681,23 @@ public class Boss2 : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        //animator.SetTrigger("DashtoIdle");
+        animator.SetTrigger("DashtoIdle");
 
         ActiveDashCollider(1);
 
         yield return new WaitForSeconds(3.0f);
 
         photonView.RPC("SetAggroTarget", RpcTarget.All, 1);
-        //aggroTarget = PlayerList[1];
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+        yield return new WaitForSeconds(1.3f); // 임시완
 
         ActiveDashCollider(0);
 
         elapsedTime = 0.0f;
 
-        //animator.SetTrigger("PrepareForDash");
+        animator.SetTrigger("PrepareForDash");
 
         while (elapsedTime < dashTime)
         {
@@ -709,7 +706,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        //animator.SetTrigger("DashtoIdle");
+        animator.SetTrigger("DashtoIdle");
 
         ActiveDashCollider(1);
 
@@ -737,7 +734,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
-        //animator.SetTrigger("JawSlamWithShockwave");
+        animator.SetTrigger("JawSlamWithShockwave");
         yield return new WaitForSeconds(2.0f); // 임시완
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 6.0f, 2.0f));
@@ -758,19 +755,19 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f)); // 임시완. 크기
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f)); // 임시완
         yield return new WaitForSeconds(2.2f);
-        // animator.SetTrigger("SpinAndTargetSmash_C");
+        animator.SetTrigger("SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f)); // 임시완. 크기
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f)); // 임시완
         yield return new WaitForSeconds(2.2f);
-        // animator.SetTrigger("SpinAndTargetSmash");
+        animator.SetTrigger("SpinAndTargetSmash");
         yield return new WaitForSeconds(2.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f)); // 임시완. 크기
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f)); // 임시완
         yield return new WaitForSeconds(2.2f);
-        // animator.SetTrigger("SpinAndTargetSmash_C");
+        animator.SetTrigger("SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(1);
@@ -788,7 +785,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        // animator.SetTrigger("Roar");
+        animator.SetTrigger("Roar");
         yield return new WaitForSeconds(0.5f);
 
         SlowAllPlayers(0.3f, 2.0f);
@@ -797,7 +794,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+        yield return new WaitForSeconds(1.3f); // 임시완
 
         ActiveDashCollider(0);
 
@@ -832,11 +829,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
-        //animator.SetTrigger("FocusAndLinearShockWave");
+        animator.SetTrigger("FocusAndLinearShockWave");
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
         yield return StartCoroutine(DamageCoroutine(2.0f));
 
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(1.5f, 0.1f, targetPosition, 2.0f)); // 임시완. 크기
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(1.5f, 0.1f, targetPosition, 2.0f)); // 임시완
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(0);
@@ -847,12 +844,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
     private IEnumerator DamageCoroutine(float duration)
     {
         photonView.RPC("SetIsFocus", RpcTarget.All, true);
-        //isFocus = true;
 
         yield return new WaitForSeconds(duration);
 
         photonView.RPC("SetIsFocus", RpcTarget.All, false);
-        //isFocus = false;
     }
 
     [PunRPC]
@@ -918,7 +913,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator SpinAndExtinguishAllTorches()
     {
         Debug.Log("SpinAndExtinguishTorches");
-        // animator.SetTrigger("QuickSpin");
+        animator.SetTrigger("QuickSpin");
 
         yield return new WaitForSeconds(2.0f);
 
@@ -947,7 +942,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     bool ControlSpeed()
     {
-        if (canControlSpeed) // 임시완. 마법진에서 canControlSpeed = true; 해줘야함
+        if (canControlSpeed)
         {
             Debug.Log("ControlSpeed");
 
@@ -956,23 +951,22 @@ public class Boss2 : MonoBehaviourPunCallbacks
             if (magicCircleCount == 5)
             {
                 animator.SetTrigger("Hit");
-                speedMultiplier = 0.5f; // 속도 50%
+                speedMultiplier = 0.5f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 6)
             {
                 animator.SetTrigger("Hit");
-                speedMultiplier = 0.4f; // 속도 40%
+                speedMultiplier = 0.4f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 7)
             {
                 animator.SetTrigger("Hit");
-                speedMultiplier = 0.3f; // 속도 30%
+                speedMultiplier = 0.3f;
                 canControlSpeed = false;
             }
 
-            // 애니메이션 속도 조절
             if (animator != null)
             {
                 animator.speed *= speedMultiplier;
@@ -1074,7 +1068,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         float elapsedTime = 0.0f;
 
-        // animator.SetTrigger("Jump");
+        animator.SetTrigger("Jump");
 
         while (elapsedTime < jumpDuration)
         {
@@ -1135,7 +1129,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator Roar()
     {
         Debug.Log("Roar");
-        //animator.SetTrigger("Roar");
+        animator.SetTrigger("Roar");
         yield return new WaitForSeconds(3.0f);
     }
     void SpeedUp()
@@ -1156,7 +1150,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
+        yield return new WaitForSeconds(1.3f); // 임시완
 
         ActiveDashCollider(0);
 
@@ -1164,7 +1158,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
-        //animator.SetTrigger("Dash");
+        animator.SetTrigger("Dash");
 
         while (elapsedTime < dashTime)
         {
@@ -1191,7 +1185,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    bool DisplayAttackOrder() // 세부 구현 후 동기화 되도록 수정 필요.
+    bool DisplayAttackOrder() // 동기화 필요
     {
         if (canDisplay)
         {
@@ -1224,7 +1218,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     void DisplayOrderOnUI(List<int> order)
     {
-        // 임시완. UI에 표시
+        // 동기화 필요
         UIManager_Vanta.Instance.ResetAttackNode(order);
     }
 
@@ -1251,7 +1245,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             Debug.Log("DamageAllMap");
 
-            StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 0, 0))); // 임시완 크기
+            StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 0, 0))); // 임시완
 
             attackOrderCount = 0;
             canDisplay = true;
@@ -1326,7 +1320,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             {
                 currentHealth = 0;
             }
-            // UI
+
             UIManager_Vanta.Instance.ManageHealth(currentHealth, maxHealth);
         }
     }
