@@ -278,6 +278,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         Debug.Log("SetGroggy");
 
+        UIManager_Vanta.Instance.DisableAttackNode();
         isGroggy = true;
         StartCoroutine(GroggyTime(10.0f));
 
@@ -1255,6 +1256,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void DisplayOrderOnUI(List<int> order)
     {
         // 임시완. UI에 표시
+        UIManager_Vanta.Instance.ResetAttackNode(order);
     }
 
     bool CheckPlayerAttackOrder()
@@ -1303,13 +1305,16 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Projectile_Wi"))
+        if (currentHealth <= 2 && currentHealth > 0)
         {
-            playerOrder.Add(0);
-        }
-        else if (collision.gameObject.CompareTag("Projectile_Zard"))
-        {
-            playerOrder.Add(1);
+            if (collision.gameObject.CompareTag("Projectile_Wi"))
+            {
+                playerOrder[attackOrderCount] = 1;
+            }
+            else if (collision.gameObject.CompareTag("Projectile_Zard"))
+            {
+                playerOrder[attackOrderCount] = 2;
+            }
         }
     }
 
@@ -1353,6 +1358,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                 currentHealth = 0;
             }
             // UI
+            UIManager_Vanta.Instance.ManageHealth(currentHealth, maxHealth);
         }
     }
 }
