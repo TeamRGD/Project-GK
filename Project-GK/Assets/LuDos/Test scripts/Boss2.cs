@@ -82,7 +82,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void Start()
     {
         currentHealth = maxHealth;
-        //animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         pattern1Tree = CreatePattern1Tree();
         pattern2Tree = CreatePattern2Tree();
@@ -142,6 +142,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                     if (!hasExecutedInitialActions1)
                     {
                         StopRandomBasicAttack();
+                        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(SpinAndExtinguishAllTorches());
                         LightMagicCircle();
@@ -158,6 +159,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                     if (!hasExecutedInitialActions2)
                     {
                         StopRandomBasicAttack();
+                        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         LightFourTorches();
                         yield return StartCoroutine(MoveAndAttack());
                         yield return RoarAndExtinguishAllTorches();
@@ -174,6 +176,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                     if (!hasExecutedInitialActions3)
                     {
                         StopRandomBasicAttack();
+                        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(Roar());
                         SpeedUp();
@@ -281,13 +284,22 @@ public class Boss2 : MonoBehaviourPunCallbacks
         UIManager_Vanta.Instance.DisableAttackNode();
         isGroggy = true;
         StartCoroutine(GroggyTime(10.0f));
+        photonView.RPC("SetGroggyRPC", RpcTarget.All);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Groggy");
+        }
 
         return true;
     }
     IEnumerator GroggyTime(float time)
     {
         yield return new WaitForSeconds(time);
-
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Idle");
+            yield return new WaitForSeconds(3.0f);
+        }
         if (!isInvincible)
         {
             currentHealth--;
@@ -295,18 +307,27 @@ public class Boss2 : MonoBehaviourPunCallbacks
         isGroggy = false;
     }
 
-    void Die()
-    {
-        Debug.Log("Die");
-        photonView.RPC("DieRPC", RpcTarget.All);
-
-        // photonView.RPC("SetTriggerRPC", RpcTarget.All, "Die");
-    }
-
     [PunRPC]
     void DieRPC()
     {
         isInvincible = true;
+
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (currentState.IsName("Groggy"))
+        {
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "GroggytoDeath");
+        }
+        else
+        {
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Death");
+        }
+    }
+
+    void Die()
+    {
+        Debug.Log("Die");
+        photonView.RPC("DieRPC", RpcTarget.All);
     }
 
     IEnumerator MakeDamageCollider(int idx, float maxLength, Vector3 position)
@@ -314,18 +335,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             if (idx == 0) { }
-            else if (idx == 1)
-            {
-                // 임시완. 과녁 모양 콜라이더
-                currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
-
-                currentDamageCollider.transform.localScale = new Vector3(maxLength, currentDamageCollider.transform.localScale.y, maxLength);
-
-                yield return new WaitForSeconds(0.1f);
-
-                PhotonNetwork.Destroy(currentDamageCollider);
-                currentDamageCollider = null;
-            }
             else
             {
                 currentDamageCollider = PhotonNetwork.Instantiate(Path.Combine("Boss", "DamageCollider" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
@@ -374,29 +383,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
                 currentIndicator = null;
                 PhotonNetwork.Destroy(currentFill);
                 currentFill = null;
-            }
-            else if (idx == 1)
-            {
-                currentIndicator = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackIndicator" + idx.ToString()), position, Quaternion.identity);
-
-                currentIndicator.transform.localScale = new Vector3(maxLength, currentIndicator.transform.localScale.y, maxLength);
-
-                float elapsedTime = 0f;
-                while (elapsedTime < duration)
-                {
-                    elapsedTime += Time.deltaTime;
-                    float t = elapsedTime / duration;
-
-                    float currentScale = Mathf.Lerp(0, maxLength, t);
-                    currentFill.transform.localScale = new Vector3(currentScale, currentFill.transform.localScale.y, currentScale);
-
-                    yield return null;
-                }
-
-                PhotonNetwork.Destroy(currentIndicator);
-                currentIndicator = null;
-
-                StartCoroutine(MakeDamageCollider(idx, maxLength, position));
             }
             else
             {
@@ -651,7 +637,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         ActiveDashCollider(1);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 10.0f, transform.position + transform.forward * 4.0f, 1.0f)); // 임시완
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 10.0f, transform.position + transform.forward * 4.0f, 1.0f)); // 임시완
         yield return new WaitForSeconds(1.0f); // 임시완. 시간 정하기
 
         LightFoots(1);
@@ -688,7 +674,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         float dashSpeed = moveSpeed;
         float elapsedTime = 0.0f;
 
-        //animator.SetTrigger("Dash");
+        //animator.SetTrigger("PrepareForDash");
 
         while (elapsedTime < dashTime)
         {
@@ -696,6 +682,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        //animator.SetTrigger("DashtoIdle");
 
         ActiveDashCollider(1);
 
@@ -712,7 +700,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         elapsedTime = 0.0f;
 
-        //animator.SetTrigger("Dash");
+        //animator.SetTrigger("PrepareForDash");
 
         while (elapsedTime < dashTime)
         {
@@ -720,6 +708,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        //animator.SetTrigger("DashtoIdle");
 
         ActiveDashCollider(1);
 
@@ -741,7 +731,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 6.0f, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.0f, 3.0f));
         yield return new WaitForSeconds(2.2f); // 임시완
 
         Vector3 targetPosition = transform.position;
@@ -761,14 +751,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator SpinAndTargetSmash()
     {
-        Debug.Log("SpinAndTargetAttack");
+        Debug.Log("SpinAndTargetSmash");
 
         isExecutingAttack = true;
         LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f)); // 임시완. 크기
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f)); // 임시완. 크기
         yield return new WaitForSeconds(2.2f);
         // animator.SetTrigger("SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
@@ -791,14 +781,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator RoarAndSmash()
     {
-        Debug.Log("RoarAndDash");
+        Debug.Log("RoarAndSmash");
 
         isExecutingAttack = true;
         LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
-        // animator.SetTrigger("RoarAndSmash");
+        // animator.SetTrigger("Roar");
         yield return new WaitForSeconds(0.5f);
 
         SlowAllPlayers(0.3f, 2.0f);
@@ -806,7 +796,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
         yield return new WaitForSeconds(1.3f); // 임시완. 시간 정하기
 
         ActiveDashCollider(0);
@@ -832,7 +822,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator FocusAndLinearShockwave()
     {
-        Debug.Log("FocusAndSmash");
+        Debug.Log("FocusAndLinearShockwave");
 
         isExecutingAttack = true;
         LightFoots(0);
@@ -842,11 +832,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
-        //animator.SetTrigger("FocusAndLinearShockwave");
-        indicatorCoroutine = StartCoroutine(ShowIndicator(2, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
+        //animator.SetTrigger("FocusAndLinearShockWave");
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
         yield return StartCoroutine(DamageCoroutine(2.0f));
 
-        shockwaveCoroutine = StartCoroutine(CreateLinearShockwave(1.5f, 0.1f, targetPosition, 2.0f)); // 임시완. 크기
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(1.5f, 0.1f, targetPosition, 2.0f)); // 임시완. 크기
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(0);
@@ -908,30 +898,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
-    IEnumerator CreateLinearShockwave(float maxRadius, float startScale, Vector3 position, float speed)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            Vector3 forwardOffset = transform.forward * 1.0f;
-            position += forwardOffset;
-            position.y = 0.15f;
-
-            currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "LinearShockWave"), position, Quaternion.identity); // 넣어줘야 함.
-
-            float currentScale = startScale;
-            Vector3 movementDirection = transform.forward;
-
-            while (currentScale < maxRadius)
-            {
-                currentShockwave.transform.position += movementDirection * speed * Time.deltaTime;
-                yield return null;
-            }
-
-            PhotonNetwork.Destroy(currentShockwave);
-            currentShockwave = null;
-        }
-    }
-
     // 패턴 1
     void MakeInvincible()
     {
@@ -952,7 +918,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator SpinAndExtinguishAllTorches()
     {
         Debug.Log("SpinAndExtinguishTorches");
-        //animator.SetTrigger("QuickSpin");
+        // animator.SetTrigger("QuickSpin");
 
         yield return new WaitForSeconds(2.0f);
 
@@ -989,16 +955,19 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             if (magicCircleCount == 5)
             {
+                animator.SetTrigger("Hit");
                 speedMultiplier = 0.5f; // 속도 50%
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 6)
             {
+                animator.SetTrigger("Hit");
                 speedMultiplier = 0.4f; // 속도 40%
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 7)
             {
+                animator.SetTrigger("Hit");
                 speedMultiplier = 0.3f; // 속도 30%
                 canControlSpeed = false;
             }
@@ -1282,7 +1251,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             Debug.Log("DamageAllMap");
 
-            StartCoroutine(MakeDamageCollider(2, 40f, new Vector3(0, 0, 0))); // 임시완 크기
+            StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 0, 0))); // 임시완 크기
 
             attackOrderCount = 0;
             canDisplay = true;

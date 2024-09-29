@@ -1568,15 +1568,12 @@ MonoBehaviour:
   attackOrderCount: 0
   AttackIndicators:
   - {fileID: 8244578177886748486, guid: d378c38c9462d7f48a46dc6142990057, type: 3}
-  - {fileID: 8018053144242486632, guid: f8f143d81b7ae1e48956f217d19f5ecc, type: 3}
   - {fileID: 6197301155000544402, guid: 26ca77827efb6be4696423fb9e52dbae, type: 3}
   AttackFills:
   - {fileID: 8244578177886748486, guid: 06b6e517fd68bbf438484d54ef9bfc83, type: 3}
-  - {fileID: 0}
   - {fileID: 6197301155000544402, guid: c9e6dda18a6d7bf43b40db46bd18b65a, type: 3}
   DamageColliders:
   - {fileID: 8244578177886748486, guid: 406f4c876b13aa94c86254fe9b6b07b8, type: 3}
-  - {fileID: 8018053144242486632, guid: c24fd440ce9bd3b429a97624ce954e9c, type: 3}
   - {fileID: 6197301155000544402, guid: 35d9f5b43e956514ea0c01d836fb21e7, type: 3}
   DashCollider: {fileID: 783672045}
   MagicCircles:
@@ -1616,7 +1613,7 @@ Animator:
   m_GameObject: {fileID: 123627475}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d921641b2301bbf439284cb1130a20f4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
