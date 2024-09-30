@@ -226,6 +226,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isWalking", false);
         playerAttack.SetCanAttack(false);
         playerToolManager.SetCanChange(false);
+        canLook = false;
         SetCanControl(false);
     }
 
@@ -237,6 +238,7 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         playerAttack.SetCanAttack(true);
         playerToolManager.SetCanChange(true);
+        canLook = true;
         SetCanControl(true);
     }
 
