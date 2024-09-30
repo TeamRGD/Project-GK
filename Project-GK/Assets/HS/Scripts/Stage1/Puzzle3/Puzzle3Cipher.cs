@@ -13,18 +13,29 @@ public class Puzzle3Cipher : MonoBehaviour
     [SerializeField] CameraTrigger cameraTrigger;
     [SerializeField] Puzzle3 puzzle3Manager;
 
-    public IEnumerator ActivateCipher() // 정답 입력 페이지 열기
+    public IEnumerator ActivateCipher(PlayerController pC) // 정답 입력 페이지 열기
     {
-        Debug.Log("ActivateCipher 실행");
-        cameraTrigger.ActivateCameraMoving();
-        yield return new WaitForSeconds(cameraTrigger.transitionSpeed + cameraTrigger.waitTime);
-        UIManagerInteraction.Instance.ActivateCipher(2);
-        yield return null;
+        playerController = pC;
+        if (playerController != null)
+        {
+            Debug.Log("ActivateCipher 실행");
+            cameraTrigger.ActivateCameraMoving();
+            pC.SetCanLook(false);
+            yield return new WaitForSeconds(cameraTrigger.transitionSpeed + cameraTrigger.waitTime);
+            UIManagerInteraction.Instance.ActivateCipher(2);
+            UIManager_Player.Instance.DisableInteractionNoticeForCipher();
+
+            yield return null;
+        }
     }
 
     public void DeactivateCipher()  // 정답 입력 페이지 닫기
     {
-        UIManagerInteraction.Instance.DeactivateCipher();
+        if (playerController != null)
+        {
+            playerController.SetCanLook(true);
+            UIManagerInteraction.Instance.DeactivateCipher();
+        }
     }
 
     public void DisableAndEnable() // 암호 정답 이후

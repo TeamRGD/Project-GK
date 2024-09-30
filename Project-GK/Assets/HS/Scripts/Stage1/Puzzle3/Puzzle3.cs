@@ -6,6 +6,7 @@ public class Puzzle3 : MonoBehaviour
 {
     private List<Drawer> drawerList;  // Drawer 스크립트가 붙어있는 서랍들의 리스트
     private List<Drawer> drawerAnswerList;
+    [SerializeField] GameObject StageClearWall;
     [SerializeField] Transform cabinetSetParent;   // 서랍들의 부모 오브젝트를 설정하는 Transform 변수
     [SerializeField] Transform answerParent;
 
@@ -21,6 +22,7 @@ public class Puzzle3 : MonoBehaviour
     public IEnumerator OnPuzzleComplete()
     {
         Debug.Log("Puzzle3 Complete!");
+        StageClearWall.SetActive(true);
         // 퍼즐 완료 시 추가적인 동작을 여기에 추가
         for (int i = 0; i < drawerList.Count; i++)
         {

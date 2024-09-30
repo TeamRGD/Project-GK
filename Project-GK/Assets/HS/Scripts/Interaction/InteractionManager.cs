@@ -194,7 +194,8 @@ public class InteractionManager : MonoBehaviour
                 playerController.CursorOn();
                 playerController.SetCanMove(false);
 
-                StartCoroutine(puzzle3Cipher.ActivateCipher());  // 코루틴 실행
+                if (playerController != null)
+                    StartCoroutine(puzzle3Cipher.ActivateCipher(playerController));  // 코루틴 실행
                 isOpen = 501;
             }
         }
