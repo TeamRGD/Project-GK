@@ -526,15 +526,13 @@ public class Boss2 : MonoBehaviourPunCallbacks
         photonView.RPC("SelectAggroTargetRPC", RpcTarget.All, idx);
     }
 
-    // 기본 공격
     bool RandomBasicAttack()
     {
         if (!isExecutingAttack)
         {
             Debug.Log("RandomBasicAttack");
 
-            //int attackType = UnityEngine.Random.Range(1, 7);
-            int attackType = 4;
+            int attackType = UnityEngine.Random.Range(1, 7);
 
             switch (attackType)
             {
@@ -631,8 +629,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator ShortDashAndSlash()
     {
-        Debug.Log("ShortDashAndSlash");
-
         isExecutingAttack = true;
         LightFoots(0);
 
@@ -680,8 +676,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator DoubleDash()
     {
-        Debug.Log("DoubleDash");
-
         isExecutingAttack = true;
         LightFoots(0);
 
@@ -749,8 +743,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator JawSlamWithShockwave()
     {
-        Debug.Log("JawSlamWithShockwave");
-
         isExecutingAttack = true;
         LightFoots(0);
 
@@ -759,16 +751,16 @@ public class Boss2 : MonoBehaviourPunCallbacks
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 6.0f, 3.0f));
-        yield return new WaitForSeconds(2.2f); // 임시완
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 3.0f, 3.0f));
+        yield return new WaitForSeconds(1.5f);
 
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "JawSlamWithShockwave");
-        yield return new WaitForSeconds(2.0f); // 임시완
+        yield return new WaitForSeconds(1.5f);
 
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 6.0f, 2.0f));
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0f, transform.position + transform.forward * 3.0f, 2.0f)); // 임시완. 깨무는 이펙트
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(1);
@@ -779,25 +771,23 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator SpinAndTargetSmash()
     {
-        Debug.Log("SpinAndTargetSmash");
-
         isExecutingAttack = true;
         LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f)); // 임시완
-        yield return new WaitForSeconds(2.2f);
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f));
+        yield return new WaitForSeconds(1.5f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f)); // 임시완
-        yield return new WaitForSeconds(2.2f);
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f));
+        yield return new WaitForSeconds(1.6f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash");
         yield return new WaitForSeconds(2.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f)); // 임시완
-        yield return new WaitForSeconds(2.2f);
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f));
+        yield return new WaitForSeconds(1.7f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
@@ -809,62 +799,50 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator RoarAndSmash()
     {
-        Debug.Log("RoarAndSmash");
-
         isExecutingAttack = true;
         LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
-        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
-        yield return new WaitForSeconds(0.5f);
-
-        SlowAllPlayers(0.3f, 2.0f);
-
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
+        yield return new WaitForSeconds(0.5f);
 
-        ActiveDashCollider(0);
+        SlowAllPlayers(0.3f, 1.0f);
 
-        float dashTime = 0.5f;
-        float dashSpeed = moveSpeed;
-        float elapsedTime = 0.0f;
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 1.5f));
+        yield return new WaitForSeconds(0.5f);
 
-        while (elapsedTime < dashTime)
-        {
-            transform.position += transform.forward * dashSpeed * Time.deltaTime;
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "ArmSmash");
 
-        ActiveDashCollider(1);
+        yield return new WaitForSeconds(3.0f);
 
         LightFoots(1);
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(2.0f);
 
         isExecutingAttack = false;
     }
 
     IEnumerator FocusAndLinearShockwave()
     {
-        Debug.Log("FocusAndLinearShockwave");
-
         isExecutingAttack = true;
         LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
+        SelectAggroTarget();
+        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
+
         Vector3 targetPosition = transform.position;
         targetPosition.y = 0.0f;
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "FocusAndLinearShockWave");
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 2.5f));
-        yield return StartCoroutine(DamageCoroutine(2.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, targetPosition + transform.forward * 2.0f, 3.0f));
+        yield return StartCoroutine(DamageCoroutine(3.0f));
 
-        shockwaveCoroutine = StartCoroutine(CreateShockwave(1.5f, 0.1f, targetPosition, 2.0f)); // 임시완
+        shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, targetPosition + transform.forward * 2.0f, 2.0f));
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(0);
