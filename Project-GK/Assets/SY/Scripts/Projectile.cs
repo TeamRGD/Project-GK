@@ -43,7 +43,7 @@ public class Projectile : MonoBehaviour
                 }
                 else if (SceneManager.GetActiveScene().name == "Vanta")
                 {
-                    Boss2 boss2 = other.GetComponent<Boss2>(); // 부위별 collider 달리면 수정하기.
+                    Boss2 boss2 = other.GetComponentInParent<Boss2>(); 
                     if (!boss2.GetIsInvincible())
                     {
                         boss2.TakeDamage(attackPower);
