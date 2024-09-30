@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
     float verticalLookRotation;
     public float currentSaveTime = 0.0f;
     Quaternion originalCameraRotation;
+    GameObject loadingUI;
 
     // Raycast variable
     [SerializeField] LayerMask interactableLayer;
@@ -99,8 +100,10 @@ public class PlayerController : MonoBehaviour
 
         originalWalkSpeed = walkSpeed;
         originalSprintSpeed = sprintSpeed;
+        
         if (PV.IsMine)
         {
+            loadingUI = GameObject.Find("Loading");
             StartCoroutine(StartTime());
         }
     }
@@ -112,7 +115,6 @@ public class PlayerController : MonoBehaviour
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
             if (playerManagers.Length == 1)
             {
-                GameObject loadingUI = GameObject.Find("Loading");
                 loadingUI.SetActive(false);
                 playerToolManager.SetCanChange(true);
                 playerAttack.SetCanAttack(true);
@@ -147,6 +149,14 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.N) && PhotonNetwork.IsMasterClient)
         {
+            loadingUI.SetActive(true);
+            rb.useGravity = false;
+            playerToolManager.SetCanChange(false);
+            playerAttack.SetCanAttack(false);
+            canControl = false;
+            canLook = false;
+            canMove = false;
+            isStarted = false;
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
             PV.RPC("LoadLevelRPC", RpcTarget.All, currentSceneIndex);
         }

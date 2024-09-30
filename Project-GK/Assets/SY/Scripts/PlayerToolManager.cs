@@ -42,14 +42,6 @@ public class PlayerToolManager : MonoBehaviour
         {
             SwitchToPreviousTool();
         }
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            AddTool(2);
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            UseTool(2);
-        }
     }
 
     void SwitchToNextTool()
