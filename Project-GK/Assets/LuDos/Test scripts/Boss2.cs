@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using System.IO;
+using Unity.VisualScripting;
 
 public class Boss2 : MonoBehaviourPunCallbacks
 {
@@ -362,18 +363,19 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            position.y = 0.15f;
+            position.y = 1.0f;
 
             if (idx == 0)
             {
                 currentIndicator = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackIndicator" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
-                currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
+                //currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill0_"), position, Quaternion.LookRotation(transform.forward));
+
+                Vector3 fillStartPosition = currentIndicator.transform.position - currentIndicator.transform.forward * (maxLength * 5f);
+                currentFill = Instantiate(AttackFills[0], fillStartPosition, Quaternion.LookRotation(transform.forward));
 
                 float width = 0.5f;
                 currentIndicator.transform.localScale = new Vector3(width, currentIndicator.transform.localScale.y, maxLength);
                 currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, 0);
-
-                currentFill.transform.position = currentIndicator.transform.position - currentIndicator.transform.forward * (maxLength / 2);
 
                 float elapsedTime = 0f;
                 while (elapsedTime < duration)
@@ -383,14 +385,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
                     float currentLength = Mathf.Lerp(0, maxLength, t);
                     currentFill.transform.localScale = new Vector3(width, currentFill.transform.localScale.y, currentLength);
-                    currentFill.transform.position = currentIndicator.transform.position - currentIndicator.transform.forward * ((maxLength - currentLength) / 2);
 
                     yield return null;
                 }
 
                 PhotonNetwork.Destroy(currentIndicator);
                 currentIndicator = null;
-                PhotonNetwork.Destroy(currentFill);
+                //PhotonNetwork.Destroy(currentFill);
+                Destroy(currentFill);
                 currentFill = null;
             }
             else
@@ -531,7 +533,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             Debug.Log("RandomBasicAttack");
 
-            int attackType = UnityEngine.Random.Range(1, 7);
+            //int attackType = UnityEngine.Random.Range(1, 7);
+            int attackType = 4;
+
             switch (attackType)
             {
                 case 1:
@@ -637,28 +641,30 @@ public class Boss2 : MonoBehaviourPunCallbacks
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 0.7f, transform.position + transform.forward * 7.0f, 2.0f));
+        yield return new WaitForSeconds(2.0f);
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "ShortDashAndSlash");
 
+        yield return new WaitForSeconds(1.0f);
+
         ActiveDashCollider(0);
 
-        float dashTime = 0.5f;
-        float dashSpeed = moveSpeed;
+        float distance = 3.0f;
+        float dashTime = distance / moveSpeed;
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
         {
-            transform.position += transform.forward * dashSpeed * Time.deltaTime;
+            transform.position += transform.forward * moveSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         ActiveDashCollider(1);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 10.0f, transform.position + transform.forward * 4.0f, 1.0f)); // 임시완
-        yield return new WaitForSeconds(1.0f); // 임시완
+        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 10.0f, transform.position + transform.forward * 8.0f, 1.2f));
+        yield return new WaitForSeconds(1.0f);
 
         LightFoots(1);
         yield return new WaitForSeconds(3.0f);
@@ -684,20 +690,22 @@ public class Boss2 : MonoBehaviourPunCallbacks
         photonView.RPC("SetAggroTarget", RpcTarget.All, 0);
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.2f, transform.position + transform.forward * 7.0f, 3.0f));
+        yield return new WaitForSeconds(1.5f);
 
         ActiveDashCollider(0);
 
-        float dashTime = 1.0f;
-        float dashSpeed = moveSpeed;
-        float elapsedTime = 0.0f;
-
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "PrepareForDash");
+
+        yield return new WaitForSeconds(1.5f);
+
+        float distance = 10.0f;
+        float dashTime = distance / moveSpeed;
+        float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
         {
-            transform.position += transform.forward * dashSpeed * Time.deltaTime;
+            transform.position += transform.forward * moveSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -706,13 +714,13 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         ActiveDashCollider(1);
 
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(2.0f);
 
-        photonView.RPC("SetAggroTarget", RpcTarget.All, 1);
+        photonView.RPC("SetAggroTarget", RpcTarget.All, 0);
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.2f, transform.position + transform.forward * 7.0f, 3.0f));
+        yield return new WaitForSeconds(1.5f);
 
         ActiveDashCollider(0);
 
@@ -720,9 +728,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "PrepareForDash");
 
+        yield return new WaitForSeconds(1.5f);
+
         while (elapsedTime < dashTime)
         {
-            transform.position += transform.forward * dashSpeed * Time.deltaTime;
+            transform.position += transform.forward * moveSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -895,7 +905,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            position.y = 0.15f;
+            position.y = 1.0f;
 
             currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "ShockWave"), position, Quaternion.identity);
 
