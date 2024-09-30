@@ -22,8 +22,13 @@ public class GuardManager : MonoBehaviour
     public Transform resetLocationZard; // 게임 종료 시 PlayerZard가 이동할 위치
     private bool playerInSight = false; // 플레이어가 시야에 있는지 여부
 
+    Animator anim;
+
     void Start()
     {
+
+        anim = GetComponent<Animator>();
+
         if (patrolPoints.Length == 0)
         {
             Debug.LogError("Patrol points are not set.");
@@ -50,6 +55,7 @@ public class GuardManager : MonoBehaviour
 
     void Patrol()
     {
+        anim.SetBool("isFind", false);
         if (Vector3.Distance(transform.position, targetPoint.position) < 0.2f)
         {
             currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length; // 다음 포인트로 순환
@@ -61,6 +67,7 @@ public class GuardManager : MonoBehaviour
 
     void DetectPlayers()
     {
+        anim.SetBool("isFind", true);
         playerInSight = false; // 매 프레임마다 초기화하여 시야 내에 플레이어가 있는지 확인
 
         // 두 플레이어 모두 감지
