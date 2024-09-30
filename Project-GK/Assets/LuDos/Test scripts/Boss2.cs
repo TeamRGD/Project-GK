@@ -283,16 +283,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         Debug.Log("SetGroggy");
 
-        UIManager_Vanta.Instance.DisableAttackNode();
         isGroggy = true;
-
-        foreach (GameObject torch in Torches)
-        {
-            if (!torch.activeSelf)
-            {
-                torch.SetActive(true);
-            }
-        }
 
         StartCoroutine(GroggyTime(10.0f));
         photonView.RPC("SetGroggyRPC", RpcTarget.All);
@@ -303,6 +294,21 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         return true;
     }
+
+    [PunRPC]
+    void SetGroggyRPC()
+    {
+        UIManager_Vanta.Instance.DisableAttackNode();
+        foreach (GameObject torch in Torches)
+        {
+            if (!torch.activeSelf)
+            {
+                torch.SetActive(true);
+            }
+        }
+    }
+
+
     IEnumerator GroggyTime(float time)
     {
         yield return new WaitForSeconds(time);

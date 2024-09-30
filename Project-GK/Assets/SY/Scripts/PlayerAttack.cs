@@ -26,9 +26,8 @@ public class PlayerAttack : MonoBehaviour
     float lastAttackTime;
     float attackCool = 0.5f;
     float projectileSpeed = 20f;
-    float maxRayDistance = 0f;
+    float maxRayDistance = 100f;
     bool isUltimate = false;
-    Vector3 vector = new Vector3(0, 0.5f, 0);
 
     void Awake()
     {
@@ -125,7 +124,7 @@ public class PlayerAttack : MonoBehaviour
             }
             else
             {
-                targetPoint = aim.position - vector;
+                targetPoint = aim.position;
             }
 
             Vector3 direction = (targetPoint - projectileSpawnPoint.position).normalized;
