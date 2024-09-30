@@ -967,53 +967,32 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (canControlSpeed)
         {
-            Debug.Log("ControlSpeed");
-
-            float speedMultiplier = 1.0f;
-
             if (magicCircleCount == 5)
             {
-                StartCoroutine(HitCoroutine());
-                speedMultiplier = 1.2f;
+                cooltime += 1.0f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 6)
             {
-                StartCoroutine(HitCoroutine());
-                speedMultiplier = 1.5f;
+                cooltime += 1.0f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 7)
             {
-                StartCoroutine(HitCoroutine());
-                speedMultiplier = 2.0f;
+                cooltime += 1.0f;
                 canControlSpeed = false;
             }
 
-            AdjustMoveSpeed(speedMultiplier);
         }
         return true;
-    }
-
-    IEnumerator HitCoroutine()
-    {
-        isExecutingAttack = true;
-        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
-        yield return new WaitForSeconds(3.0f);
-        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
-        isExecutingAttack = false;
-    }
-
-    void AdjustMoveSpeed(float multiplier)
-    {
-        cooltime *= multiplier;
-        print(cooltime);
     }
 
     // ∆–≈œ 2
     void LightFourTorches()
     {
         Debug.Log("LightFourTorches");
+
+        cooltime -= 3.0f;
 
         for (int i = 0; i < 4; i++)
         {
