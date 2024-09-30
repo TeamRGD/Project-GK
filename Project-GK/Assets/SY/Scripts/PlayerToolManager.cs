@@ -27,7 +27,6 @@ public class PlayerToolManager : MonoBehaviour
         UpdateToolVisibility();
         tools.Add(entireTools[0]);
         tools.Add(entireTools[1]);
-        tools.Add(entireTools[2]);
         UIManager_Player.Instance.SetInventory(0, tools);
     }
 
@@ -43,6 +42,14 @@ public class PlayerToolManager : MonoBehaviour
         {
             SwitchToPreviousTool();
         }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            AddTool(2);
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            UseTool(2);
+        }
     }
 
     void SwitchToNextTool()
@@ -50,7 +57,6 @@ public class PlayerToolManager : MonoBehaviour
         if(!PV.IsMine)
             return;
         PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
-        //UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     void SwitchToPreviousTool()
@@ -58,7 +64,6 @@ public class PlayerToolManager : MonoBehaviour
         if(!PV.IsMine)
             return;
         PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
-        //UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     [PunRPC]
@@ -66,7 +71,6 @@ public class PlayerToolManager : MonoBehaviour
     {
         currentToolIndex = (currentToolIndex + 1) % tools.Count;
         UpdateToolVisibility();
-        UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     [PunRPC]
@@ -74,7 +78,6 @@ public class PlayerToolManager : MonoBehaviour
     {
         currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
         UpdateToolVisibility();
-        UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     void UpdateToolVisibility()
@@ -84,6 +87,7 @@ public class PlayerToolManager : MonoBehaviour
             tools[i].SetActive(i == currentToolIndex);
         }
         playerAttack.SetCanAttack(currentToolIndex == 0); 
+        UIManager_Player.Instance.SetInventory(currentToolIndex, tools);
     }
 
     public int GetCurrentToolIndex()
@@ -101,7 +105,7 @@ public class PlayerToolManager : MonoBehaviour
     {
         if(!PV.IsMine)
             return;
-        PV.RPC("AddToolRPC", RpcTarget.AllBuffered, idx);
+        PV.RPC("AddToolRPC", RpcTarget.All, idx);
     }
 
     [PunRPC]
@@ -115,12 +119,13 @@ public class PlayerToolManager : MonoBehaviour
     {
         if(!PV.IsMine)
             return;
-        PV.RPC("UseToolRPC", RpcTarget.AllBuffered, idx);
+        PV.RPC("UseToolRPC", RpcTarget.All, idx);
     }
 
     [PunRPC]
     void UseToolRPC(int idx)
     {
+        tools[idx].SetActive(false);
         currentToolIndex = 0; // [임시완]
         tools.RemoveAt(idx);
         UpdateToolVisibility();
