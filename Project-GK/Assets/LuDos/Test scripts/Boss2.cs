@@ -368,10 +368,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
             if (idx == 0)
             {
                 currentIndicator = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackIndicator" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
-                //currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill0_"), position, Quaternion.LookRotation(transform.forward));
+                currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill0_"), position, Quaternion.LookRotation(transform.forward));
 
                 Vector3 fillStartPosition = currentIndicator.transform.position - currentIndicator.transform.forward * (maxLength * 5f);
-                currentFill = Instantiate(AttackFills[0], fillStartPosition, Quaternion.LookRotation(transform.forward));
+                //currentFill = Instantiate(AttackFills[0], fillStartPosition, Quaternion.LookRotation(transform.forward));
 
                 float width = 0.5f;
                 currentIndicator.transform.localScale = new Vector3(width, currentIndicator.transform.localScale.y, maxLength);
@@ -391,7 +391,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
                 PhotonNetwork.Destroy(currentIndicator);
                 currentIndicator = null;
-                //PhotonNetwork.Destroy(currentFill);
+                PhotonNetwork.Destroy(currentFill);
                 Destroy(currentFill);
                 currentFill = null;
             }
@@ -751,7 +751,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 3.0f, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 3.0f, 3.0f));
         yield return new WaitForSeconds(1.5f);
 
         Vector3 targetPosition = transform.position;
@@ -776,17 +776,17 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 15.0f, transform.position, 3.0f));
         yield return new WaitForSeconds(1.5f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position, 3.0f));
         yield return new WaitForSeconds(1.6f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash");
         yield return new WaitForSeconds(2.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 25.0f, transform.position, 3.0f));
         yield return new WaitForSeconds(1.7f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
@@ -812,7 +812,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         SlowAllPlayers(0.3f, 1.0f);
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position + transform.forward * 1.0f, 1.5f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 1.5f));
         yield return new WaitForSeconds(0.5f);
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "ArmSmash");
@@ -839,7 +839,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         targetPosition.y = 0.0f;
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "FocusAndLinearShockWave");
-        indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, targetPosition + transform.forward * 2.0f, 3.0f));
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, targetPosition + transform.forward * 2.0f, 3.0f));
         yield return StartCoroutine(DamageCoroutine(3.0f));
 
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, targetPosition + transform.forward * 2.0f, 2.0f));
@@ -928,14 +928,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < Torches.Count; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.All, Torches, i, false);
+            photonView.RPC("SetActiveTorchesRPC", RpcTarget.All, i, false);
         }
     }
 
     [PunRPC]
-    void SetActiveRPC(List<GameObject> gameObjects, int idx, bool value)
+    void SetActiveTorchesRPC(int idx, bool value)
     {
-        gameObjects[idx].SetActive(value);
+        Torches[idx].SetActive(value);
     }
 
 
@@ -945,8 +945,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < MagicCircles.Count; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.All, MagicCircles, i, true);
+            photonView.RPC("SetActiveLightMagicCircleRPC", RpcTarget.All, i, true);
         }
+    }
+
+    [PunRPC]
+    void SetActiveLightMagicCircleRPC(int idx, bool value)
+    {
+        MagicCircles[idx].SetActive(value);
     }
 
     bool ControlSpeed()
@@ -1004,7 +1010,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < 4; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.All, Torches, 2 * i, true);
+            photonView.RPC("SetActiveTorchesRPC", RpcTarget.All, 2 * i, true);
         }
     }
 
@@ -1039,8 +1045,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < Torches.Count; i++)
         {
-            photonView.RPC("SetActiveRPC", RpcTarget.All, Torches, i, false);
-            Torches[i].SetActive(false);
+            photonView.RPC("SetActiveTorchesRPC", RpcTarget.All, i, false);
         }
     }
 
