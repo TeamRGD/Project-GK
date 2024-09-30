@@ -22,7 +22,7 @@ public class Puzzle3 : MonoBehaviour
     public IEnumerator OnPuzzleComplete()
     {
         Debug.Log("Puzzle3 Complete!");
-        StageClearWall.SetActive(true);
+        StageClearWall.SetActive(false);
         // 퍼즐 완료 시 추가적인 동작을 여기에 추가
         for (int i = 0; i < drawerList.Count; i++)
         {
@@ -45,6 +45,7 @@ public class Puzzle3 : MonoBehaviour
                 drawer.OpenDrawer();
                 drawer.OpenDrawer();
                 drawer.enabled = false;
+                drawer.gameObject.tag = "Others";
             }
         }
         for (int i = 0; i < drawerList.Count; i++)
