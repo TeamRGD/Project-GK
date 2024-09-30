@@ -11,9 +11,9 @@ public class MagicCircle : MonoBehaviour
         boss = FindObjectOfType<Boss2>();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Projectile_Wi") || collision.gameObject.CompareTag("Projectile_Zard"))
+        if (other.gameObject.CompareTag("Projectile_Wi") || other.gameObject.CompareTag("Projectile_Zard"))
         {
             ToggleMagicCircleAndTorches();
         }
@@ -21,15 +21,6 @@ public class MagicCircle : MonoBehaviour
 
     void ToggleMagicCircleAndTorches()
     {
-        if (gameObject.activeSelf)
-        {
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.SetActive(true);
-        }
-
         foreach (GameObject torch in connectedTorches)
         {
             if (torch.activeSelf)

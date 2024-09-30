@@ -36,8 +36,8 @@ ModelImporter:
       name: SpinAndTargetSmash_C
       takeName: Take 001
       internalID: 1827226128182048838
-      firstFrame: 85
-      lastFrame: 143
+      firstFrame: 0
+      lastFrame: 54
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

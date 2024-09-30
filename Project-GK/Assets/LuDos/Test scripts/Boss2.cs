@@ -368,10 +368,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
             if (idx == 0)
             {
                 currentIndicator = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackIndicator" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
-                currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill0_"), position, Quaternion.LookRotation(transform.forward));
 
                 Vector3 fillStartPosition = currentIndicator.transform.position - currentIndicator.transform.forward * (maxLength * 5f);
-                //currentFill = Instantiate(AttackFills[0], fillStartPosition, Quaternion.LookRotation(transform.forward));
+                currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill0_"), fillStartPosition, Quaternion.LookRotation(transform.forward));
 
                 float width = 0.5f;
                 currentIndicator.transform.localScale = new Vector3(width, currentIndicator.transform.localScale.y, maxLength);
@@ -533,6 +532,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             Debug.Log("RandomBasicAttack");
 
             int attackType = UnityEngine.Random.Range(1, 7);
+            // int attackType = 1;
 
             switch (attackType)
             {
@@ -787,7 +787,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2.0f);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f));
-        yield return new WaitForSeconds(1.7f);
+        yield return new WaitForSeconds(1.8f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
@@ -907,7 +907,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            //photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
+            photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
         }
 
         photonView.RPC("MakeInvincibleRPC", RpcTarget.All);
@@ -924,7 +924,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Debug.Log("SpinAndExtinguishTorches");
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "QuickSpin");
 
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(4.0f);
 
         for (int i = 0; i < Torches.Count; i++)
         {
