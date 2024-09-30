@@ -16,6 +16,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     float currentHealth;
     float moveSpeed = 10.0f;
     float rotSpeed = 75.0f;
+    float cooltime = 2.0f;
 
     bool isFirstTimeBelow66 = true;
     bool isFirstTimeBelow2 = true;
@@ -663,7 +664,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
 
         LightFoots(1);
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
     }
@@ -736,7 +737,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         ActiveDashCollider(1);
 
         LightFoots(1);
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
     }
@@ -764,7 +765,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(1);
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
     }
@@ -792,7 +793,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(1);
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
     }
@@ -820,7 +821,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(3.0f);
 
         LightFoots(1);
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
     }
@@ -846,7 +847,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2.0f);
 
         LightFoots(0);
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(cooltime);
+
         isExecutingAttack = false;
     }
 
@@ -966,25 +968,20 @@ public class Boss2 : MonoBehaviourPunCallbacks
             if (magicCircleCount == 5)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
-                speedMultiplier = 0.5f;
+                speedMultiplier = 1.2f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 6)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
-                speedMultiplier = 0.4f;
+                speedMultiplier = 1.5f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 7)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
-                speedMultiplier = 0.3f;
+                speedMultiplier = 2.0f;
                 canControlSpeed = false;
-            }
-
-            if (animator != null)
-            {
-                photonView.RPC("ControlSpeedRPC", RpcTarget.All, speedMultiplier);
             }
 
             AdjustMoveSpeed(speedMultiplier);
@@ -992,15 +989,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    [PunRPC]
-    void ControlSpeedRPC(float speedMultiplier)
-    {
-        animator.speed *= speedMultiplier;
-    }
-
     void AdjustMoveSpeed(float multiplier)
     {
-        moveSpeed *= multiplier;
+        cooltime *= multiplier;
+        print(cooltime);
     }
 
     // ∆–≈œ 2
