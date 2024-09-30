@@ -26,7 +26,7 @@ public class PlayerAttack : MonoBehaviour
     float lastAttackTime;
     float attackCool = 0.5f;
     float projectileSpeed = 20f;
-    float maxRayDistance = 100f;
+    float maxRayDistance = 1000f;
     bool isUltimate = false;
 
     void Awake()

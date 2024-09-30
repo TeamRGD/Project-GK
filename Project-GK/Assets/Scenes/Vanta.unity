@@ -10071,6 +10071,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 321533465}
     m_Modifications:
+    - target: {fileID: 157178123347771738, guid: f118e078fe12e364fb0e51b1bbf21c86, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 1698591676053600786, guid: f118e078fe12e364fb0e51b1bbf21c86, type: 3}
       propertyPath: m_Name
       value: Prefab_Wood_scantlings_05
@@ -10719,6 +10723,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 321533465}
     m_Modifications:
+    - target: {fileID: 157178123347771738, guid: f118e078fe12e364fb0e51b1bbf21c86, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 1698591676053600786, guid: f118e078fe12e364fb0e51b1bbf21c86, type: 3}
       propertyPath: m_Name
       value: Prefab_Wood_scantlings_05
@@ -25984,6 +25992,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7071717591397436948, guid: a527d7e404b98e145b20d1ded11b7cc9, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 8083656008506436439, guid: a527d7e404b98e145b20d1ded11b7cc9, type: 3}
       propertyPath: m_Convex
       value: 0
@@ -26913,6 +26925,10 @@ PrefabInstance:
     - target: {fileID: 1961105736726603669, guid: 26f253c95a4509541880e0ceeb245546, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3075271576032220632, guid: 26f253c95a4509541880e0ceeb245546, type: 3}
+      propertyPath: m_TagString
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 3377323330183594411, guid: 26f253c95a4509541880e0ceeb245546, type: 3}
       propertyPath: m_Enabled
@@ -30009,6 +30025,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7071717591397436948, guid: a527d7e404b98e145b20d1ded11b7cc9, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 8083656008506436439, guid: a527d7e404b98e145b20d1ded11b7cc9, type: 3}
       propertyPath: m_Convex
       value: 0
@@ -32266,7 +32286,7 @@ GameObject:
   - component: {fileID: 2046225035}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32305,8 +32325,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1.019544, z: 1}
+  m_Center: {x: 0, y: 0.009771798, z: 0}
 --- !u!23 &2046225036
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -34103,6 +34123,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.766
       objectReference: {fileID: 0}
+    - target: {fileID: 5388390973996181815, guid: 070ccbbb5e9d65249bb5c273fb7a67e5, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 6715008849950181568, guid: 070ccbbb5e9d65249bb5c273fb7a67e5, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -34589,6 +34613,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8465772815802518966}
     m_Modifications:
+    - target: {fileID: 6058519721108870791, guid: 63f792982afffec40b410bbd04f7f25a, type: 3}
+      propertyPath: m_TagString
+      value: Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 7750841533361724809, guid: 63f792982afffec40b410bbd04f7f25a, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -34944,7 +34972,7 @@ GameObject:
   - component: {fileID: 1934550467}
   m_Layer: 0
   m_Name: Wall
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -26,11 +26,14 @@ public class Launcher : MonoBehaviourPunCallbacks
     private bool isFirst = true;
     public bool isReady;
     private List<RoomInfo> roomInfos = new List<RoomInfo>();
+    GameObject loadingUI;
 
     void Start()
     {
         Debug.Log("Connecting to Master");
         PhotonNetwork.ConnectUsingSettings();
+        loadingUI = GameObject.Find("Loading");
+        loadingUI.SetActive(false);
     }
 
     void Update()
@@ -192,6 +195,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         if (AreAllPlayersReady())
         {
+            loadingUI.SetActive(true);
             PhotonNetwork.LoadLevel(1);
         }
         else
