@@ -967,19 +967,19 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             if (magicCircleCount == 5)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
+                StartCoroutine(HitCoroutine());
                 speedMultiplier = 1.2f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 6)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
+                StartCoroutine(HitCoroutine());
                 speedMultiplier = 1.5f;
                 canControlSpeed = false;
             }
             else if (magicCircleCount == 7)
             {
-                photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
+                StartCoroutine(HitCoroutine());
                 speedMultiplier = 2.0f;
                 canControlSpeed = false;
             }
@@ -987,6 +987,15 @@ public class Boss2 : MonoBehaviourPunCallbacks
             AdjustMoveSpeed(speedMultiplier);
         }
         return true;
+    }
+
+    IEnumerator HitCoroutine()
+    {
+        isExecutingAttack = true;
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Hit");
+        yield return new WaitForSeconds(3.0f);
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Invincible");
+        isExecutingAttack = false;
     }
 
     void AdjustMoveSpeed(float multiplier)
