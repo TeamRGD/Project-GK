@@ -134,7 +134,7 @@ public class PlayerStateManager : MonoBehaviour
         SetCanState(false); // 상대 화면에서도 빠른 동작 멈춤을 위해 동기화 해줌.
         animator.SetBool("isGroggy", true);
         animator.SetBool("trigger", true);
-        StartCoroutine(TriggerAnimTime(0.2f));
+        StartCoroutine(TriggerAnimTime(0.4f));
         isAlive = false;
     }
 

@@ -295,14 +295,14 @@ public class PlayerController : MonoBehaviour
         float verticalRotation = Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
 
         // Player Body Rotation
-        if (!isFreeLooking)
+        if (!isFreeLooking && playerState.GetIsAlive())
         {
             playerBody.Rotate(Vector3.up * horizontalRotation);
-        }
 
-        // Camera Rotation
-        verticalLookRotation -= verticalRotation;
-        verticalLookRotation = Mathf.Clamp(verticalLookRotation, -60f, 60f);
+            // Camera Rotation
+            verticalLookRotation -= verticalRotation;
+            verticalLookRotation = Mathf.Clamp(verticalLookRotation, -60f, 60f);
+        }
 
         if (!isFreeLooking)
         {
@@ -374,6 +374,7 @@ public class PlayerController : MonoBehaviour
             CheckForInteractable(ray);
 
         // Ping
+        /*
         if (Input.GetKeyDown(KeyCode.Z))
         {
             RaycastHit hit;
@@ -383,6 +384,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(DestroyPing(pingMarker));
             }
         }
+        */
     }
 
     IEnumerator DestroyPing(GameObject ping)
