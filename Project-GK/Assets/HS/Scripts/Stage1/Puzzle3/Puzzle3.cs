@@ -10,6 +10,10 @@ public class Puzzle3 : MonoBehaviour
     [SerializeField] Transform cabinetSetParent;   // 서랍들의 부모 오브젝트를 설정하는 Transform 변수
     [SerializeField] Transform answerParent;
 
+    // 클리어 이후에
+    [SerializeField] Subtitle subtitle;
+    [SerializeField] Outline ziplineOutline;
+
     [SerializeField] List<GameObject> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
 
     private void Awake()
@@ -24,6 +28,10 @@ public class Puzzle3 : MonoBehaviour
         Debug.Log("Puzzle3 Complete!");
         StageClearWall.SetActive(false);
         // 퍼즐 완료 시 추가적인 동작을 여기에 추가
+
+        ziplineOutline.enabled = true;
+        subtitle.StartSubTitle();
+
         for (int i = 0; i < drawerList.Count; i++)
         {
             drawerList[i].CloseDrawer();

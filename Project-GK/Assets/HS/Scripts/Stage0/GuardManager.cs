@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class GuardManager : MonoBehaviour
 {
+    [SerializeField] Subtitle subtitleRebirth; // 다시 태어날 때 자막 표기
+
     public Transform[] patrolPoints; // 경비병이 순찰할 포인트들
     public float speed = 2f; // 경비병 이동 속도
     private int currentPointIndex = 0; // 현재 경비병이 목표로 하는 포인트
@@ -121,7 +123,7 @@ public class GuardManager : MonoBehaviour
 
     void EndGame()
     {
-        Debug.Log("Game Over! The guard has caught a player.");
+        subtitleRebirth.LoopSubTitle();
 
         // 두 플레이어를 지정된 위치로 이동시킴
         if (playerWi != null)
