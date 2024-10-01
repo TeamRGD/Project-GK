@@ -12,7 +12,9 @@ using Unity.VisualScripting;
 public class Boss2 : MonoBehaviourPunCallbacks
 {
     #region variables
-    float maxHealth = 100;
+    //public LineRenderer lineRenderer;  // LineRenderer를 에디터에서 설정할 수 있도록 공개 변수로 설정
+    //public int segments = 100;  // 원을 그리기 위한 점의 수 (세그먼트)
+    float maxHealth = 34;
     float currentHealth;
     float moveSpeed = 10.0f;
     float rotSpeed = 75.0f;
@@ -162,7 +164,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                     {
                         StopRandomBasicAttack();
                         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
-                        LightFourTorches();
+                        //LightFourTorches();
                         yield return StartCoroutine(MoveAndAttack());
                         yield return RoarAndExtinguishAllTorches();
                         hasExecutedInitialActions2 = true;
@@ -285,8 +287,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         isGroggy = true;
 
-        StartCoroutine(GroggyTime(10.0f));
         photonView.RPC("SetGroggyRPC", RpcTarget.All);
+
+        StartCoroutine(GroggyTime(10.0f));
+
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "Groggy");
@@ -298,6 +302,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
     [PunRPC]
     void SetGroggyRPC()
     {
+        isInvincible = false;
+        StopRandomBasicAttack();
+
         UIManager_Vanta.Instance.DisableAttackNode();
         foreach (GameObject torch in Torches)
         {
@@ -1004,8 +1011,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         Debug.Log("MoveAndAttack");
 
+        yield return new WaitForSeconds(3.0f);
+
         Vector3 center = new Vector3(0, 0, 0);
-        float radius = 45.0f;
+        float radius = 15.0f;
 
         for (int n = 0; n < 8; n++)
         {
@@ -1017,7 +1026,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
             yield return JumpToPosition(targetPosition);
             yield return StartCoroutine(randomAttack);
-            yield return new WaitForSeconds(3.0f);
+            yield return new WaitForSeconds(1.0f);
         }
     }
 
@@ -1026,7 +1035,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         Debug.Log("RoarAndExtinguishAllTorches");
 
-        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar1");
         yield return new WaitForSeconds(3.0f);
 
         for (int i = 0; i < Torches.Count; i++)
@@ -1035,10 +1044,38 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
+    //void DrawCircle(Vector3 center, float radius)
+    //{
+    //    if (lineRenderer == null)
+    //    {
+    //        // LineRenderer가 없다면, 동적으로 추가
+    //        GameObject lineObj = new GameObject("Circle");
+    //        lineRenderer = lineObj.AddComponent<LineRenderer>();
+    //    }
+
+    //    lineRenderer.positionCount = segments + 1;  // 원의 각 점들을 위한 위치 설정
+    //    lineRenderer.useWorldSpace = true;          // 월드 좌표계 사용
+    //    lineRenderer.startWidth = 0.1f;             // 선의 너비 설정
+    //    lineRenderer.endWidth = 0.1f;               // 선의 너비 설정
+
+    //    float angle = 0f;
+    //    for (int i = 0; i < (segments + 1); i++)
+    //    {
+    //        float x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
+    //        float z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
+
+    //        Vector3 pos = new Vector3(center.x + x, center.y, center.z + z);
+    //        lineRenderer.SetPosition(i, pos);  // 각 점을 LineRenderer에 설정
+
+    //        angle += (360f / segments);
+    //    }
+    //}
+
     Vector3 GetRandomPosition(Vector3 center, float radius)
     {
-        Vector2 randomPoint = Random.insideUnitCircle * radius;
-        return new Vector3(center.x + randomPoint.x, center.y, center.z + randomPoint.y);
+        Vector3 randomPoint = Random.insideUnitCircle * radius;
+        //DrawCircle(center, radius); // 범위 확인용
+        return new Vector3(center.x + randomPoint.x, center.y, center.z + randomPoint.z);
     }
 
 
@@ -1066,15 +1103,17 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator JumpToPosition(Vector3 targetPosition)
     {
-        yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
+        yield return StartCoroutine(LookAtTarget(targetPosition - transform.position, rotSpeed));
+        yield return new WaitForSeconds(1.5f);
 
         Vector3 startPosition = transform.position;
-        float jumpHeight = 10.0f;
-        float jumpDuration = 2.0f;
+        float jumpHeight = 5.0f;
+        float jumpDuration = 1.0f;
 
         float elapsedTime = 0.0f;
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Jump");
+        yield return new WaitForSeconds(1.0f);
 
         while (elapsedTime < jumpDuration)
         {
@@ -1085,7 +1124,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        transform.position = targetPosition;
+        //transform.position = targetPosition;
 
         yield return new WaitForSeconds(1.0f);
     }
@@ -1097,8 +1136,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         if (bossAttackCount < storedPositions.Count)
         {
             Vector3 targetPosition = storedPositions[bossAttackCount];
-            jumpToPositionCoroutine = StartCoroutine(JumpToPosition(targetPosition));
-            yield return new WaitForSeconds(1.0f);
+            jumpToPositionCoroutine = StartCoroutine(JumpToPosition(targetPosition)); // yield return
         }
         yield break;
     }
@@ -1110,12 +1148,12 @@ public class Boss2 : MonoBehaviourPunCallbacks
         if (bossAttackCount < storedAttacks.Count)
         {
             IEnumerator storedAttack = storedAttacks[bossAttackCount];
-            currentAttackCoroutine = StartCoroutine(storedAttack);
+            currentAttackCoroutine = StartCoroutine(storedAttack); // yield return
 
             Debug.Log("bossAttackCount: " + bossAttackCount);
 
             bossAttackCount++;
-            yield return new WaitForSeconds(4.0f);
+            yield return new WaitForSeconds(1.0f);
         }
         yield break;
     }
@@ -1135,7 +1173,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator Roar()
     {
         Debug.Log("Roar");
-        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar0");
         yield return new WaitForSeconds(3.0f);
     }
     void SpeedUp()
@@ -1150,7 +1188,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
         isExecutingAttack = true;
 
         yield return new WaitForSeconds(1.0f);
-
 
         SelectAggroTarget();
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
