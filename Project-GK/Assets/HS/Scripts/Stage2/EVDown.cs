@@ -9,9 +9,11 @@ public class EVDown : MonoBehaviour
     [SerializeField] float moveTime = 5.0f; // 이동하는 데 걸리는 시간 (초 단위)
     Transform playerTransform;
     Vector3 playerLocalPosition; // 로컬 위치 저장용
+    [SerializeField] AudioSource EVSound;
 
     public IEnumerator MoveCarrier(Transform target)
     {
+        EVSound.Play();
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = target.position;
         float elapsedTime = 0f;

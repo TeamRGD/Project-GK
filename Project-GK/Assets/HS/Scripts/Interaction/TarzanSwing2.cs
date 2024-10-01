@@ -11,6 +11,7 @@ public class TarzanSwing2 : MonoBehaviour
 
     [SerializeField] Transform player;            // 플레이어 트랜스폼
     [SerializeField] Transform objectToAttach;    // 플레이어가 붙을 오브젝트 트랜스폼
+    [SerializeField] AudioSource ropeSound;
 
     private Transform originalParent;   // 플레이어의 원래 부모 트랜스폼 (부모가 없을 경우 null일 수 있음)
     RotateObjectByAngle rotateObjectByAngle;
@@ -22,10 +23,12 @@ public class TarzanSwing2 : MonoBehaviour
 
     public IEnumerator MoveLampWithPlayer()
     {
+        ropeSound.Play();
         AttachPlayer();  // 플레이어를 자식 관계로 변경
         GoStage();
         yield return new WaitForSeconds(3.0f);
         DetachPlayer();  // 플레이어를 다시 원래 위치로 해제
+        ropeSound.Stop();
     }
 
 

@@ -6,12 +6,8 @@ public class Drawer : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 2f;
     [SerializeField] public bool isOpen = false;
-    Puzzle3 puzzle3Manager;
-
-    public void Start()
-    {
-        puzzle3Manager = FindAnyObjectByType<Puzzle3>();
-    }
+    [SerializeField] AudioSource openSound;
+    [SerializeField] AudioSource closeSound;
 
     void OnTriggerEnter(Collider other)
     {
@@ -43,12 +39,14 @@ public class Drawer : MonoBehaviour
 
     public void OpenDrawer()
     {
+        openSound.Play();
         transform.Translate(new Vector3(3, 0, 0), Space.Self);
         isOpen = true;
     }
 
     public void CloseDrawer()
     {
+        closeSound.Play();
         transform.Translate(new Vector3(-3, 0, 0), Space.Self);
         isOpen = false;
     }

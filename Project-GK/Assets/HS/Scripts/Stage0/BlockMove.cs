@@ -8,6 +8,7 @@ public class BlockMove : MonoBehaviour
     [SerializeField] float moveXAmount;
     [SerializeField] float moveYAmount;
     [SerializeField] float moveZAmount;
+    [SerializeField] AudioSource stoneSound;
 
     public void Move()
     {
@@ -17,6 +18,7 @@ public class BlockMove : MonoBehaviour
     // y 좌표를 일정 시간 동안 이동시키는 코루틴
     IEnumerator MoveYOverTime()
     {
+        stoneSound.Play();
         this.gameObject.layer = 0;
         // 시작 위치 저장
         Vector3 startPosition = transform.position;
@@ -44,5 +46,6 @@ public class BlockMove : MonoBehaviour
 
         puzzle0Manager.PuzzleProgress();
         this.gameObject.layer = 0;
+        //stoneSound.Stop(); // 쓰면 중간에 끊겨서 어색해짐
     }
 }

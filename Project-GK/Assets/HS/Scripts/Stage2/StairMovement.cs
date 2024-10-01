@@ -7,6 +7,7 @@ public class StairMovement : MonoBehaviour
     [SerializeField] private float moveDuration = 1f; // 이동 시간
     [SerializeField] Transform destination;
     [SerializeField] Transform originTransform;
+    [SerializeField] AudioSource stoneSound;
 
     private Coroutine currentMoveCoroutine;
 
@@ -27,6 +28,7 @@ public class StairMovement : MonoBehaviour
 
     private IEnumerator MoveStair()
     {
+        stoneSound.Play();
         Vector3 startPosition = transform.position;
         float elapsedTime = 0f;
 
@@ -54,5 +56,6 @@ public class StairMovement : MonoBehaviour
         }
 
         currentMoveCoroutine = null; // 코루틴이 끝났음을 표시
+        //stoneSound.Stop();
     }
 }

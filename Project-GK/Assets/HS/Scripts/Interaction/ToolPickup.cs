@@ -10,6 +10,23 @@ public class ToolPickup : MonoBehaviour
     PlayerController playerController;
     PhotonView PV;
 
+    private bool isFall = false;
+    AudioSource fallSound;
+
+    private void Start()
+    {
+        fallSound = GetComponent<AudioSource>();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Ground") && !isFall)
+        {
+            fallSound.Play();
+            isFall = true;
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
