@@ -22,12 +22,12 @@ public class Subtitle : MonoBehaviour
 
     public void StartSubTitle()
     {
-        StartCoroutine(SubtitleManager.instance.SubtitleInitiate(subTitles));
+        //StartCoroutine(SubtitleManager.instance.SubtitleInitiate(subTitles));
     }
 
     public void LoopSubTitle() // 반복하는 용도
     {
-        StartCoroutine(SubtitleManager.instance.SubtitleInitiate(subTitles));
+        //StartCoroutine(SubtitleManager.instance.SubtitleInitiate(subTitles));
         RefreshActive();
     }
 
