@@ -14,7 +14,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     #region variables
     //public LineRenderer lineRenderer;  // LineRenderer를 에디터에서 설정할 수 있도록 공개 변수로 설정
     //public int segments = 100;  // 원을 그리기 위한 점의 수 (세그먼트)
-    float maxHealth = 34;
+    float maxHealth = 3;
     float currentHealth;
     float moveSpeed = 10.0f;
     float rotSpeed = 75.0f;
@@ -165,7 +165,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                         StopRandomBasicAttack();
                         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         //LightFourTorches();
-                        yield return StartCoroutine(MoveAndAttack());
+                        //yield return StartCoroutine(MoveAndAttack());
                         yield return RoarAndExtinguishAllTorches();
                         hasExecutedInitialActions2 = true;
                     }
@@ -180,13 +180,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
                     if (!hasExecutedInitialActions3)
                     {
                         StopRandomBasicAttack();
+                        isGroggy = false;
                         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         MakeInvincible();
                         yield return StartCoroutine(Roar());
                         SpeedUp();
                         hasExecutedInitialActions3 = true;
                     }
-
+                    
                     StartCoroutine(ExecutePattern(pattern3Tree));
                 }
             }
@@ -236,7 +237,17 @@ public class Boss2 : MonoBehaviourPunCallbacks
         var jumpNode = new ActionCoroutineNode(JumpToStoredPosition, this);
         var attackNode = new ActionCoroutineNode(PerformStoredAttack, this);
 
+        var checkHealthNode = new ActionNode(() => {
+            if (currentHealth <= 2)
+            {
+                isGroggy = true;
+                return false;
+            }
+            return true;
+        });
+
         return new Sequence(
+            checkHealthNode,
             jumpNode,
             attackNode,
             new ActionNode(() => {
@@ -1104,16 +1115,16 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator JumpToPosition(Vector3 targetPosition)
     {
         yield return StartCoroutine(LookAtTarget(targetPosition - transform.position, rotSpeed));
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.0f);
 
         Vector3 startPosition = transform.position;
-        float jumpHeight = 5.0f;
-        float jumpDuration = 1.0f;
+        float jumpHeight = 3.0f;
+        float jumpDuration = 0.7f;
 
         float elapsedTime = 0.0f;
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Jump");
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(2.0f);
 
         while (elapsedTime < jumpDuration)
         {
@@ -1124,7 +1135,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             yield return null;
         }
 
-        //transform.position = targetPosition;
+        transform.position = targetPosition;
 
         yield return new WaitForSeconds(1.0f);
     }
@@ -1136,7 +1147,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
         if (bossAttackCount < storedPositions.Count)
         {
             Vector3 targetPosition = storedPositions[bossAttackCount];
-            jumpToPositionCoroutine = StartCoroutine(JumpToPosition(targetPosition)); // yield return
+            jumpToPositionCoroutine = StartCoroutine(JumpToPosition(targetPosition));
+            yield return new WaitForSeconds(2.0f);
         }
         yield break;
     }
@@ -1189,26 +1201,30 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f);
 
-        SelectAggroTarget();
+        photonView.RPC("SetAggroTarget", RpcTarget.All, 0);
         yield return StartCoroutine(LookAtTarget(aggroTarget.transform.position - transform.position, rotSpeed));
 
-        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 20.0f, transform.position + transform.forward * 1.0f, 3.0f));
-        yield return new WaitForSeconds(1.3f); // 임시완
+        indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.2f, transform.position + transform.forward * 7.0f, 3.0f));
+        yield return new WaitForSeconds(1.5f);
 
         ActiveDashCollider(0);
 
-        float dashTime = 1.0f;
-        float dashSpeed = moveSpeed;
-        float elapsedTime = 0.0f;
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "PrepareForDash");
 
-        photonView.RPC("SetTriggerRPC", RpcTarget.All, "Dash");
+        yield return new WaitForSeconds(1.5f);
+
+        float distance = 10.0f;
+        float dashTime = distance / moveSpeed;
+        float elapsedTime = 0.0f;
 
         while (elapsedTime < dashTime)
         {
-            transform.position += transform.forward * dashSpeed * Time.deltaTime;
+            transform.position += transform.forward * moveSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
+        photonView.RPC("SetTriggerRPC", RpcTarget.All, "DashtoIdle");
 
         ActiveDashCollider(1);
 
@@ -1233,13 +1249,13 @@ public class Boss2 : MonoBehaviourPunCallbacks
         if (canDisplay)
         {
             Debug.Log("DisplayAttackOrder");
-
+            
             playerOrder = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
-            // correctOrder = new List<int> { 1, 1, 1, 1, 2, 2, 2, 2 };
-            correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 임시완. 실험용
+            correctOrder = new List<int> { 1, 1, 1, 1, 2, 2, 2, 2 };
+            // correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 임시완. 실험용
             Shuffle(correctOrder);
 
-            photonView.RPC("DisplayOrderOnUI",RpcTarget.All, correctOrder);
+            //photonView.RPC("DisplayOrderOnUI",RpcTarget.All, correctOrder); // 수정 필요
 
             attackOrderCount = 0;
 
@@ -1288,7 +1304,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             Debug.Log("DamageAllMap");
 
-            StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 0, 0))); // 임시완
+            StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 0, 0)));
 
             attackOrderCount = 0;
             canDisplay = true;
