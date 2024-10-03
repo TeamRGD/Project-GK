@@ -18,12 +18,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Yggdrasil.unity
     guid: 96f16aa820d92bc4d9634a78a043af32
   - enabled: 1
-    path: Assets/Scenes/Vanta.unity
-    guid: 18a33a12296f46d4495257d9a46f61d8
-  - enabled: 1
     path: Assets/Scenes/S3.unity
     guid: b384ba2d8f865e749b8b8348c02c3827
   - enabled: 1
     path: Assets/Scenes/S4.unity
     guid: c41e9d5179a564b45948fef6e25f518d
+  - enabled: 1
+    path: Assets/Scenes/Vanta.unity
+    guid: 18a33a12296f46d4495257d9a46f61d8
   m_configObjects: {}

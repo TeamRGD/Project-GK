@@ -15,9 +15,8 @@ public class PlayerManager : MonoBehaviour
         new UnityEngine.Vector3(330, 0, 32), // S1
         new UnityEngine.Vector3(37, 24, -17), // S2
         new UnityEngine.Vector3(13, 1, 1), // Ygg
-        new UnityEngine.Vector3(-10, 4, -1), // Vanta
         new UnityEngine.Vector3(25, 66, 0), // S3
-        //new UnityEngine.Vector3(-10, 4, -1), // Vanta
+        new UnityEngine.Vector3(-10, 4, -1), // Vanta
         new UnityEngine.Vector3(193, 3, 0) // S4
     };
     List<UnityEngine.Vector3> startPositionZard = new List<UnityEngine.Vector3>
@@ -27,7 +26,7 @@ public class PlayerManager : MonoBehaviour
         new UnityEngine.Vector3(-10, 4, 1), // Vanta
         new UnityEngine.Vector3(13, 1, -1), // Ygg
         new UnityEngine.Vector3(25, 66, 0), // S3
-        //new UnityEngine.Vector3(-10, 4, 1), // Vanta
+        new UnityEngine.Vector3(-10, 4, 1), // Vanta
         new UnityEngine.Vector3(193, 3, 0) // S4
     };
     List<UnityEngine.Quaternion> startRotationWi = new List<UnityEngine.Quaternion>

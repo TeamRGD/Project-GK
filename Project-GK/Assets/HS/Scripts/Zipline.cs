@@ -77,15 +77,9 @@ public class Zipline : MonoBehaviour
     // 플레이어를 매달릴 위치로 이동시키는 함수
     private void AttachPlayerToPosition(Transform playerTransform, Vector3 attachPosition, PlayerController playerController)
     {
-        PV.RPC("AttachPlayerToPositionRPC", RpcTarget.AllBuffered, playerTransform, attachPosition, playerController);
-    }
-
-    [PunRPC]
-    void AttachPlayerToPoistionRPC(Transform playerTransform, Vector3 attachPosition, PlayerController playerController)
-    {
-        playerTransform.position = attachPosition;
         playerController.SetCanMove(false);
         playerController.SetCanLook(false);
+        playerTransform.position = attachPosition;
     }
 
 
