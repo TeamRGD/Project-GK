@@ -19,6 +19,7 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
     public RectTransform notEnoughMana;
     public Image getHit;
     private bool isLowHealth;
+    public Image saved;
 
     // for Inventory
     public Sprite[] itemImages;
@@ -59,13 +60,14 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
         //}
         //inventoryOutlines[0].enabled = true;
         isLowHealth = false;
+        saved.gameObject.SetActive(false);  
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))
         {
-            ManageHealth(4, 1000);
+            SavedUI();
         }
     }
 
@@ -213,6 +215,14 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
             saveText.gameObject.SetActive(true);
         }
         saveCirc.fillAmount = currentSaveTime / 6f;
+    }
+
+    public void SavedUI()
+    {
+        Color color = saved.color;
+        color.a = 0.7f;
+        saved.color = color;
+        saved.DOFade(0f, 0.3f).SetEase(Ease.OutSine).OnStart(() => saved.gameObject.SetActive(true)).OnComplete(() => saved.gameObject.SetActive(false));
     }
 
     public void AggroAim(string who)
