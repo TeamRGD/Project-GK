@@ -52,7 +52,14 @@ public class Projectile : MonoBehaviour
                 }
             }
         }
+        else if (other.CompareTag("Stone"))
+        {
+            BreakableStone stone = other.GetComponent<BreakableStone>();
+            stone.TakeDamage(1);
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
+
     private void DestroyProjectileAfterTime() // n초 후 제거.
     {
         StartCoroutine(DestroyAfterSeconds());
