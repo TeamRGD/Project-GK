@@ -48,8 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2
   isOpen: 0
-  openSound: {fileID: 0}
-  closeSound: {fileID: 0}
 --- !u!65 &7718474108245519963
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -69,8 +67,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.49, y: 0.16, z: 0.15}
-  m_Center: {x: 0.04, y: 0.03, z: 0}
+  m_Size: {x: 0.5, y: 0.16, z: 0.16}
+  m_Center: {x: 0, y: 0.03, z: 0}
 --- !u!1 &1030976829
 GameObject:
   m_ObjectHideFlags: 0
