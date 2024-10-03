@@ -152,7 +152,36 @@ public class PlayerController : MonoBehaviour
             Save();
         }
             
-        //ForDebug();
+        ForDebug();
+    }
+
+    void ForDebug()
+    {
+        if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N) && cutScenePlayer != null)
+        {
+            rb.useGravity = false;
+            playerToolManager.SetCanChange(false);
+            playerAttack.SetCanAttack(false);
+            canControl = false;
+            canLook = false;
+            canMove = false;
+            isStarted = false;
+            renderTexture.Release();
+            cutScenePlayer.Play();
+        }
+        else if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N) && cutScenePlayer == null)
+        {
+            rb.useGravity = false;
+            playerToolManager.SetCanChange(false);
+            playerAttack.SetCanAttack(false);
+            canControl = false;
+            canLook = false;
+            canMove = false;
+            isStarted = false;
+            PV.RPC("UI", RpcTarget.All);
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            PhotonNetwork.LoadLevel(currentSceneIndex + 1);
+        }
     }
 
     public void NextScene()
@@ -161,7 +190,7 @@ public class PlayerController : MonoBehaviour
         {
             PV.RPC("UI", RpcTarget.All);
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            PV.RPC("LoadLevelRPC", RpcTarget.All, currentSceneIndex);
+            PhotonNetwork.LoadLevel(currentSceneIndex + 1);
         }
     }
 
@@ -169,12 +198,6 @@ public class PlayerController : MonoBehaviour
     void UI()
     {
         UIManager_Player.Instance.LoadingUI(true);
-    }
-
-    [PunRPC]
-    void LoadLevelRPC(int currentSceneIndex)
-    {
-        PhotonNetwork.LoadLevel(currentSceneIndex + 1);
     }
 
     void Move()
