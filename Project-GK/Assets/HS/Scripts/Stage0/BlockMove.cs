@@ -1,9 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
 
-public class BlockMove : MonoBehaviour
+public class BlockMove : MonoBehaviourPunCallbacks
 {
-
     [SerializeField] Puzzle0Manager puzzle0Manager;
     [SerializeField] private float moveDuration = 2f;
     [SerializeField] float moveXAmount;
@@ -11,7 +11,22 @@ public class BlockMove : MonoBehaviour
     [SerializeField] float moveZAmount;
     [SerializeField] AudioSource stoneSound;
 
+    private PhotonView PV;
+
+    void Start()
+    {
+        PV = GetComponent<PhotonView>();
+    }
+
+    // 네트워크 상에서 블록 이동을 호출할 때 사용
     public void Move()
+    {
+        PV.RPC("MoveBlock", RpcTarget.AllBuffered);
+    }
+
+    // 블록 이동을 모든 클라이언트에게 동기화
+    [PunRPC]
+    public void MoveBlock()
     {
         StartCoroutine(MoveYOverTime());
     }
@@ -19,8 +34,15 @@ public class BlockMove : MonoBehaviour
     // y 좌표를 일정 시간 동안 이동시키는 코루틴
     IEnumerator MoveYOverTime()
     {
-        stoneSound.Play();
+        // 소리 재생
+        if (stoneSound != null)
+        {
+            stoneSound.Play();
+        }
+
+        // 레이어를 변경하여 충돌 처리 비활성화
         this.gameObject.layer = 0;
+
         // 시작 위치 저장
         Vector3 startPosition = transform.position;
         // 목표 위치 설정
@@ -45,8 +67,13 @@ public class BlockMove : MonoBehaviour
         // 정확하게 목표 위치로 설정
         transform.position = targetPosition;
 
-        puzzle0Manager.PuzzleProgress();
+        // 퍼즐의 진행 상태 갱신
+        if (puzzle0Manager != null)
+        {
+            puzzle0Manager.PuzzleProgress();
+        }
+
+        // 레이어 재설정
         this.gameObject.layer = 0;
-        //stoneSound.Stop(); // 쓰면 중간에 끊겨서 어색해짐
     }
 }
