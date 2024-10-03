@@ -3,7 +3,11 @@ using UnityEngine;
 
 public class GuardManager : MonoBehaviour
 {
-    [SerializeField] Subtitle subtitleRebirth; // 다시 태어날 때 자막 표기
+    [SerializeField] Subtitle subtitleS1_6_Wi; // 걸렸을 때 자막표기
+    [SerializeField] Subtitle subtitleS1_6_Zard; // 걸렸을 때 자막표기
+
+    [SerializeField] Subtitle subtitleRebirth_Wi; // 다시 태어날 때 자막 표기
+    [SerializeField] Subtitle subtitleRebirth_Zard; // 다시 태어날 때 자막 표기
 
     public Transform[] patrolPoints; // 경비병이 순찰할 포인트들
     public float speed = 2f; // 경비병 이동 속도
@@ -24,6 +28,8 @@ public class GuardManager : MonoBehaviour
     public Transform resetLocationWi; // 게임 종료 시 PlayerWi가 이동할 위치
     public Transform resetLocationZard; // 게임 종료 시 PlayerZard가 이동할 위치
     private bool playerInSight = false; // 플레이어가 시야에 있는지 여부
+
+    bool isEnding = false;
 
     Animator anim;
 
@@ -101,7 +107,8 @@ public class GuardManager : MonoBehaviour
                     // 즉시 게임 종료 범위 내에 있으면 바로 게임 종료
                     if (distanceToPlayer <= immediateDistance)
                     {
-                        EndGame();
+                        if (!isEnding)
+                            StartCoroutine(EndGame(player));
                         return;
                     }
                     // 점진적 감지 범위 내에 있으면 대기 후 게임 종료
@@ -112,7 +119,7 @@ public class GuardManager : MonoBehaviour
 
                         if (playerDetectionCounterWi >= detectionTime) // 일정 시간 이상 노출되면
                         {
-                            EndGame();
+                            StartCoroutine(EndGame(player));
                             return;
                         }
                     }
@@ -144,7 +151,8 @@ public class GuardManager : MonoBehaviour
                     // 즉시 게임 종료 범위 내에 있으면 바로 게임 종료
                     if (distanceToPlayer <= immediateDistance)
                     {
-                        EndGame();
+                        if (!isEnding)
+                            StartCoroutine(EndGame(player));
                         return;
                     }
                     // 점진적 감지 범위 내에 있으면 대기 후 게임 종료
@@ -155,7 +163,7 @@ public class GuardManager : MonoBehaviour
 
                         if (playerDetectionCounterZard >= detectionTime) // 일정 시간 이상 노출되면
                         {
-                            EndGame();
+                            StartCoroutine(EndGame(player));
                             return;
                         }
                     }
@@ -169,9 +177,19 @@ public class GuardManager : MonoBehaviour
         }
     }
 
-    void EndGame()
+    
+    IEnumerator EndGame(GameObject player)
     {
-        subtitleRebirth.LoopSubTitle();
+        isEnding = true;
+
+        if (player.CompareTag("PlayerWi"))
+            subtitleS1_6_Wi.LoopSubTitle();
+        else if (player.CompareTag("PlayerZard"))
+            subtitleS1_6_Zard.LoopSubTitle();
+
+        yield return new WaitForSeconds(2f);
+        FadeInOut.instance.FadeOut(1f);
+        yield return new WaitForSeconds(1f);
 
         // 두 플레이어를 지정된 위치로 이동시킴
         if (playerWi != null)
@@ -179,8 +197,20 @@ public class GuardManager : MonoBehaviour
         if (playerZard != null)
             playerZard.transform.root.position = resetLocationZard.position;
 
+        FadeInOut.instance.FadeIn(1f);
+        yield return new WaitForSeconds(1f);
+
+        if (player.CompareTag("PlayerWi"))
+            subtitleRebirth_Wi.LoopSubTitle();
+        else if (player.CompareTag("PlayerZard"))
+            subtitleRebirth_Zard.LoopSubTitle();
+
         playerDetectionCounterWi = 0f;
         playerDetectionCounterZard = 0f;
+
+        isEnding = false;
+
+        yield return null;
     }
 
     void OnDrawGizmos() // 경비병 시야를 시각적으로 확인하기 위해 Gizmo 사용
