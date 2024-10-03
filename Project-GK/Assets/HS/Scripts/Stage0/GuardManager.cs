@@ -11,7 +11,8 @@ public class GuardManager : MonoBehaviour
     private Transform targetPoint; // 다음 순찰 포인트
 
     public float detectionTime = 2f; // 플레이어가 시야에 노출된 시간을 관리하는 변수
-    [SerializeField] private float playerDetectionCounter = 0f; // 플레이어가 시야에 있는 시간
+    [SerializeField] private float playerDetectionCounterWi = 0f; // 플레이어가 시야에 있는 시간
+    [SerializeField] private float playerDetectionCounterZard = 0f; // 플레이어가 시야에 있는 시간
     public float viewAngle = 360f; // 경비병의 시야각 (원형 시야)
     public float sphereRadius = 1f; // SphereCast의 반경
     public float immediateDistance = 2f; // 즉시 게임 종료 범위
@@ -65,6 +66,9 @@ public class GuardManager : MonoBehaviour
         }
         transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, speed * Time.deltaTime); // 경비병 이동
         transform.LookAt(targetPoint); // 순찰 중 목표 지점 바라보기
+
+        playerDetectionCounterWi = 0f;
+        playerDetectionCounterZard = 0f;
     }
 
     void DetectPlayers()
@@ -73,13 +77,14 @@ public class GuardManager : MonoBehaviour
         playerInSight = false; // 매 프레임마다 초기화하여 시야 내에 플레이어가 있는지 확인
 
         // 두 플레이어 모두 감지
-        DetectSinglePlayer(playerWi);
-        DetectSinglePlayer(playerZard);
+        DetectSinglePlayerWi(playerWi);
+        if (playerZard != null)
+            DetectSinglePlayerZard(playerZard);
     }
 
-    void DetectSinglePlayer(GameObject player)
+    void DetectSinglePlayerWi(GameObject player)
     {
-        if (player == null) return; // 플레이어가 없는 경우 건너뜀
+        if (player.tag != "PlayerWi") return; // 플레이어가 없는 경우 건너뜀
 
         Vector3 directionToPlayer = player.transform.position - rayOrigin.position;
         float distanceToPlayer = directionToPlayer.magnitude;
@@ -103,9 +108,9 @@ public class GuardManager : MonoBehaviour
                     else if (distanceToPlayer <= gradualDistance)
                     {
                         playerInSight = true; // 플레이어가 시야 내에 있음
-                        playerDetectionCounter += Time.deltaTime; // 노출 시간 증가
+                        playerDetectionCounterWi += Time.deltaTime; // 노출 시간 증가
 
-                        if (playerDetectionCounter >= detectionTime) // 일정 시간 이상 노출되면
+                        if (playerDetectionCounterWi >= detectionTime) // 일정 시간 이상 노출되면
                         {
                             EndGame();
                             return;
@@ -113,7 +118,50 @@ public class GuardManager : MonoBehaviour
                     }
                     else
                     {
-                        playerDetectionCounter = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
+                        playerDetectionCounterWi = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
+                    }
+                }
+            }
+        }
+    }
+
+    void DetectSinglePlayerZard(GameObject player)
+    {
+        if (player.tag != "PlayerZard") return;
+
+        Vector3 directionToPlayer = player.transform.position - rayOrigin.position;
+        float distanceToPlayer = directionToPlayer.magnitude;
+
+        // 방향과 거리 계산
+        if (distanceToPlayer <= gradualDistance)
+        {
+            // SphereCast를 통해 플레이어를 감지
+            RaycastHit hit;
+            if (Physics.SphereCast(rayOrigin.position, sphereRadius, directionToPlayer.normalized, out hit, gradualDistance))
+            {
+                if (hit.collider.CompareTag(player.tag))
+                {
+                    // 즉시 게임 종료 범위 내에 있으면 바로 게임 종료
+                    if (distanceToPlayer <= immediateDistance)
+                    {
+                        EndGame();
+                        return;
+                    }
+                    // 점진적 감지 범위 내에 있으면 대기 후 게임 종료
+                    else if (distanceToPlayer <= gradualDistance)
+                    {
+                        playerInSight = true; // 플레이어가 시야 내에 있음
+                        playerDetectionCounterZard += Time.deltaTime; // 노출 시간 증가
+
+                        if (playerDetectionCounterZard >= detectionTime) // 일정 시간 이상 노출되면
+                        {
+                            EndGame();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        playerDetectionCounterZard = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
 
                     }
                 }
@@ -131,7 +179,8 @@ public class GuardManager : MonoBehaviour
         if (playerZard != null)
             playerZard.transform.root.position = resetLocationZard.position;
 
-        playerDetectionCounter = 0f;
+        playerDetectionCounterWi = 0f;
+        playerDetectionCounterZard = 0f;
     }
 
     void OnDrawGizmos() // 경비병 시야를 시각적으로 확인하기 위해 Gizmo 사용
