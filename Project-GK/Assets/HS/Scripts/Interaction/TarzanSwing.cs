@@ -7,6 +7,7 @@ public class TarzanSwing : MonoBehaviour
 {
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
     PhotonView PV;
+    PhotonView photonView;
     PlayerController playerController;
 
     [SerializeField] Transform player;            // 플레이어 트랜스폼
@@ -18,6 +19,7 @@ public class TarzanSwing : MonoBehaviour
 
     private void Start()
     {
+        photonView = GetComponent<PhotonView>();
         rotateObjectByAngle = GetComponentInParent<RotateObjectByAngle>();
     }
 
@@ -68,10 +70,22 @@ public class TarzanSwing : MonoBehaviour
 
     public void ComeToPlayer()
     {
+        photonView.RPC("ComeToPlayerRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void ComeToPlayerRPC()
+    {
         rotateObjectByAngle.RotateX(45f);
     }
 
     public void GoStage()
+    {
+        photonView.RPC("GoStageRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void GoStageRPC()
     {
         rotateObjectByAngle.RotateX(-105f);
     }

@@ -32,7 +32,6 @@ public class Puzzle1Frame : MonoBehaviour
                     CalculateCurrentAngle(1);
                 }
 
-                // Projectile 오브젝트 삭제
                 Destroy(other.gameObject);
 
                 puzzleManager.CheckPuzzleCompletion();

@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Zipline : MonoBehaviour
 {
+    PhotonView PV;
+
     private bool player1Interacted = false; // 플레이어 1 상호작용 여부
     private bool player2Interacted = false; // 플레이어 2 상호작용 여부
 
@@ -12,6 +15,11 @@ public class Zipline : MonoBehaviour
 
     [SerializeField] private Transform player1AttachPoint; // 플레이어 1이 매달릴 위치
     [SerializeField] private Transform player2AttachPoint; // 플레이어 2가 매달릴 위치
+    
+    void Start()
+    {
+        PV = GetComponent<PhotonView>();
+    }
 
     public void Interact(Transform playerTransform, PlayerController playerController, PlayerToolManager playerTool)
     {
@@ -28,9 +36,12 @@ public class Zipline : MonoBehaviour
 
     private void AttachZipline()
     {
-        TryGetComponent<PlayerToolManager>(out PlayerToolManager playerToolManager);
+        PV.RPC("AttachZiplineRPC", RpcTarget.AllBuffered);
+    }
 
-
+    [PunRPC]
+    void AttachZiplineRPC()
+    {
         ZiplineOutline.SetActive(false);
         ZiplineItem.SetActive(true);
     }
@@ -43,7 +54,6 @@ public class Zipline : MonoBehaviour
             player1Interacted = true;
             // 플레이어 1을 지정된 위치로 이동
             AttachPlayerToPosition(playerTransform, player1AttachPoint.position, playerController);
-            Debug.Log("집라인 스크립트 실행");
         }
         else if (playerController.gameObject.CompareTag("PlayerZard") && !player2Interacted)
         {
@@ -59,21 +69,24 @@ public class Zipline : MonoBehaviour
         }
     }
 
-    // 플레이어를 매달릴 위치로 이동시키는 함수
-    private void AttachPlayerToPosition(Transform playerTransform, Vector3 attachPosition, PlayerController playerController)
+    [PunRPC]
+    void AttachPlayerToPoistionRPC(Transform playerTransform, Vector3 attachPosition, PlayerController playerController)
     {
-        // 플레이어의 위치를 지정된 attachPosition으로 이동
         playerTransform.position = attachPosition;
         playerController.SetCanMove(false);
         playerController.SetCanLook(false);
-        // 만약 매달리는 애니메이션이 필요하다면, 애니메이션 트리거 추가 가능
-        Debug.Log("아래도 실행함");
     }
 
-    // 오브젝트가 이동하는 함수
-    private void Move()
+    // 플레이어를 매달릴 위치로 이동시키는 함수
+    private void AttachPlayerToPosition(Transform playerTransform, Vector3 attachPosition, PlayerController playerController)
     {
-        // 오브젝트 이동 로직
-        Debug.Log("Both players interacted. Moving object!");
+        PV.RPC("AttachPlayerToPositionRPC", RpcTarget.AllBuffered, playerTransform, attachPosition, playerController);
+    }
+
+
+
+    // 컷씬 작동 및 보스전 이동 코드(동기화 필요하면 해야 됨)
+    public void Move()
+    {
     }
 }
