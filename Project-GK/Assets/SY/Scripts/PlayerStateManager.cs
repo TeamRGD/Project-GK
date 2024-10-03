@@ -1,4 +1,5 @@
 using Photon.Pun;
+using PixPlays.ElementalVFX;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -32,6 +33,7 @@ public class PlayerStateManager : MonoBehaviour
     PlayerAttack playerAttack;
     PlayerToolManager playerToolManager;
     Animator animator;
+    public Renderer targetRenderer;
 
     void Awake()
     {
@@ -222,8 +224,49 @@ public class PlayerStateManager : MonoBehaviour
         if (currentUltimatePower > maxUltimatePower)
         {
             currentUltimatePower = maxUltimatePower;
+            VFX(true);
         }
         UIManager_Player.Instance.ManageUlt(currentUltimatePower, maxUltimatePower);
+    }
+
+    public void VFX(bool isReady)
+    {
+        PV.RPC("VFXUI", RpcTarget.All, isReady);
+    }
+
+    [PunRPC]
+    void VFXUI(bool isReady)
+    {
+        if (isReady)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                Material mat = targetRenderer.material;
+                mat.SetColor("_EmissionColor", Color.red);
+                mat.EnableKeyword("_EMISSION");
+            }
+            else
+            {
+                Material mat = targetRenderer.material;
+                mat.SetColor("_EmissionColor", Color.blue);
+                mat.EnableKeyword("_EMISSION");
+            }
+        }
+        else
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                Material mat = targetRenderer.material;
+                mat.SetColor("_EmissionColor", Color.green);
+                mat.EnableKeyword("_EMISSION");
+            }
+            else
+            {
+                Material mat = targetRenderer.material;
+                mat.SetColor("_EmissionColor", Color.red);
+                mat.EnableKeyword("_EMISSION");
+            }
+        }
     }
 
     public void DecreasePower(int amount)

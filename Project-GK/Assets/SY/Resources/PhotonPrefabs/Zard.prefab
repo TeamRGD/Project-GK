@@ -1017,7 +1017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isAlive: 1
-  targetRenderer: {fileID: 0}
+  targetRenderer: {fileID: 3397270539598994485}
 --- !u!114 &4740842065779380106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1238,6 +1238,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 936b321fd1f03be44bc58877cc3bd1c8, type: 3}
+--- !u!199 &3397270539598994485 stripped
+ParticleSystemRenderer:
+  m_CorrespondingSourceObject: {fileID: 5046865020516520908, guid: 936b321fd1f03be44bc58877cc3bd1c8, type: 3}
+  m_PrefabInstance: {fileID: 7579443210809364473}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7540431918609527438 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 111298684174810487, guid: 936b321fd1f03be44bc58877cc3bd1c8, type: 3}
