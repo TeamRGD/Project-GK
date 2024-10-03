@@ -14,7 +14,7 @@ using DG.Tweening;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
-    float maxHealth = 100;
+    float maxHealth = 3;
     float currentHealth;
     float rotSpeed = 75.0f;
     float sitRotSpeed = 50.0f;
@@ -575,7 +575,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (!isExecutingAttack)
         {
             //int attackType = UnityEngine.Random.Range(1, 6);
-            int attackType = 3;
+            int attackType = 1;
 
             switch (attackType)
             {
@@ -660,6 +660,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
 
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
+        Vector3 tmpPosition = targetPosition;
+        tmpPosition.y = -0.85f;
+        StartCoroutine(PlayEffectForDuration(Effects[2], tmpPosition + transform.forward * 4.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         shockwaveCoroutine = StartCoroutine(CreateShockwave(4.4f, 0.1f, targetPosition + transform.forward * 4.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
@@ -773,6 +776,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.7f);
 
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
+        Vector3 tmpPosition = transform.position;
+        tmpPosition.y = -0.85f;
+        StartCoroutine(PlayEffectForDuration(Effects[2], tmpPosition + transform.forward * 6.5f + transform.right * 2.5f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
@@ -799,6 +805,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.7f);
 
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
+        Vector3 tmpPosition = transform.position;
+        tmpPosition.y = -0.85f;
+        StartCoroutine(PlayEffectForDuration(Effects[2], tmpPosition + transform.forward * 5.5f + transform.right * 1.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -1248,8 +1257,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
+            yield return new WaitForSeconds(3.0f);
+
+            for (int i = 0; i < PlayerList.Count; i++)
+            {
+                StartCoroutine(PlayEffectForDuration(Effects[1], (transform.position + transform.up * 10.0f) + 0.5f *(PlayerList[i].transform.position - (transform.position + transform.up * 10.0f)), Quaternion.LookRotation(PlayerList[i].transform.position - transform.position), 3.0f, new Vector3(1.0f, 20.0f, 20.0f)));
+            }
         }
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(1.0f);
     }
 
     [PunRPC]
