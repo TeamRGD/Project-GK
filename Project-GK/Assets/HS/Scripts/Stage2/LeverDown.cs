@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class LeverDown : MonoBehaviour
 {
+    PhotonView PV;
     bool isDown = false;
     RotateObjectByAngle leverHandle;
     [SerializeField] EVDown EV;
@@ -13,6 +15,7 @@ public class LeverDown : MonoBehaviour
 
     private void Start()
     {
+        PV = GetComponent<PhotonView>();
         leverHandle = GetComponentInChildren<RotateObjectByAngle>();
     }
 
@@ -27,7 +30,7 @@ public class LeverDown : MonoBehaviour
              
             if(levelStep < 3)
             {
-                StartCoroutine(EV.MoveCarrier(carrierStep[levelStep]));
+                PV.RPC("UseLeverRPC", RpcTarget.AllBuffered);
             }
             
             else if (levelStep == 3)
@@ -39,5 +42,9 @@ public class LeverDown : MonoBehaviour
         }
     }
 
-    
+    [PunRPC]
+    void UseLeverRPC()
+    {
+        StartCoroutine(EV.MoveCarrier(carrierStep[levelStep]));
+    }
 }

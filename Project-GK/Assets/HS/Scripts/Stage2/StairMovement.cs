@@ -1,8 +1,10 @@
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
 
 public class StairMovement : MonoBehaviour
 {
+    PhotonView PV;
     bool isAppear;
     [SerializeField] private float moveDuration = 1f; // 이동 시간
     [SerializeField] Transform destination;
@@ -11,7 +13,13 @@ public class StairMovement : MonoBehaviour
 
     private Coroutine currentMoveCoroutine;
 
-    public void Move()
+    private void Start()
+    {
+        PV = GetComponent<PhotonView>();
+    }
+
+    [PunRPC]
+    void MoveRPC()
     {
         // 현재 이동 중인 코루틴이 있으면 중단
         if (currentMoveCoroutine != null)
@@ -24,6 +32,11 @@ public class StairMovement : MonoBehaviour
         // 새로운 코루틴 시작
         isAppear = !isAppear;
         currentMoveCoroutine = StartCoroutine(MoveStair());
+    }
+
+    public void Move()
+    {
+        PV.RPC("MoveRPC", RpcTarget.AllBuffered);
     }
 
     private IEnumerator MoveStair()

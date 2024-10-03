@@ -49,8 +49,7 @@ public class SubtitleManager : MonoBehaviour
         subtitle.gameObject.SetActive(true);
         for (int i = 0; i < subtitles.Count; i++)
         {
-            if (audios[i].clip != null)
-                audios[i].Play();
+            audios[i].Play();
             subtitle.DOFade(1f, 0.2f).SetEase(Ease.OutSine);
             subtitle.text = subtitles[i];
             yield return new WaitForSeconds(waitSeconds[i]);
