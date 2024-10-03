@@ -26,7 +26,7 @@ public class Subtitle : MonoBehaviour
 
     public void StartSubTitle(string player)
     {
-        if (dubbingSequence == 11)
+        if (dubbingSequence == 11) // S1_1
         {
             if (player == "PlayerWi")
             {
@@ -38,26 +38,61 @@ public class Subtitle : MonoBehaviour
                 subTitles[0] = "Zard: " + subTitles[0];
                 dubbingSound.RemoveAt(0);
             }
-        } // S1_1
-
-        else if (dubbingSequence == 12)
-        {
-            if (player == "PlayerWi")
-            {
-                subTitles[0] = "Wi: " + subTitles[0];
-                dubbingSound.RemoveAt(1);
-            }
-            else if (player == "PlayerZard")
-            {
-                subTitles[0] = "Zard: " + subTitles[0];
-                dubbingSound.RemoveAt(0);
-            }
-        } // S1_2
-
-        else if (dubbingSequence == 3)
-        {
-
         }
+
+        else if (dubbingSequence == 12) // S1_2
+        {
+            if (player == "PlayerWi")
+            {
+                subTitles[0] = "Wi: " + subTitles[0];
+                dubbingSound.RemoveAt(1);
+            }
+            else if (player == "PlayerZard")
+            {
+                subTitles[0] = "Zard: " + subTitles[0];
+                dubbingSound.RemoveAt(0);
+            }
+        }
+
+        else if (dubbingSequence == 33) // S3_3
+        {
+            if (player == "PlayerWi")
+            {
+                subTitles[0] = "Wi: " + subTitles[0];
+                dubbingSound.RemoveAt(1);
+            }
+            else if (player == "PlayerZard")
+            {
+                subTitles[0] = "Zard: " + subTitles[0];
+                dubbingSound.RemoveAt(0);
+            }
+        } 
+        else if (dubbingSequence == 34)
+        {
+            if (player == "PlayerWi")
+            {
+                subTitles[0] = "Wi: " + subTitles[0];
+                dubbingSound.RemoveAt(1);
+            }
+            else if (player == "PlayerZard")
+            {
+                subTitles[0] = "Zard: " + subTitles[0];
+                dubbingSound.RemoveAt(0);
+            }
+        }
+        else if (dubbingSequence == 35)
+        {
+            if (player == "PlayerWi")
+            {
+                subTitles[0] = "Wi: " + subTitles[0];
+                dubbingSound.RemoveAt(1);
+            }
+            else if (player == "PlayerZard")
+            {
+                subTitles[0] = "Zard: " + subTitles[0];
+                dubbingSound.RemoveAt(0);
+            }
+        } // S3_5
 
         StartCoroutine(SubtitleManager.instance.SubtitleInitiate(subTitles, dubbingTime, dubbingSound));
     }
