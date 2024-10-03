@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     PlayerStateManager playerState;
 
     // Bool variable    
-    bool grounded;
+    public bool grounded;
     bool canControl = false;
     bool canLook = false;
     bool canMove = false;
@@ -147,6 +147,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.N) && PhotonNetwork.IsMasterClient)
         {
+            PV.RPC("UI",RpcTarget.All);
             rb.useGravity = false;
             playerToolManager.SetCanChange(false);
             playerAttack.SetCanAttack(false);
@@ -160,9 +161,14 @@ public class PlayerController : MonoBehaviour
     }
 
     [PunRPC]
-    void LoadLevelRPC(int currentSceneIndex)
+    void UI()
     {
         UIManager_Player.Instance.LoadingUI(true);
+    }
+
+    [PunRPC]
+    void LoadLevelRPC(int currentSceneIndex)
+    {
         PhotonNetwork.LoadLevel(currentSceneIndex + 1);
     }
 
