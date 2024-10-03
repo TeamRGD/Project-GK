@@ -152,6 +152,10 @@ MonoBehaviour:
   - OpenDrawerRPC
   - WallRPC
   - MoveObjectWithPlayerRPC
+  - MoveCarrier
+  - MoveCarrierRPC
+  - UseLeverRPC
+  - MoveRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

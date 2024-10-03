@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1030975482}
   - component: {fileID: 1030975483}
   - component: {fileID: -7762190139026092597}
+  - component: {fileID: 4520229345739888792}
   m_Layer: 0
   m_Name: SM_filing_cabinet_07
-  m_TagString: Untagged
+  m_TagString: Drawer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -51,7 +52,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
@@ -70,6 +71,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2
   isOpen: 0
+  openSound: {fileID: 0}
+  closeSound: {fileID: 0}
+--- !u!65 &4520229345739888792
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030975481}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5, y: 0.15, z: 0.14}
+  m_Center: {x: -0.01, y: 0.03, z: 0}
 --- !u!1 &1030975484
 GameObject:
   m_ObjectHideFlags: 0
