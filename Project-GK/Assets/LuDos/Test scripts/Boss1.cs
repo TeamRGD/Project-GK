@@ -84,6 +84,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     CipherDevice cipherDeviceScript;
     Animator animator;
     Rigidbody rb;
+    public List<GameObject> Effects;
     public GameObject ShockWave;
 
     GameObject currentIndicator;
@@ -111,7 +112,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -405,6 +406,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 PhotonNetwork.Destroy(currentFill);
                 currentFill = null;
 
+                yield return new WaitForSeconds(0.7f);
                 StartCoroutine(MakeDamageCollider(idx, maxLength, position));
             }
             else
@@ -599,6 +601,16 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
     }
 
+    IEnumerator PlayEffectForDuration(GameObject effect, Vector3 position, Quaternion rotation, float duration, Vector3 scale)
+    {
+        GameObject spawnedEffect = Instantiate(effect, position, rotation);
+        spawnedEffect.transform.localScale = scale;
+
+        yield return new WaitForSeconds(duration);
+
+        Destroy(spawnedEffect);
+    }
+
     IEnumerator JumpWithDuration(float duration, Vector3 startPosition, Vector3 targetPosition)
     {
         float elapsedTime = 0.0f;
@@ -694,7 +706,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 {
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmHardSlam");
                 }
-                yield return new WaitForSeconds(3.0f);
+                yield return new WaitForSeconds(1.5f);
+                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 8.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
+                yield return new WaitForSeconds(1.5f);
             }
             else if (i == 0 || i == 2)
             {
@@ -705,7 +719,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 {
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmSlam");
                 }
-                yield return new WaitForSeconds(3.0f);
+                yield return new WaitForSeconds(1.1f);
+                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 0.7f)));
+                yield return new WaitForSeconds(1.9f);
             }
             else
             {
@@ -716,7 +732,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 {
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "RightArmSlam");
                 }
-                yield return new WaitForSeconds(3.0f);
+                yield return new WaitForSeconds(1.1f);
+                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 0.7f)));
+                yield return new WaitForSeconds(1.9f);
             }
         }
 

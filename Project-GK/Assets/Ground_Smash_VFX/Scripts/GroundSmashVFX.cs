@@ -16,7 +16,7 @@ public class GroundSmashVFX : MonoBehaviour
     {
 
          magicAnim = avatar.GetComponent<Animator>();
-         smashFX.SetActive(false);
+         //smashFX.SetActive(false);
 
     }
 
