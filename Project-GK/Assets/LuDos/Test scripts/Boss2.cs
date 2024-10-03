@@ -1294,6 +1294,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void DisplayOrderOnUI(int[] orderArray)
     {
         List<int> order = new List<int>(orderArray);
+        UIManager_Vanta.Instance.EnableAttackNode();
         UIManager_Vanta.Instance.ResetAttackNode(order);
     }
 
