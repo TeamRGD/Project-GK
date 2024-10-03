@@ -12,7 +12,14 @@ public class PushableObject : MonoBehaviour
     [SerializeField] private bool isPushing = false;       // 오브젝트를 밀고 있는지 여부
     [SerializeField] private Transform playerTransform;    // 상호작용 중인 플레이어의 트랜스폼
 
+    PhotonView photonView;
+
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
+
+    private void Start()
+    {
+        photonView = GetComponent<PhotonView>();
+    }
 
     private void Update()
     {
@@ -127,8 +134,14 @@ public class PushableObject : MonoBehaviour
             directionToMove.Normalize();
 
             // 오브젝트를 플레이어가 향하는 방향으로 이동시킴
-            transform.position += directionToMove * moveSpeed * Time.deltaTime;
+            photonView.RPC("MoveObjectWithPlayerRPC", RpcTarget.AllBuffered, directionToMove);
         }
+    }
+
+    [PunRPC]
+    void MoveObjectWithPlayerRPC(Vector3 directionToMove)
+    {
+        transform.position += directionToMove * moveSpeed * Time.deltaTime;
     }
 
     private void OnDrawGizmosSelected()

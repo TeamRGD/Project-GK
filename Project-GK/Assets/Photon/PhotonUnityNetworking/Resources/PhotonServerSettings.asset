@@ -142,6 +142,16 @@ MonoBehaviour:
   - ApplyDamage
   - UpdateHealth
   - VFXUI
+  - AddToolToPlayerRPC
+  - AttachPlayerToPoistionRPC
+  - AttachZiplineRPC
+  - CloseDrawerRPC
+  - ComeToPlayerRPC
+  - GoStageRPC
+  - OnPuzzleCompleteRPC
+  - OpenDrawerRPC
+  - WallRPC
+  - MoveObjectWithPlayerRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
