@@ -23,8 +23,12 @@ public class GuardManager : MonoBehaviour
     public float gradualDistance = 5f; // 일정 시간 후 게임 종료 범위
 
     public Transform rayOrigin; // Ray 발사 위치를 위한 자식 오브젝트 Transform
+
     private GameObject playerWi; // PlayerWi 태그를 가진 플레이어
     private GameObject playerZard; // PlayerZard 태그를 가진 플레이어
+    PlayerController playerControllerWi;
+    PlayerController playerControllerZard;
+
     public Transform resetLocationWi; // 게임 종료 시 PlayerWi가 이동할 위치
     public Transform resetLocationZard; // 게임 종료 시 PlayerZard가 이동할 위치
     private bool playerInSight = false; // 플레이어가 시야에 있는지 여부
@@ -49,6 +53,10 @@ public class GuardManager : MonoBehaviour
         // 각각의 플레이어 오브젝트 찾기
         playerWi = GameObject.FindGameObjectWithTag("PlayerWi");
         playerZard = GameObject.FindGameObjectWithTag("PlayerZard");
+        if (playerWi != null)
+            playerControllerWi = playerWi.GetComponentInParent<PlayerController>();
+        if (playerZard != null)
+            playerControllerZard = playerZard.GetComponentInParent<PlayerController>();
     }
 
     void Update()
@@ -64,7 +72,6 @@ public class GuardManager : MonoBehaviour
 
     void Patrol()
     {
-        anim.SetBool("isFind", false);
         if (Vector3.Distance(transform.position, targetPoint.position) < 0.2f)
         {
             currentPointIndex = (currentPointIndex + 1) % patrolPoints.Length; // 다음 포인트로 순환
@@ -79,8 +86,6 @@ public class GuardManager : MonoBehaviour
 
     void DetectPlayers()
     {
-        anim.SetBool("isFind", true);
-        playerInSight = false; // 매 프레임마다 초기화하여 시야 내에 플레이어가 있는지 확인
 
         // 두 플레이어 모두 감지
         DetectSinglePlayerWi(playerWi);
@@ -104,6 +109,8 @@ public class GuardManager : MonoBehaviour
             {
                 if (hit.collider.CompareTag(player.tag))
                 {
+                    anim.SetBool("isFind", true);
+                    playerInSight = true;
                     // 즉시 게임 종료 범위 내에 있으면 바로 게임 종료
                     if (distanceToPlayer <= immediateDistance)
                     {
@@ -126,6 +133,8 @@ public class GuardManager : MonoBehaviour
                     else
                     {
                         playerDetectionCounterWi = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
+                        anim.SetBool("isFind", false);
+                        playerInSight = false;
                     }
                 }
             }
@@ -148,11 +157,15 @@ public class GuardManager : MonoBehaviour
             {
                 if (hit.collider.CompareTag(player.tag))
                 {
+                    anim.SetBool("isFind", true);
+                    playerInSight = true;
                     // 즉시 게임 종료 범위 내에 있으면 바로 게임 종료
                     if (distanceToPlayer <= immediateDistance)
                     {
                         if (!isEnding)
+                        {
                             StartCoroutine(EndGame(player));
+                        }
                         return;
                     }
                     // 점진적 감지 범위 내에 있으면 대기 후 게임 종료
@@ -170,7 +183,8 @@ public class GuardManager : MonoBehaviour
                     else
                     {
                         playerDetectionCounterZard = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
-
+                        anim.SetBool("isFind", false);
+                        playerInSight = false;
                     }
                 }
             }
@@ -182,6 +196,10 @@ public class GuardManager : MonoBehaviour
     {
         isEnding = true;
 
+        playerControllerWi.SetCanMove(false);
+        if (playerControllerZard != null)
+            playerControllerZard.SetCanMove(false);
+
         if (player.CompareTag("PlayerWi"))
             subtitleS1_6_Wi.LoopSubTitle();
         else if (player.CompareTag("PlayerZard"))
@@ -191,11 +209,21 @@ public class GuardManager : MonoBehaviour
         FadeInOut.instance.FadeOut(1f);
         yield return new WaitForSeconds(1f);
 
+
         // 두 플레이어를 지정된 위치로 이동시킴
         if (playerWi != null)
+        {
             playerWi.transform.root.position = resetLocationWi.position;
+            playerWi.transform.root.rotation = resetLocationWi.rotation;
+        }
         if (playerZard != null)
+        {
             playerZard.transform.root.position = resetLocationZard.position;
+            playerZard.transform.root.rotation = resetLocationZard.rotation;
+        }
+
+        anim.SetBool("isFind", false);
+        playerInSight = false;
 
         FadeInOut.instance.FadeIn(1f);
         yield return new WaitForSeconds(1f);
@@ -209,6 +237,10 @@ public class GuardManager : MonoBehaviour
         playerDetectionCounterZard = 0f;
 
         isEnding = false;
+
+        playerControllerWi.SetCanMove(true);
+        if (playerControllerZard != null)
+            playerControllerZard.SetCanMove(true);
 
         yield return null;
     }
