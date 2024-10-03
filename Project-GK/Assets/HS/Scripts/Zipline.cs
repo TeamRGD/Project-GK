@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.Video;
 
 public class Zipline : MonoBehaviour
 {
@@ -16,9 +17,12 @@ public class Zipline : MonoBehaviour
     [SerializeField] private Transform player1AttachPoint; // 플레이어 1이 매달릴 위치
     [SerializeField] private Transform player2AttachPoint; // 플레이어 2가 매달릴 위치
 
+    public GameObject cutSceneTrigger;
+
     void Start()
     {
         PV = GetComponent<PhotonView>();
+        cutSceneTrigger.SetActive(false);
     }
 
     public void Interact(Transform playerTransform, PlayerController playerController, PlayerToolManager playerTool)
@@ -88,5 +92,6 @@ public class Zipline : MonoBehaviour
     // 오브젝트가 이동하는 함수
     private void Move()
     {
+        cutSceneTrigger.SetActive(true);
     }
 }
