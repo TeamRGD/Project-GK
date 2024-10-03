@@ -61,6 +61,7 @@ public class PlayerController : MonoBehaviour
 
     // For CutScenes
     VideoPlayer cutScenePlayer;
+    RenderTexture renderTexture;
     private bool triggered;
 
     void Awake()
@@ -105,6 +106,8 @@ public class PlayerController : MonoBehaviour
         // CutScenes
         cutScenePlayer = FindObjectOfType<VideoPlayer>();
         cutScenePlayer.loopPointReached += CheckOver;
+        renderTexture = cutScenePlayer.targetTexture;
+        renderTexture.Release();
 
         originalWalkSpeed = walkSpeed;
         originalSprintSpeed = sprintSpeed;
@@ -154,9 +157,12 @@ public class PlayerController : MonoBehaviour
 
     public void NextScene()
     {
-        PV.RPC("UI", RpcTarget.All);
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        PV.RPC("LoadLevelRPC", RpcTarget.All, currentSceneIndex);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PV.RPC("UI", RpcTarget.All);
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            PV.RPC("LoadLevelRPC", RpcTarget.All, currentSceneIndex);
+        }
     }
 
     [PunRPC]
@@ -603,6 +609,8 @@ public class PlayerController : MonoBehaviour
     }
     void CheckOver(VideoPlayer vp)
     {
+        cutScenePlayer.Stop();
+        renderTexture.Release();
         NextScene();
     }
 
@@ -617,7 +625,7 @@ public class PlayerController : MonoBehaviour
             canLook = false;
             canMove = false;
             isStarted = false;
-
+            renderTexture.Release();
             cutScenePlayer.Play();
         }
     }
