@@ -69,4 +69,3 @@ public class Drawer : MonoBehaviour
         isOpen = false;
     }
 }
-}
