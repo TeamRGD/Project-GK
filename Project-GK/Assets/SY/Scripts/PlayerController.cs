@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
         if (!PV.IsMine)
             return;
         if (!playerState.GetIsAlive())
-            aim.position = new Vector3(aim.position.x, -1000f, aim.position.z);
+            aim.position = new Vector3(aim.position.x, -13f, aim.position.z);
         Look();
 
         if (canControl)

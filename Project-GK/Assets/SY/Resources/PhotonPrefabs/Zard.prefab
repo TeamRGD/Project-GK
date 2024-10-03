@@ -160,13 +160,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990582280266613540}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.285036, z: -0, w: 0.95851684}
-  m_LocalPosition: {x: -0.566, y: 0.769, z: 0.065}
-  m_LocalScale: {x: 0.2, y: 0.19999999, z: 0.2}
+  m_LocalRotation: {x: 0.7653012, y: 0.09272837, z: -0.013497733, w: -0.6368151}
+  m_LocalPosition: {x: -0.07740845, y: -0.1448827, z: -0.27470753}
+  m_LocalScale: {x: 0.20000003, y: 0.19999988, z: 0.19999987}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7078062261238428359}
-  m_Father: {fileID: 5241704465359754820}
+  m_Father: {fileID: 7048608000642712352}
   m_LocalEulerAnglesHint: {x: 0, y: 33.122, z: 0}
 --- !u!64 &8318967676509239279
 MeshCollider:
@@ -354,12 +354,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4396775789072448927}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.575, y: 0.654, z: 0.26}
-  m_LocalScale: {x: 0.21334, y: 0.21334, z: 0.21334}
+  m_LocalRotation: {x: 0.7297067, y: 0.27039677, z: -0.23107618, w: -0.5839671}
+  m_LocalPosition: {x: -0.22581945, y: 0.010707088, z: -0.20331374}
+  m_LocalScale: {x: 0.21334003, y: 0.21333992, z: 0.21333991}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5241704465359754820}
+  m_Father: {fileID: 7048608000642712352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7889580427336334380
 MeshFilter:
@@ -746,15 +746,9 @@ PrefabInstance:
       addedObject: {fileID: 6158319822806871963}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 169aac16af97f3040a4c04335401252b, type: 3}
       insertIndex: 1
-      addedObject: {fileID: 4359682381234679693}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 169aac16af97f3040a4c04335401252b, type: 3}
-      insertIndex: 2
-      addedObject: {fileID: 2412260511661495382}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 169aac16af97f3040a4c04335401252b, type: 3}
-      insertIndex: 3
       addedObject: {fileID: 7589513303165024472}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 169aac16af97f3040a4c04335401252b, type: 3}
-      insertIndex: 4
+      insertIndex: 2
       addedObject: {fileID: 4725759553505068503}
     - targetCorrespondingSourceObject: {fileID: -5578680853199860427, guid: 169aac16af97f3040a4c04335401252b, type: 3}
       insertIndex: -1
@@ -762,6 +756,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -5578680853199860427, guid: 169aac16af97f3040a4c04335401252b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3040021275842269047}
+    - targetCorrespondingSourceObject: {fileID: 3379195796597289615, guid: 169aac16af97f3040a4c04335401252b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4359682381234679693}
+    - targetCorrespondingSourceObject: {fileID: 3379195796597289615, guid: 169aac16af97f3040a4c04335401252b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2412260511661495382}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 169aac16af97f3040a4c04335401252b, type: 3}
       insertIndex: -1
@@ -1052,10 +1052,10 @@ MonoBehaviour:
     SynchronizeType: 1
     Name: onDeath
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: onStun
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: trigger
   m_SynchronizeLayers:
   - SynchronizeType: 0
@@ -1257,6 +1257,11 @@ BoxCollider:
 --- !u!4 &6497011846251664338 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1521929512549376637, guid: 169aac16af97f3040a4c04335401252b, type: 3}
+  m_PrefabInstance: {fileID: 5707467063344607663}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7048608000642712352 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3379195796597289615, guid: 169aac16af97f3040a4c04335401252b, type: 3}
   m_PrefabInstance: {fileID: 5707467063344607663}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &9052363205746785434 stripped
