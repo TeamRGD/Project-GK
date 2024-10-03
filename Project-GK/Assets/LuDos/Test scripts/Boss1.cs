@@ -14,7 +14,7 @@ using DG.Tweening;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
-    float maxHealth = 3;
+    float maxHealth = 100;
     float currentHealth;
     float rotSpeed = 75.0f;
     float sitRotSpeed = 50.0f;
@@ -113,7 +113,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);

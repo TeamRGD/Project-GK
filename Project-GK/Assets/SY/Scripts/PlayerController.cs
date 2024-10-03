@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour
         while (!isStarted)
         {
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
-            if (playerManagers.Length == 1)
+            if (playerManagers.Length == 2)
             {
                 UIManager_Player.Instance.LoadingUI(false);
                 playerToolManager.SetCanChange(true);
