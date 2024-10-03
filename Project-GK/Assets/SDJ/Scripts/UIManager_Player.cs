@@ -17,6 +17,8 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
     public Image manaBar;
     public Image ultBar;
     public RectTransform notEnoughMana;
+    public Image getHit;
+    private bool isLowHealth;
 
     // for Inventory
     public Sprite[] itemImages;
@@ -56,6 +58,15 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
         //    inventoryOutlines[i].enabled = false;
         //}
         //inventoryOutlines[0].enabled = true;
+        isLowHealth = false;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            ManageHealth(4, 1000);
+        }
     }
 
     public void LoadingUI(bool value)
@@ -73,7 +84,22 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
     // Player Stats
     public void ManageHealth(float currentHp, float maxHp)
     {
+        float temp = currentHp / maxHp;
         healthBar.DOFillAmount(currentHp / maxHp, 0.05f).SetEase(Ease.OutFlash);
+        if (temp <= 0.3f && !isLowHealth)
+        {
+            print("Done");
+            getHit.DOKill();
+            isLowHealth = true;
+            getHit.DOFade(1f, 1.5f).SetDelay(0.3f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
+        }
+        else
+        {
+            print("Done1");
+            getHit.DOKill();
+            isLowHealth = false;
+            getHit.DOFade(0f, 0.3f).SetEase(Ease.OutSine);
+        }
     }
 
     public void ManageMana(float currentPower, float maxPower)
