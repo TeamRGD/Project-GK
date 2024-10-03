@@ -100,7 +100,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -926,7 +926,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             position.y = 1.0f;
 
-            currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "ShockWave"), position, Quaternion.identity);
+            currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "ShockWave_shock"), position, Quaternion.identity);
 
             float currentScale = startScale;
 
