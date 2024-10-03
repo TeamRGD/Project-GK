@@ -495,7 +495,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
-    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed) 
+    IEnumerator LookAtTarget(Vector3 targetDirection, float rotationSpeed)
     {
         targetDirection.y = 0;
 
@@ -532,7 +532,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "Idle");
             }
 
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(2.0f);
         }
     }
 
