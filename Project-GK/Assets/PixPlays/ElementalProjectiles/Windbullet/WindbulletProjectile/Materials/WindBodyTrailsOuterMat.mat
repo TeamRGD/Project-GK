@@ -8,8 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: WindBodyTrailsOuterMat
-  m_Shader: {fileID: -6465566751694194690, guid: 4c9c846df19bed74f86c0cbbd835ba19,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 4c9c846df19bed74f86c0cbbd835ba19, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -91,6 +90,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Vertex_Offset_Mask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Vertex_Offset_Tex:
         m_Texture: {fileID: 2800000, guid: 79b50747e9542ad45a9ee4d1f88a9765, type: 3}
         m_Scale: {x: 0, y: 1}
@@ -141,7 +144,9 @@ Material:
     - _GlossyReflections: 0
     - _Initial_Color_Offset: 5.96
     - _Mask1_Distortion: 0
+    - _Mask1_PositionUVs: 0
     - _Mask2_Distortion: 0
+    - _Mask2_PositionUVs: 0
     - _Mask_1_Rotate: 90
     - _Mask_2_Rotate: 0
     - _Mask_AddOrMultiply: 1
@@ -172,8 +177,8 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color_1: {r: 1.8938819, g: 1.8214383, b: 1.8214383, a: 0}
-    - _Color_2: {r: 1, g: 1, b: 1, a: 0}
+    - _Color_1: {r: 6.017002, g: 5.1440787, b: 0, a: 0}
+    - _Color_2: {r: 1, g: 0.47560662, b: 0, a: 0}
     - _Color_Scroll: {r: 2, g: 0, b: 0, a: 0}
     - _Color_Tex_Remap: {r: 0, g: 1, b: 0, a: 0}
     - _Disolve_Remap: {r: 0, g: 1, b: 0, a: 0}
@@ -185,6 +190,7 @@ Material:
     - _Mask1_Scroll: {r: 2, g: 0, b: 0, a: 0}
     - _Mask2_Remap: {r: -0.24, g: 1, b: 0, a: 0}
     - _Mask2_Scroll: {r: 0, g: 0, b: 0, a: 0}
+    - _Offset_Mask_Smoothstep: {r: 0, g: 0, b: 0, a: 0}
     - _Offset_Scroll: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

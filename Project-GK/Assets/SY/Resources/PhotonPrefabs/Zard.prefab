@@ -160,13 +160,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990582280266613540}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7653012, y: 0.09272837, z: -0.013497733, w: -0.6368151}
-  m_LocalPosition: {x: -0.07740845, y: -0.1448827, z: -0.27470753}
-  m_LocalScale: {x: 0.20000003, y: 0.19999988, z: 0.19999987}
+  m_LocalRotation: {x: 0.62825435, y: -0.61522996, z: -0.34025, w: -0.33319438}
+  m_LocalPosition: {x: -0.1461972, y: 0.049732193, z: 0.56600124}
+  m_LocalScale: {x: 0.20000005, y: 0.19999996, z: 0.19999994}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7078062261238428359}
-  m_Father: {fileID: 7048608000642712352}
+  m_Father: {fileID: 1947674035646605298}
   m_LocalEulerAnglesHint: {x: 0, y: 33.122, z: 0}
 --- !u!64 &8318967676509239279
 MeshCollider:
@@ -654,7 +654,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -3156046720583723427, guid: 169aac16af97f3040a4c04335401252b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6190694283801482396}
-    - targetCorrespondingSourceObject: {fileID: 3379195796597289615, guid: 169aac16af97f3040a4c04335401252b, type: 3}
+    - targetCorrespondingSourceObject: {fileID: -3156046720583723427, guid: 169aac16af97f3040a4c04335401252b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2412260511661495382}
     m_AddedComponents:
@@ -1017,6 +1017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isAlive: 1
+  targetRenderer: {fileID: 0}
 --- !u!114 &4740842065779380106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1029,7 +1030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4836e6e5dbb8674e9f1ade1380c5de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 3597697435051772679, guid: 8146d7a3d8f587f42be190c577a431b8, type: 3}
+  projectilePrefab: {fileID: 2268428576765071778, guid: 8aa5512f204a0274d80bce4139091835, type: 3}
   projectileSpawnPoint: {fileID: 3040021275842269047}
   aim: {fileID: 6158319822806871963}
   playerBody: {fileID: 5241704465359754820}
@@ -1159,11 +1160,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1521929512549376637, guid: 169aac16af97f3040a4c04335401252b, type: 3}
   m_PrefabInstance: {fileID: 5707467063344607663}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &7048608000642712352 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3379195796597289615, guid: 169aac16af97f3040a4c04335401252b, type: 3}
-  m_PrefabInstance: {fileID: 5707467063344607663}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9052363205746785434 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5578680853199860427, guid: 169aac16af97f3040a4c04335401252b, type: 3}
@@ -1233,6 +1229,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WiZard_VFX_1
       objectReference: {fileID: 0}
+    - target: {fileID: 5046865020516520908, guid: 936b321fd1f03be44bc58877cc3bd1c8, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c007d1b18479d134b847574df603240c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

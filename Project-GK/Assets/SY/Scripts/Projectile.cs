@@ -97,6 +97,7 @@ public class Projectile : MonoBehaviour
     [PunRPC]
     void SetTag(string tag)
     {
-        gameObject.tag = tag;
+        Transform projectile = transform.Find("WindBulletProjectile");
+        projectile.gameObject.tag = tag;
     }
 }
