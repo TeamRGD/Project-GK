@@ -133,15 +133,9 @@ public class PushableObject : MonoBehaviour
             directionToMove.y = 0;
             directionToMove.Normalize();
 
+            transform.position += directionToMove * moveSpeed * Time.deltaTime;
             // 오브젝트를 플레이어가 향하는 방향으로 이동시킴
-            photonView.RPC("MoveObjectWithPlayerRPC", RpcTarget.AllBuffered, directionToMove);
         }
-    }
-
-    [PunRPC]
-    void MoveObjectWithPlayerRPC(Vector3 directionToMove)
-    {
-        transform.position += directionToMove * moveSpeed * Time.deltaTime;
     }
 
     private void OnDrawGizmosSelected()

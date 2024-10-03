@@ -58,6 +58,11 @@ public class Projectile : MonoBehaviour
             stone.TakeDamage(1);
             PhotonNetwork.Destroy(gameObject);
         }
+
+        else if (other.CompareTag("Drawer"))
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     private void DestroyProjectileAfterTime() // n초 후 제거.
