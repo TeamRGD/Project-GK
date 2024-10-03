@@ -12,6 +12,7 @@ public class LeverDown : MonoBehaviour
     [SerializeField] int levelStep; // 몇 번째 레버인지
     [SerializeField] List<Transform> carrierStep; //  인덱스 0번: 1번째 버튼 누르는 위치 1번: 2번째 버튼 누르는 위치 2번: 3번째 버튼 누르는 위치
     [SerializeField] AudioSource leverSound;
+    [SerializeField] GameObject cutSceneTrigger;
 
     private void Start()
     {
