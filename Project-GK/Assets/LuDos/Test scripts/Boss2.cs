@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.IO;
 using Unity.VisualScripting;
+using DG.Tweening;
 
 public class Boss2 : MonoBehaviourPunCallbacks
 {
@@ -529,6 +530,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "Idle");
             }
+
+            yield return new WaitForSeconds(1.0f);
         }
     }
 
@@ -614,6 +617,12 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             DashCollider.tag = "Untagged";
         }
+    }
+
+    [PunRPC]
+    void CameraShakeRPC()
+    {
+        Camera.main.DOShakePosition(1f, 0.6f, 50, 90, true);
     }
 
     void LightFoots(int idx)
@@ -843,7 +852,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "ArmSmash");
 
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(0.5f); // юс╫ц©о
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
+
+        yield return new WaitForSeconds(2.5f);
 
         LightFoots(1);
         yield return new WaitForSeconds(cooltime);
@@ -868,6 +880,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, targetPosition + transform.forward * 2.0f, 3.0f));
         yield return StartCoroutine(DamageCoroutine(3.0f));
 
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, targetPosition + transform.forward * 2.0f, 2.0f));
         yield return new WaitForSeconds(2.0f);
 
@@ -1306,6 +1319,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             Debug.Log("DamageAllMap");
 
+            photonView.RPC("CameraShakeRPC", RpcTarget.All);
             StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 0, 0)));
 
             attackOrderCount = 0;
