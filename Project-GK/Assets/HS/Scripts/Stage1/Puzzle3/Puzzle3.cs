@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
-
 
 public class Puzzle3 : MonoBehaviour
 {
@@ -18,29 +16,21 @@ public class Puzzle3 : MonoBehaviour
 
     [SerializeField] List<GameObject> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
 
-    PhotonView PV;
-
-
     private void Awake()
     {
         drawerList = new List<Drawer>(cabinetSetParent.GetComponentsInChildren<Drawer>());
         drawerAnswerList = new List<Drawer>(answerParent.GetComponentsInChildren<Drawer>());
-        PV = GetComponent<PhotonView>();
-    }
-
-
-    [PunRPC]
-    void WallRPC()
-    {
-        StageClearWall.SetActive(false);
-        ziplineOutline.enabled = true;
     }
 
     // 퍼즐 완성 시 실행할 함수
     public IEnumerator OnPuzzleComplete()
     {
-        PV.RPC("WallRPC", RpcTarget.AllBuffered);
-        subtitle.StartSubTitle("PlayerWi");
+        Debug.Log("Puzzle3 Complete!");
+        StageClearWall.SetActive(false);
+        // 퍼즐 완료 시 추가적인 동작을 여기에 추가
+
+        ziplineOutline.enabled = true;
+        //subtitle.StartSubTitle();
 
         for (int i = 0; i < drawerList.Count; i++)
         {

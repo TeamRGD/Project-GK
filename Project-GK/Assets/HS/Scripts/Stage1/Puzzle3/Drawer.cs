@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
 public class Drawer : MonoBehaviour
 {
@@ -9,13 +8,6 @@ public class Drawer : MonoBehaviour
     [SerializeField] public bool isOpen = false;
     [SerializeField] AudioSource openSound;
     [SerializeField] AudioSource closeSound;
-
-    PhotonView PV;
-
-    private void Start()
-    {
-        PV = GetComponent<PhotonView>();
-    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -38,6 +30,9 @@ public class Drawer : MonoBehaviour
                 {
                     CloseDrawer();
                 }
+
+                // Projectile 오브젝트 삭제
+                Destroy(other.gameObject);
             }
         }
     }
@@ -45,12 +40,6 @@ public class Drawer : MonoBehaviour
     public void OpenDrawer()
     {
         openSound.Play();
-        PV.RPC("OpenDrawerRPC", RpcTarget.AllBuffered);
-    }
-
-    [PunRPC]
-    void OpenDrawerRPC()
-    {
         transform.Translate(new Vector3(3, 0, 0), Space.Self);
         isOpen = true;
     }
@@ -58,12 +47,6 @@ public class Drawer : MonoBehaviour
     public void CloseDrawer()
     {
         closeSound.Play();
-        PV.RPC("CloseDrawerRPC", RpcTarget.AllBuffered);
-    }
-
-    [PunRPC]
-    void CloseDrawerRPC()
-    {
         transform.Translate(new Vector3(-3, 0, 0), Space.Self);
         isOpen = false;
     }
