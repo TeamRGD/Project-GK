@@ -9,12 +9,14 @@ public class ToolPickup : MonoBehaviour
     PlayerToolManager playerToolManager;
     PlayerController playerController;
     PhotonView PV;
+    PhotonView photonView;
 
     private bool isFall = false;
     AudioSource fallSound;
 
     private void Start()
     {
+        photonView = GetComponent<PhotonView>();
         fallSound = GetComponent<AudioSource>();
     }
 
@@ -69,7 +71,13 @@ public class ToolPickup : MonoBehaviour
         {
             playerToolManager.AddTool(2); // 짚라인 idx: 2, 그 후 추가되는 것 idx: 3.
             // 신동준 UI 추가 코드
-            gameObject.SetActive(false);
+            photonView.RPC("AddToolToPlayerRPC", RpcTarget.AllBuffered);
         }
+    }
+
+    [PunRPC]
+    void AddToolToPlayerRPC()
+    {
+        gameObject.SetActive(false);
     }
 }

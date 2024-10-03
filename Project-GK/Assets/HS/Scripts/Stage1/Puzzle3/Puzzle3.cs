@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Puzzle3 : MonoBehaviour
 {
+    PhotonView PV;
+
     private List<Drawer> drawerList;  // Drawer 스크립트가 붙어있는 서랍들의 리스트
     private List<Drawer> drawerAnswerList;
     [SerializeField] GameObject StageClearWall;
@@ -18,14 +21,23 @@ public class Puzzle3 : MonoBehaviour
 
     private void Awake()
     {
+        PV = GetComponent<PhotonView>();
         drawerList = new List<Drawer>(cabinetSetParent.GetComponentsInChildren<Drawer>());
         drawerAnswerList = new List<Drawer>(answerParent.GetComponentsInChildren<Drawer>());
     }
 
-    // 퍼즐 완성 시 실행할 함수
+    [PunRPC]
+    void WallRPC()
+    {
+        StageClearWall.SetActive(false);
+        ziplineOutline.enabled = true;
+    }
+
     public IEnumerator OnPuzzleComplete()
     {
-        Debug.Log("Puzzle3 Complete!");
+        PV.RPC("WallRPC", RpcTarget.AllBuffered);
+        subtitle.StartSubTitle("PlayerWi");
+
         StageClearWall.SetActive(false);
         // 퍼즐 완료 시 추가적인 동작을 여기에 추가
 
