@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BlockMove : MonoBehaviour
 {
+
     [SerializeField] Puzzle0Manager puzzle0Manager;
     [SerializeField] private float moveDuration = 2f;
     [SerializeField] float moveXAmount;

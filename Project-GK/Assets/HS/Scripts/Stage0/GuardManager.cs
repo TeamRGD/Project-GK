@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class GuardManager : MonoBehaviour
 {
+
     [SerializeField] Subtitle subtitleS1_6_Wi; // 걸렸을 때 자막표기
     [SerializeField] Subtitle subtitleS1_6_Zard; // 걸렸을 때 자막표기
 
