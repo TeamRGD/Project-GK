@@ -14,7 +14,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     #region variables
     //public LineRenderer lineRenderer;  // LineRenderer를 에디터에서 설정할 수 있도록 공개 변수로 설정
     //public int segments = 100;  // 원을 그리기 위한 점의 수 (세그먼트)
-    float maxHealth = 3;
+    float maxHealth = 100;
     float currentHealth;
     float moveSpeed = 10.0f;
     float rotSpeed = 75.0f;
@@ -59,6 +59,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     public List<GameObject> Torches;
     public List<GameObject> FootMesh;
     // public List<GameObject> EyesAndMouse;
+    public List<GameObject> Effects;
 
     List<Vector3> storedPositions = new List<Vector3>();
     List<IEnumerator> storedAttacks = new List<IEnumerator>();
