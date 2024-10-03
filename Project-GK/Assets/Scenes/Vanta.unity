@@ -1743,6 +1743,7 @@ MonoBehaviour:
   - {fileID: 2138499769}
   - {fileID: 386522102}
   - {fileID: 2146162849}
+  Effects: []
   correctOrder: 
   PlayerList: []
   aggroTarget: {fileID: 0}
@@ -24770,7 +24771,7 @@ GameObject:
   - component: {fileID: 1583101761}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25453,7 +25454,7 @@ MonoBehaviour:
   attackNodeContainer: {fileID: 772111657}
   attackNodes:
   - {fileID: 21300000, guid: 9b59af519e0553641bd4dff84f309c7f, type: 3}
-  - {fileID: 0}
+  - {fileID: 21300000, guid: 2da48d88d10dfce4ea4d851b429681c0, type: 3}
 --- !u!114 &1604601891
 MonoBehaviour:
   m_ObjectHideFlags: 0

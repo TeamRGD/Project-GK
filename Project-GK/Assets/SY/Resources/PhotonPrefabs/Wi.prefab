@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 9197837587381557411}
   m_Layer: 3
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1098,6 +1098,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   aim: {fileID: 6158319822806871963}
+  grounded: 0
   currentSaveTime: 0
   interactableLayer:
     serializedVersion: 2
