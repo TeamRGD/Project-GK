@@ -10,6 +10,7 @@ using UnityEngine.Animations;
 using System.IO;
 using UnityEngine.UIElements;
 using ExitGames.Client.Photon;
+using DG.Tweening;
 
 public class Boss1 : MonoBehaviourPunCallbacks
 {
@@ -382,8 +383,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (idx == 0)
             {
-                currentIndicator = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackIndicator"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
-                currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill"+idx.ToString()), position, Quaternion.LookRotation(transform.forward));
+                currentIndicator = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackIndicator" + idx.ToString()), position, Quaternion.LookRotation(transform.forward));
+
+                Vector3 fillStartPosition = currentIndicator.transform.position - currentIndicator.transform.forward * (maxLength * 5f);
+                currentFill = PhotonNetwork.Instantiate(Path.Combine("Boss", "AttackFill0_"), fillStartPosition, Quaternion.LookRotation(transform.forward));
 
                 float width = 0.5f;
                 currentIndicator.transform.localScale = new Vector3(width, currentIndicator.transform.localScale.y, maxLength);
@@ -406,7 +409,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 PhotonNetwork.Destroy(currentFill);
                 currentFill = null;
 
-                yield return new WaitForSeconds(0.7f);
+                yield return new WaitForSeconds(0.6f);
                 StartCoroutine(MakeDamageCollider(idx, maxLength, position));
             }
             else
@@ -437,6 +440,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 StartCoroutine(MakeDamageCollider(idx, maxLength, position));
             }
         }
+    }
+
+    [PunRPC]
+    void CameraShakeRPC()
+    {
+        Camera.main.DOShakePosition(1f, 0.6f, 50, 90, true);
     }
 
     void StopRandomBasicAttack()
@@ -565,7 +574,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         if (!isExecutingAttack)
         {
-            int attackType = UnityEngine.Random.Range(1, 6);
+            //int attackType = UnityEngine.Random.Range(1, 6);
+            int attackType = 3;
 
             switch (attackType)
             {
@@ -649,6 +659,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
 
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(4.4f, 0.1f, targetPosition + transform.forward * 4.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
@@ -673,6 +684,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(2.5f);
 
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 8.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
@@ -699,7 +711,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             if (i == 4)
             {
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 8.0f - transform.right * 1.0f, 2.5f));
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.5f, transform.position + transform.forward * 10.0f - transform.right * 1.0f, 2.5f));
                 yield return new WaitForSeconds(1.0f);
 
                 if (PhotonNetwork.IsMasterClient)
@@ -707,12 +719,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmHardSlam");
                 }
                 yield return new WaitForSeconds(1.5f);
-                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 8.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
+                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.3f)));
                 yield return new WaitForSeconds(1.5f);
             }
             else if (i == 0 || i == 2)
             {
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f - transform.right * 1.0f, 2.0f));
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 10.0f - transform.right * 1.0f, 2.0f));
                 yield return new WaitForSeconds(0.9f);
 
                 if (PhotonNetwork.IsMasterClient)
@@ -720,12 +732,12 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmSlam");
                 }
                 yield return new WaitForSeconds(1.1f);
-                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 0.7f)));
+                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
                 yield return new WaitForSeconds(1.9f);
             }
             else
             {
-                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 6.0f + transform.right * 1.0f, 2.0f));
+                indicatorCoroutine = StartCoroutine(ShowIndicator(0, 1.0f, transform.position + transform.forward * 10.0f + transform.right * 1.0f, 2.0f));
                 yield return new WaitForSeconds(0.9f);
 
                 if (PhotonNetwork.IsMasterClient)
@@ -733,7 +745,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "RightArmSlam");
                 }
                 yield return new WaitForSeconds(1.1f);
-                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 0.7f)));
+                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
                 yield return new WaitForSeconds(1.9f);
             }
         }
@@ -760,6 +772,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(1.7f);
 
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
@@ -784,6 +797,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "PalmStrike");
         }
         yield return new WaitForSeconds(1.7f);
+
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -1309,6 +1324,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "CrashAtBookCase");
+                photonView.RPC("CameraShakeRPC", RpcTarget.All);
                 photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 1);
             }
             yield return new WaitForSeconds(1.0f);
@@ -1321,6 +1337,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "CrashAtBookCase");
+                photonView.RPC("CameraShakeRPC", RpcTarget.All);
                 photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 1);
             }
             yield return new WaitForSeconds(1.0f);
