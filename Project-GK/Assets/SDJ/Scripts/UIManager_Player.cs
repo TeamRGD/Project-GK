@@ -58,14 +58,6 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
         //inventoryOutlines[0].enabled = true;
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            ManageMana(0, 1000);
-        }
-    }
-
     public void LoadingUI(bool value)
     {
         loadingUI.SetActive(value);
