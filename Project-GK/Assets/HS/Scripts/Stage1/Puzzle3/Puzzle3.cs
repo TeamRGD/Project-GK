@@ -30,7 +30,7 @@ public class Puzzle3 : MonoBehaviour
         // 퍼즐 완료 시 추가적인 동작을 여기에 추가
 
         ziplineOutline.enabled = true;
-        subtitle.StartSubTitle();
+        //subtitle.StartSubTitle();
 
         for (int i = 0; i < drawerList.Count; i++)
         {

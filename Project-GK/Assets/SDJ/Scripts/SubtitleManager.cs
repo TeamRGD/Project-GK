@@ -11,9 +11,9 @@ public class SubtitleManager : MonoBehaviour
 
     public TMP_Text subtitle;
 
-    public string[] testSubtitles;
-    public float[] testWaitSeconds;
-    public AudioSource[] testAudioSources;
+    public List<string> testSubtitles;
+    public List<float> testWaitSeconds;
+    public List<AudioSource> testAudioSources;
 
     private WaitForSeconds waitForNextSubtitle;
     private WaitForSeconds waitForFadeOutSubtitle;
@@ -44,12 +44,13 @@ public class SubtitleManager : MonoBehaviour
         
     }
 
-    public IEnumerator SubtitleInitiate(string[] subtitles, float[] waitSeconds, AudioSource[] audios)
+    public IEnumerator SubtitleInitiate(List<string> subtitles, List<float> waitSeconds, List<AudioSource> audios)
     {
         subtitle.gameObject.SetActive(true);
-        for (int i = 0; i < subtitles.Length; i++)
+        for (int i = 0; i < subtitles.Count; i++)
         {
-            audios[i].Play();
+            if (audios[i].clip != null)
+                audios[i].Play();
             subtitle.DOFade(1f, 0.2f).SetEase(Ease.OutSine);
             subtitle.text = subtitles[i];
             yield return new WaitForSeconds(waitSeconds[i]);
