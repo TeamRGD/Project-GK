@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1030976836}
-  - component: {fileID: 1030976837}
   - component: {fileID: 5219181611333233868}
+  - component: {fileID: 6277571684812650340}
   m_Layer: 0
   m_Name: SM_filing_cabinet_03_1
   m_TagString: Untagged
@@ -34,8 +34,24 @@ Transform:
   - {fileID: 1030976839}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1030976837
-MeshCollider:
+--- !u!114 &5219181611333233868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030976835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83801aef8a1598149acf23f8b1b8d2d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  isOpen: 0
+  openSound: {fileID: 0}
+  closeSound: {fileID: 0}
+--- !u!65 &6277571684812650340
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -52,24 +68,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300004, guid: abc00000000004772564131146377928, type: 3}
---- !u!114 &5219181611333233868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1030976835}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83801aef8a1598149acf23f8b1b8d2d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 2
-  isOpen: 0
+  serializedVersion: 3
+  m_Size: {x: 0.48, y: 0.16, z: 0.14}
+  m_Center: {x: 0.06, y: 0.04, z: 0}
 --- !u!1 &1030976838
 GameObject:
   m_ObjectHideFlags: 0

@@ -70,6 +70,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 2
   isOpen: 0
+  openSound: {fileID: 0}
+  closeSound: {fileID: 0}
 --- !u!1 &1030976958
 GameObject:
   m_ObjectHideFlags: 0
