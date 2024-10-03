@@ -16,6 +16,7 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
     public Image healthBar;
     public Image manaBar;
     public Image ultBar;
+    public RectTransform notEnoughMana;
 
     // for Inventory
     public Sprite[] itemImages;
@@ -57,6 +58,14 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
         //inventoryOutlines[0].enabled = true;
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            ManageMana(0, 1000);
+        }
+    }
+
     public void LoadingUI(bool value)
     {
         loadingUI.SetActive(value);
@@ -77,6 +86,11 @@ public class UIManager_Player : MonoBehaviourPunCallbacks
 
     public void ManageMana(float currentPower, float maxPower)
     {
+        if (manaBar.fillAmount == 0f)
+        {
+            notEnoughMana.DOKill();
+            notEnoughMana.DOShakeAnchorPos(0.3f, 10f, 40, 90, false, true).OnStart(() => notEnoughMana.gameObject.SetActive(true)).OnComplete(() => notEnoughMana.gameObject.SetActive(false));
+        }
         manaBar.DOFillAmount(currentPower / maxPower, 0.05f).SetEase(Ease.OutFlash);
     }
 
