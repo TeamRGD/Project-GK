@@ -611,14 +611,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
     }
 
-    IEnumerator PlayEffectForDuration(GameObject effect, Vector3 position, Quaternion rotation, float duration, Vector3 scale)
+    IEnumerator PlayEffectForDuration(int idx, Vector3 position, Quaternion rotation, float duration, Vector3 scale)
     {
-        GameObject spawnedEffect = Instantiate(effect, position, rotation);
+        GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
         spawnedEffect.transform.localScale = scale;
 
         yield return new WaitForSeconds(duration);
 
-        Destroy(spawnedEffect);
+        PhotonNetwork.Destroy(spawnedEffect);
     }
 
     IEnumerator JumpWithDuration(float duration, Vector3 startPosition, Vector3 targetPosition)
@@ -662,7 +662,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
         Vector3 tmpPosition = targetPosition;
         tmpPosition.y = -0.85f;
-        StartCoroutine(PlayEffectForDuration(Effects[2], tmpPosition + transform.forward * 4.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
+        StartCoroutine(PlayEffectForDuration(2, tmpPosition + transform.forward * 4.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         shockwaveCoroutine = StartCoroutine(CreateShockwave(4.4f, 0.1f, targetPosition + transform.forward * 4.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
@@ -722,7 +722,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmHardSlam");
                 }
                 yield return new WaitForSeconds(1.5f);
-                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.3f)));
+                StartCoroutine(PlayEffectForDuration(0, transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.3f)));
                 yield return new WaitForSeconds(1.5f);
             }
             else if (i == 0 || i == 2)
@@ -735,7 +735,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "LeftArmSlam");
                 }
                 yield return new WaitForSeconds(1.1f);
-                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
+                StartCoroutine(PlayEffectForDuration(0, transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
                 yield return new WaitForSeconds(1.9f);
             }
             else
@@ -748,7 +748,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                     photonView.RPC("SetTriggerRPC", RpcTarget.All, "RightArmSlam");
                 }
                 yield return new WaitForSeconds(1.1f);
-                StartCoroutine(PlayEffectForDuration(Effects[0], transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
+                StartCoroutine(PlayEffectForDuration(0, transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
                 yield return new WaitForSeconds(1.9f);
             }
         }
@@ -778,7 +778,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
         Vector3 tmpPosition = transform.position;
         tmpPosition.y = -0.85f;
-        StartCoroutine(PlayEffectForDuration(Effects[2], tmpPosition + transform.forward * 6.5f + transform.right * 2.5f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
+        StartCoroutine(PlayEffectForDuration(2, tmpPosition + transform.forward * 6.5f + transform.right * 2.5f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, transform.position + transform.forward * 6.5f + transform.right * 2.5f, 2.0f));
         yield return new WaitForSeconds(3.0f);
 
@@ -807,7 +807,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
         Vector3 tmpPosition = transform.position;
         tmpPosition.y = -0.85f;
-        StartCoroutine(PlayEffectForDuration(Effects[2], tmpPosition + transform.forward * 5.5f + transform.right * 1.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
+        StartCoroutine(PlayEffectForDuration(2, tmpPosition + transform.forward * 5.5f + transform.right * 1.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         yield return new WaitForSeconds(3.0f);
 
         isExecutingAttack = false;
@@ -1261,7 +1261,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
             for (int i = 0; i < PlayerList.Count; i++)
             {
-                StartCoroutine(PlayEffectForDuration(Effects[1], (transform.position + transform.up * 10.0f) + 0.5f *(PlayerList[i].transform.position - (transform.position + transform.up * 10.0f)), Quaternion.LookRotation(PlayerList[i].transform.position - transform.position), 3.0f, new Vector3(1.0f, 20.0f, 20.0f)));
+                StartCoroutine(PlayEffectForDuration(1, (transform.position + transform.up * 10.0f) + 0.5f *(PlayerList[i].transform.position - (transform.position + transform.up * 10.0f)), Quaternion.LookRotation(PlayerList[i].transform.position - transform.position), 3.0f, new Vector3(1.0f, 20.0f, 20.0f)));
             }
         }
         yield return new WaitForSeconds(1.0f);
