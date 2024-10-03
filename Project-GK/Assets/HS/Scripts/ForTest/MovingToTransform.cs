@@ -8,6 +8,7 @@ public class MovingToTransform : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        other.transform.root.position = Destination.position;
+        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
+            other.transform.root.position = Destination.position;
     }
 }
