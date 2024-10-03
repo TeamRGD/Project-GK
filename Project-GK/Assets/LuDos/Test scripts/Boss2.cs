@@ -98,7 +98,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -1244,7 +1244,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    bool DisplayAttackOrder() // 동기화 필요
+    bool DisplayAttackOrder()
     {
         if (canDisplay)
         {
@@ -1255,7 +1255,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             // correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 임시완. 실험용
             Shuffle(correctOrder);
 
-            //photonView.RPC("DisplayOrderOnUI",RpcTarget.All, correctOrder); // 수정 필요
+            photonView.RPC("DisplayOrderOnUI",RpcTarget.All, correctOrder.ToArray());
 
             attackOrderCount = 0;
 
@@ -1276,8 +1276,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void DisplayOrderOnUI(List<int> order)
+    void DisplayOrderOnUI(int[] orderArray)
     {
+        List<int> order = new List<int>(orderArray);
         UIManager_Vanta.Instance.ResetAttackNode(order);
     }
 

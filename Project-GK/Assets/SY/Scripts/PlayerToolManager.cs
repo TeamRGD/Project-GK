@@ -49,6 +49,7 @@ public class PlayerToolManager : MonoBehaviour
         if(!PV.IsMine)
             return;
         PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
+        UpdateToolVisibility();
     }
 
     void SwitchToPreviousTool()
@@ -56,20 +57,19 @@ public class PlayerToolManager : MonoBehaviour
         if(!PV.IsMine)
             return;
         PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
+        UpdateToolVisibility();
     }
 
     [PunRPC]
     void SwitchToNextToolRPC()
     {
         currentToolIndex = (currentToolIndex + 1) % tools.Count;
-        UpdateToolVisibility();
     }
 
     [PunRPC]
     void SwitchToPreviousToolRPC()
     {
         currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
-        UpdateToolVisibility();
     }
 
     void UpdateToolVisibility()

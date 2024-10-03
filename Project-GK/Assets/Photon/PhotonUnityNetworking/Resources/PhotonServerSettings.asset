@@ -131,6 +131,11 @@ MonoBehaviour:
   - LightFootsRPC
   - SetActiveLightMagicCircleRPC
   - SetActiveTorchesRPC
+  - UIRPC
+  - FindRPC
+  - FindZard
+  - UI
+  - Moving
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

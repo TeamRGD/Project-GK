@@ -12030,7 +12030,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 1
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -14952,6 +14952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f1bb37e97046945adcf8e3c22f739d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadingUI: {fileID: 743323660}
   healthBar: {fileID: 2083098546}
   manaBar: {fileID: 1995658286}
   ultBar: {fileID: 648064925}
@@ -20940,6 +20941,8 @@ MonoBehaviour:
   - You gave her your sweater, it's just polyester
   - But you like her better
   - Wish I were Heather
+  testWaitSeconds: []
+  testAudioSources: []
 --- !u!4 &1085618866
 Transform:
   m_ObjectHideFlags: 0

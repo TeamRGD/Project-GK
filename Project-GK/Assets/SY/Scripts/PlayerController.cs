@@ -49,7 +49,6 @@ public class PlayerController : MonoBehaviour
     float verticalLookRotation;
     public float currentSaveTime = 0.0f;
     Quaternion originalCameraRotation;
-    GameObject loadingUI;
 
     // Raycast variable
     [SerializeField] LayerMask interactableLayer;
@@ -103,7 +102,6 @@ public class PlayerController : MonoBehaviour
         
         if (PV.IsMine)
         {
-            loadingUI = GameObject.Find("Loading");
             StartCoroutine(StartTime());
         }
     }
@@ -113,9 +111,9 @@ public class PlayerController : MonoBehaviour
         while (!isStarted)
         {
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
-            if (playerManagers.Length == 1)
+            if (playerManagers.Length == 2)
             {
-                loadingUI.SetActive(false);
+                UIManager_Player.Instance.LoadingUI(false);
                 playerToolManager.SetCanChange(true);
                 playerAttack.SetCanAttack(true);
                 canControl = true;
@@ -141,7 +139,7 @@ public class PlayerController : MonoBehaviour
             Move();
             Save();
         }
-
+            
         ForDebug();
     }
 
@@ -149,7 +147,6 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.N) && PhotonNetwork.IsMasterClient)
         {
-            loadingUI.SetActive(true);
             rb.useGravity = false;
             playerToolManager.SetCanChange(false);
             playerAttack.SetCanAttack(false);
@@ -165,9 +162,9 @@ public class PlayerController : MonoBehaviour
     [PunRPC]
     void LoadLevelRPC(int currentSceneIndex)
     {
+        UIManager_Player.Instance.LoadingUI(true);
         PhotonNetwork.LoadLevel(currentSceneIndex + 1);
     }
-
 
     void Move()
     {

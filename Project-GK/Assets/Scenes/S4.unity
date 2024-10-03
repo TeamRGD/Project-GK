@@ -5142,7 +5142,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 1
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -51664,6 +51664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f1bb37e97046945adcf8e3c22f739d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadingUI: {fileID: 1440932064}
   healthBar: {fileID: 1893459361}
   manaBar: {fileID: 1357129326}
   ultBar: {fileID: 195787624}

@@ -1707,8 +1707,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00b6bae90f42dc64f8aeddd10801dd76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineRenderer: {fileID: 123627483}
-  segments: 100
   magicCircleCount: 0
   attackOrderCount: 0
   canControlSpeed: 0
@@ -8746,6 +8744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f1bb37e97046945adcf8e3c22f739d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadingUI: {fileID: 424416639}
   healthBar: {fileID: 496070121}
   manaBar: {fileID: 1024011630}
   ultBar: {fileID: 642111722}
@@ -9655,7 +9654,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 1
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0

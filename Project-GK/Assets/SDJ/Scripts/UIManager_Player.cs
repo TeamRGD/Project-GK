@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class UIManager_Player : MonoBehaviour
+public class UIManager_Player : MonoBehaviourPunCallbacks
 {
+    public GameObject loadingUI;
     //for Singleton Pattern
     public static UIManager_Player Instance;
 
@@ -52,6 +55,17 @@ public class UIManager_Player : MonoBehaviour
         //    inventoryOutlines[i].enabled = false;
         //}
         //inventoryOutlines[0].enabled = true;
+    }
+
+    public void LoadingUI(bool value)
+    {
+        loadingUI.SetActive(value);
+    }
+
+    [PunRPC]
+    void UI()
+    {
+        loadingUI.SetActive(true);
     }
 
 
