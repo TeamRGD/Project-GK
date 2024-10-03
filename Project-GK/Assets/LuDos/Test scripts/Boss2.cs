@@ -167,7 +167,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                         StopRandomBasicAttack();
                         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         //LightFourTorches();
-                        //yield return StartCoroutine(MoveAndAttack());
+                        yield return StartCoroutine(MoveAndAttack());
                         yield return RoarAndExtinguishAllTorches();
                         hasExecutedInitialActions2 = true;
                     }
