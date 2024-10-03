@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.Video;
 
 public class PlayerController : MonoBehaviour
 {
@@ -58,6 +59,10 @@ public class PlayerController : MonoBehaviour
     bool canInteract = false;
     RaycastHit hitInfo;
 
+    // For CutScenes
+    VideoPlayer cutScenePlayer;
+    private bool triggered;
+
     void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -96,6 +101,10 @@ public class PlayerController : MonoBehaviour
             GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
             boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
         }
+
+        // CutScenes
+        cutScenePlayer = FindObjectOfType<VideoPlayer>();
+        cutScenePlayer.loopPointReached += CheckOver;
 
         originalWalkSpeed = walkSpeed;
         originalSprintSpeed = sprintSpeed;
@@ -140,24 +149,14 @@ public class PlayerController : MonoBehaviour
             Save();
         }
             
-        ForDebug();
+        //ForDebug();
     }
 
-    void ForDebug()
+    public void NextScene()
     {
-        if (Input.GetKeyDown(KeyCode.N) && PhotonNetwork.IsMasterClient)
-        {
-            PV.RPC("UI",RpcTarget.All);
-            rb.useGravity = false;
-            playerToolManager.SetCanChange(false);
-            playerAttack.SetCanAttack(false);
-            canControl = false;
-            canLook = false;
-            canMove = false;
-            isStarted = false;
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            PV.RPC("LoadLevelRPC", RpcTarget.All, currentSceneIndex);
-        }
+        PV.RPC("UI", RpcTarget.All);
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        PV.RPC("LoadLevelRPC", RpcTarget.All, currentSceneIndex);
     }
 
     [PunRPC]
@@ -601,5 +600,25 @@ public class PlayerController : MonoBehaviour
 
         walkSpeed = originalWalkSpeed;
         sprintSpeed = originalSprintSpeed;
+    }
+    void CheckOver(VideoPlayer vp)
+    {
+        NextScene();
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.name == "CutSceneTrigger")
+        {
+            rb.useGravity = false;
+            playerToolManager.SetCanChange(false);
+            playerAttack.SetCanAttack(false);
+            canControl = false;
+            canLook = false;
+            canMove = false;
+            isStarted = false;
+
+            cutScenePlayer.Play();
+        }
     }
 }
