@@ -31,17 +31,6 @@ public class BreakableStone : MonoBehaviourPunCallbacks
         }
     }
 
-    // Projectile과 충돌했을 때 호출되는 함수
-    private void OnTriggerEnter(Collider other)
-    {
-        // 충돌한 오브젝트가 Projectile 태그를 가지고 있을 때
-        if (other.gameObject.CompareTag("Projectile_Wi") || other.gameObject.CompareTag("Projectile_Zard"))
-        {          
-            if (PV.IsMine)
-                TakeDamage(1);
-        }
-    }
-
     public void TakeDamage(int damage)
     {
         PV.RPC("TakeDamageRPC", RpcTarget.AllBuffered, damage);

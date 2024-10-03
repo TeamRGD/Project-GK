@@ -139,6 +139,8 @@ MonoBehaviour:
   - CameraShakeRPC
   - Break
   - MoveBlock
+  - ApplyDamage
+  - UpdateHealth
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
