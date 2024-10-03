@@ -105,9 +105,13 @@ public class PlayerController : MonoBehaviour
 
         // CutScenes
         cutScenePlayer = FindObjectOfType<VideoPlayer>();
-        cutScenePlayer.loopPointReached += CheckOver;
-        renderTexture = cutScenePlayer.targetTexture;
-        renderTexture.Release();
+        if (cutScenePlayer != null)
+        {
+            cutScenePlayer.loopPointReached += CheckOver;
+            renderTexture = cutScenePlayer.targetTexture;
+            renderTexture.Release();
+        }
+        
 
         originalWalkSpeed = walkSpeed;
         originalSprintSpeed = sprintSpeed;
@@ -166,8 +170,7 @@ public class PlayerController : MonoBehaviour
             canLook = false;
             canMove = false;
             isStarted = false;
-            renderTexture.Release();
-            cutScenePlayer.Play();
+            PV.RPC("CutSceneRPC", RpcTarget.All);
         }
         else if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N) && cutScenePlayer == null)
         {
@@ -186,7 +189,7 @@ public class PlayerController : MonoBehaviour
 
     public void NextScene()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && PV.IsMine)
         {
             PV.RPC("UI", RpcTarget.All);
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
@@ -648,8 +651,14 @@ public class PlayerController : MonoBehaviour
             canLook = false;
             canMove = false;
             isStarted = false;
-            renderTexture.Release();
-            cutScenePlayer.Play();
+            PV.RPC("CutSceneRPC", RpcTarget.All);
         }
+    }
+
+    [PunRPC]
+    void CutSceneRPC()
+    {
+        renderTexture.Release();
+        cutScenePlayer.Play();
     }
 }
