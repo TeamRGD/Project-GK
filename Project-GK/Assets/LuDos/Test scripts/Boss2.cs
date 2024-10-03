@@ -181,7 +181,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
                 {
                     if (!hasExecutedInitialActions3)
                     {
-                        StopRandomBasicAttack();
+                        //StopRandomBasicAttack();
                         isGroggy = false;
                         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Exit");
                         MakeInvincible();
@@ -242,6 +242,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         var checkHealthNode = new ActionNode(() => {
             if (currentHealth <= 2)
             {
+                StopRandomBasicAttack();
                 isGroggy = true;
                 return false;
             }
@@ -625,47 +626,47 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Camera.main.DOShakePosition(1f, 0.6f, 50, 90, true);
     }
 
-    void LightFoots(int idx)
-    {
-        if (currentHealth == 66 || (currentHealth <= 33 && currentHealth > 2))
-        {
-            if (idx == 0)
-            {
-                for (int i = 0; i < FootMesh.Count; i++)
-                {
-                    photonView.RPC("LightFootsRPC", RpcTarget.All, i, true);
-                }
-            }
-            else if (idx == 1)
-            {
-                for (int i = 0; i < FootMesh.Count; i++)
-                {
-                    photonView.RPC("LightFootsRPC", RpcTarget.All, i, false);
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < FootMesh.Count; i++)
-            {
-                if (FootMesh[i].activeSelf)
-                {
-                    photonView.RPC("LightFootsRPC", RpcTarget.All, i, false);
-                }
-            }
-        }
-    }
+    //void LightFoots(int idx)
+    //{
+    //    if (currentHealth == 66 || (currentHealth <= 33 && currentHealth > 2))
+    //    {
+    //        if (idx == 0)
+    //        {
+    //            for (int i = 0; i < FootMesh.Count; i++)
+    //            {
+    //                photonView.RPC("LightFootsRPC", RpcTarget.All, i, true);
+    //            }
+    //        }
+    //        else if (idx == 1)
+    //        {
+    //            for (int i = 0; i < FootMesh.Count; i++)
+    //            {
+    //                photonView.RPC("LightFootsRPC", RpcTarget.All, i, false);
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        for (int i = 0; i < FootMesh.Count; i++)
+    //        {
+    //            if (FootMesh[i].activeSelf)
+    //            {
+    //                photonView.RPC("LightFootsRPC", RpcTarget.All, i, false);
+    //            }
+    //        }
+    //    }
+    //}
 
-    [PunRPC]
-    void LightFootsRPC(int i, bool value)
-    {
-        FootMesh[i].SetActive(value);
-    }
+    //[PunRPC]
+    //void LightFootsRPC(int i, bool value)
+    //{
+    //    FootMesh[i].SetActive(value);
+    //}
 
     IEnumerator ShortDashAndSlash()
     {
         isExecutingAttack = true;
-        LightFoots(0);
+        //LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -697,7 +698,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 10.0f, transform.position + transform.forward * 8.0f, 1.2f));
         yield return new WaitForSeconds(1.0f);
 
-        LightFoots(1);
+        //LightFoots(1);
         yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
@@ -712,7 +713,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator DoubleDash()
     {
         isExecutingAttack = true;
-        LightFoots(0);
+        //LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -770,7 +771,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         ActiveDashCollider(1);
 
-        LightFoots(1);
+        //LightFoots(1);
         yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
@@ -779,7 +780,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator JawSlamWithShockwave()
     {
         isExecutingAttack = true;
-        LightFoots(0);
+        //LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -798,7 +799,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0f, transform.position + transform.forward * 3.0f, 2.0f)); // 임시완. 깨무는 이펙트
         yield return new WaitForSeconds(2.0f);
 
-        LightFoots(1);
+        //LightFoots(1);
         yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
@@ -807,7 +808,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator SpinAndTargetSmash()
     {
         isExecutingAttack = true;
-        LightFoots(0);
+        //LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -826,7 +827,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
         yield return new WaitForSeconds(2.0f);
 
-        LightFoots(1);
+        //LightFoots(1);
         yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
@@ -835,7 +836,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator RoarAndSmash()
     {
         isExecutingAttack = true;
-        LightFoots(0);
+        //LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -852,12 +853,12 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "ArmSmash");
 
-        yield return new WaitForSeconds(0.5f); // 임시완
+        yield return new WaitForSeconds(1.0f); // 임시완
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
 
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(2.0f);
 
-        LightFoots(1);
+        //LightFoots(1);
         yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
@@ -866,7 +867,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator FocusAndLinearShockwave()
     {
         isExecutingAttack = true;
-        LightFoots(0);
+        //LightFoots(0);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -884,7 +885,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, targetPosition + transform.forward * 2.0f, 2.0f));
         yield return new WaitForSeconds(2.0f);
 
-        LightFoots(0);
+        //LightFoots(0);
         yield return new WaitForSeconds(cooltime);
 
         isExecutingAttack = false;
@@ -1174,7 +1175,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         if (bossAttackCount < storedAttacks.Count)
         {
             IEnumerator storedAttack = storedAttacks[bossAttackCount];
-            currentAttackCoroutine = StartCoroutine(storedAttack); // yield return
+            currentAttackCoroutine = StartCoroutine(storedAttack);
 
             Debug.Log("bossAttackCount: " + bossAttackCount);
 
