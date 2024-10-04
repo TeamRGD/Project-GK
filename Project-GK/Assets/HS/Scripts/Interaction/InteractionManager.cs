@@ -50,11 +50,12 @@ public class InteractionManager : MonoBehaviour
         {
             if (hitInfo.collider.TryGetComponent<ToolPickup>(out ToolPickup toolPickup))
             {
-                if (Input.GetKey(KeyCode.T))
+                if (Input.GetKeyDown(KeyCode.T))
                 {
                     toolPickup.AddToolToPlayer(2);
                     UIManager_Player.Instance.DisableInteractionNotice();
                 }
+
             }
         }
 

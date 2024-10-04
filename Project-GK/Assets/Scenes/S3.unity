@@ -21828,12 +21828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   subtitle: {fileID: 829436508}
-  testSubtitles:
-  - Why would you ever kiss me?
-  - I'm not even half as pretty
-  - You gave her your sweater, it's just polyester
-  - But you like her better
-  - Wish I were Heather
+  testSubtitles: []
   testWaitSeconds: []
   testAudioSources: []
 --- !u!4 &1085618866
