@@ -14,7 +14,7 @@ public class InteractionManager : MonoBehaviour
 
     private void Start()
     {
-        TryGetComponent<PhotonView>(out PV);
+        PV = GetComponent<PhotonView>();
         playerController = GetComponentInChildren<PlayerController>();
         playerTool = GetComponent<PlayerToolManager>();
         cameraTrigger = FindAnyObjectByType<CameraTrigger>();
@@ -33,8 +33,7 @@ public class InteractionManager : MonoBehaviour
     // 오픈할 UI를 찾기 위해 Tag들을 비교하는 함수.
     public void CheckForTags(RaycastHit hitInfo)
     {
-        if (!PV.IsMine)
-            return;
+        Debug.Log("CheckForTags");
 
         if (hitInfo.collider.CompareTag("Note")) // 퍼즐1번 쪽지 힌트
         {
@@ -48,14 +47,12 @@ public class InteractionManager : MonoBehaviour
          
         else if (hitInfo.collider.CompareTag("ZiplineItem")) // 퍼즐1번 이후 짚라인 아이템
         {
+            Debug.Log("ZiplineItem hit 성공");
             if (hitInfo.collider.TryGetComponent<ToolPickup>(out ToolPickup toolPickup))
             {
-                if (Input.GetKeyDown(KeyCode.T))
-                {
-                    toolPickup.AddToolToPlayer(2);
-                    UIManager_Player.Instance.DisableInteractionNotice();
-                }
-
+                Debug.Log("toolPickup hit성공");
+                toolPickup.AddToolToPlayer(2);
+                UIManager_Player.Instance.DisableInteractionNotice();
             }
         }
 
