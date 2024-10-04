@@ -96,11 +96,19 @@ public class PlayerController : MonoBehaviour
         {
             GameObject boss1 = GameObject.Find("Yggdrasil"); // [임시완]
             boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
+            if (PV.IsMine && PhotonNetwork.IsMasterClient)
+            {
+                boss1.GetComponent<Boss1>().aggroTarget = this.gameObject;
+            }
         }
         else if (SceneManager.GetActiveScene().name == "Vanta")
         {
             GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
             boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
+            if (PV.IsMine && PhotonNetwork.IsMasterClient)
+            {
+                boss2.GetComponent<Boss2>().aggroTarget = this.gameObject;
+            }
         }
 
         // CutScenes
@@ -660,5 +668,14 @@ public class PlayerController : MonoBehaviour
     {
         renderTexture.Release();
         cutScenePlayer.Play();
+        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
+
+        foreach (AudioSource audioSource in allAudioSources)
+        {
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
+        }
     }
 }
