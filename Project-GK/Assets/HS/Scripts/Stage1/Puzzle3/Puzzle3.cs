@@ -16,6 +16,7 @@ public class Puzzle3 : MonoBehaviour
     // 클리어 이후에
     [SerializeField] Subtitle subtitle;
     [SerializeField] Outline ziplineOutline;
+    [SerializeField] GameObject ziplineTrigger;
 
     [SerializeField] List<GameObject> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
 
@@ -43,6 +44,7 @@ public class Puzzle3 : MonoBehaviour
 
         ziplineOutline.enabled = true;
         //subtitle.StartSubTitle();
+        
 
         for (int i = 0; i < drawerList.Count; i++)
         {

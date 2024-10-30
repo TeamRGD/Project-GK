@@ -36,15 +36,6 @@ public class TarzanSwing : MonoBehaviour
 
     private void AttachPlayer()
     {
-        // 플레이어의 현재 부모가 있는지 확인하고 저장
-        if (player.parent != null)
-        {
-            originalParent = player.parent; // 부모가 있을 경우 저장
-        }
-        else
-        {
-            originalParent = null; // 부모가 없으면 null로 설정
-        }
         // 플레이어를 오브젝트의 자식으로 설정
         playerController.SetCanMove(false);
         player.parent = objectToAttach;
@@ -54,15 +45,7 @@ public class TarzanSwing : MonoBehaviour
 
     private void DetachPlayer()
     {
-        // 원래 부모가 null이 아닌 경우에만 원래 부모로 되돌림
-        if (originalParent != null)
-        {
-            player.parent = originalParent; // 원래 부모로 설정
-        }
-        else
-        {
-            player.parent = null; // 부모가 없었으면 null로 설정 (최상위 객체로 돌아감)
-        }
+        player.parent = null; // 부모가 없었으면 null로 설정 (최상위 객체로 돌아감)
         playerController.SetCanMove(true);
         player.position = new Vector3(77f, 25f, -17f); 
         player.rotation = Quaternion.Euler(0f, 90f, 0f);
