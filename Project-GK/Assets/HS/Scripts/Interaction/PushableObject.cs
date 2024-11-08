@@ -6,7 +6,7 @@ public class PushableObject : MonoBehaviour
 {
     public float interactionRange = 2f;   // 상호작용 가능한 거리
     public LayerMask playerLayer;         // 플레이어 레이어 설정
-    public float moveSpeed = 2f;          // 오브젝트를 움직일 때 속도
+    public float moveSpeed = 0.1f;          // 오브젝트를 움직일 때 속도
 
     [SerializeField] private bool isPlayerNearby = false;
     [SerializeField] private bool isPushing = false;       // 오브젝트를 밀고 있는지 여부
@@ -133,9 +133,15 @@ public class PushableObject : MonoBehaviour
             directionToMove.y = 0;
             directionToMove.Normalize();
 
-            transform.position += directionToMove * moveSpeed * Time.deltaTime;
+            photonView.RPC("TranslationPositionRPC", RpcTarget.AllBuffered, directionToMove);
             // 오브젝트를 플레이어가 향하는 방향으로 이동시킴
         }
+    }
+
+    [PunRPC]
+    void TranslationPositionRPC(Vector3 directionToMove)
+    {
+        transform.position += directionToMove * moveSpeed;
     }
 
     private void OnDrawGizmosSelected()

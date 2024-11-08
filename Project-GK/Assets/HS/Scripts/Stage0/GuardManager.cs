@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
 
 public class GuardManager : MonoBehaviour
 {
@@ -16,8 +17,8 @@ public class GuardManager : MonoBehaviour
     private Transform targetPoint; // 다음 순찰 포인트
 
     public float detectionTime = 2f; // 플레이어가 시야에 노출된 시간을 관리하는 변수
-    [SerializeField] private float playerDetectionCounterWi = 0f; // 플레이어가 시야에 있는 시간
-    [SerializeField] private float playerDetectionCounterZard = 0f; // 플레이어가 시야에 있는 시간
+    [SerializeField] private float playerDetectionCounterWi = 0f; // Wi가 시야에 있는 시간
+    [SerializeField] private float playerDetectionCounterZard = 0f; // Zard가 시야에 있는 시간
     public float viewAngle = 360f; // 경비병의 시야각 (원형 시야)
     public float sphereRadius = 1f; // SphereCast의 반경
     public float immediateDistance = 2f; // 즉시 게임 종료 범위
@@ -37,10 +38,11 @@ public class GuardManager : MonoBehaviour
     bool isEnding = false;
 
     Animator anim;
+    PhotonView photonView;
 
     void Start()
     {
-
+        photonView = GetComponent<PhotonView>();
         anim = GetComponent<Animator>();
 
         if (patrolPoints.Length == 0)
@@ -110,7 +112,7 @@ public class GuardManager : MonoBehaviour
             {
                 if (hit.collider.CompareTag(player.tag))
                 {
-                    anim.SetBool("isFind", true);
+                    photonView.RPC("AnimationStateRPC", RpcTarget.AllBuffered, "isFind", true);
                     playerInSight = true;
                     // 즉시 게임 종료 범위 내에 있으면 바로 게임 종료
                     if (distanceToPlayer <= immediateDistance)
@@ -134,12 +136,18 @@ public class GuardManager : MonoBehaviour
                     else
                     {
                         playerDetectionCounterWi = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
-                        anim.SetBool("isFind", false);
+                        photonView.RPC("AnimationStateRPC", RpcTarget.AllBuffered, "isFind", false);
                         playerInSight = false;
                     }
                 }
             }
         }
+    }
+
+    [PunRPC]
+    public void AnimationStateRPC(string animationName, bool state)
+    {
+        anim.SetBool(animationName, state);
     }
 
     void DetectSinglePlayerZard(GameObject player)
@@ -158,7 +166,10 @@ public class GuardManager : MonoBehaviour
             {
                 if (hit.collider.CompareTag(player.tag))
                 {
-                    anim.SetBool("isFind", true);
+                    if (photonView != null)
+                        photonView.RPC("AnimationStateRPC", RpcTarget.AllBuffered, "isFind", true);
+                    else
+                        Debug.Log("PhotonView가 없습니다.");
                     playerInSight = true;
                     // 즉시 게임 종료 범위 내에 있으면 바로 게임 종료
                     if (distanceToPlayer <= immediateDistance)
@@ -184,7 +195,7 @@ public class GuardManager : MonoBehaviour
                     else
                     {
                         playerDetectionCounterZard = 0f; // 플레이어가 감지되지 않으면 노출 시간 초기화
-                        anim.SetBool("isFind", false);
+                        photonView.RPC("AnimationStateRPC", RpcTarget.AllBuffered, "isFind", false);
                         playerInSight = false;
                     }
                 }
@@ -223,7 +234,7 @@ public class GuardManager : MonoBehaviour
             playerZard.transform.root.rotation = resetLocationZard.rotation;
         }
 
-        anim.SetBool("isFind", false);
+        photonView.RPC("AnimationStateRPC", RpcTarget.AllBuffered, "isFind", false);
         playerInSight = false;
 
         FadeInOut.instance.FadeIn(1f);
