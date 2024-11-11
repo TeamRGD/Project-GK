@@ -57,7 +57,7 @@ public class PushableStone : MonoBehaviour
         {
             // 이동 중에는 Raycast를 무시하도록 설정
             rb.velocity = pushDirection * pushSpeed;
-            Debug.Log("이동 중");
+            Debug.Log("MoveObject");
 
             // 이동할 위치를 예측하여 BoxCast를 사용하여 충돌 감지
             if (CheckCollisionInDirection(pushDirection) && !isHit)
@@ -101,12 +101,10 @@ public class PushableStone : MonoBehaviour
         // BoxCast 사용 (조정된 크기를 적용)
         if (Physics.BoxCast(transform.position, adjustedBoxCastHalfExtents, direction, out hit, Quaternion.identity, rayDistance, layerMask))
         {
-            if (hit.collider.CompareTag("Stone") || hit.collider.CompareTag("PushableStone") || hit.collider.CompareTag("Others"))
-            {
-                Debug.Log("충돌로 인해 이동이 불가능합니다");
-                isHit = true;
-                return true; // 충돌이 발생함
-            }
+            Debug.Log("충돌로 인해 이동이 불가능합니다");
+            isHit = true;
+            return true; // 충돌이 발생함
+
         }
         isHit = false;
         return false; // 충돌이 발생하지 않음
@@ -116,16 +114,13 @@ public class PushableStone : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         // 다른 오브젝트와 충돌하면 멈춤
-        if (collision.gameObject.CompareTag("Stone") || collision.gameObject.CompareTag("PushableStone") || collision.gameObject.CompareTag("Others"))
+        if (isBeingPushed)
         {
-            if (isBeingPushed)
-            {
-                StopCoroutine(moveCoroutine);
-                rb.velocity = Vector3.zero;
-                isHit = true;
-                isBeingPushed = false;
-                Debug.Log("이동 중 다른 오브젝트와 충돌하여 움직임을 멈춥니다.");
-            }
+            StopCoroutine(moveCoroutine);
+            rb.velocity = Vector3.zero;
+            isHit = true;
+            isBeingPushed = false;
+            Debug.Log("이동 중 다른 오브젝트와 충돌하여 움직임을 멈춥니다.");
         }
     }
 
