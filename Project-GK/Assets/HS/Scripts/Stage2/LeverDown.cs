@@ -25,7 +25,7 @@ public class LeverDown : MonoBehaviour
         if(!isDown)
         {
             leverSound.Play();
-            leverHandle.RotateX(-60f);
+            
             isDown = true;
             this.gameObject.layer = 0;
              
@@ -41,6 +41,12 @@ public class LeverDown : MonoBehaviour
 
             this.gameObject.layer = 0;
         }
+    }
+
+    [PunRPC]
+    void RotateLeverHandleRPC()
+    {
+        leverHandle.RotateX(-60f);
     }
 
     [PunRPC]

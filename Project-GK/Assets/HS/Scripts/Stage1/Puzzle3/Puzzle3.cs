@@ -64,10 +64,9 @@ public class Puzzle3 : MonoBehaviour
         {
             if(stairDrawerList[i].TryGetComponent<Drawer>(out Drawer drawer))
             {
-                drawer.OpenDrawer();
-                drawer.OpenDrawer();
+                drawer.SetDrawer(6, 0, 0);
                 drawer.enabled = false;
-                drawer.gameObject.tag = "Others";
+                drawer.gameObject.tag = "Others"; // Drawer tag 제거로 플레이어 공격에 반응 안 하도록
             }
         }
         for (int i = 0; i < drawerList.Count; i++)

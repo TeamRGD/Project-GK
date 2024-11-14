@@ -11,6 +11,9 @@ public class Drawer : MonoBehaviour
     [SerializeField] AudioSource openSound;
     [SerializeField] AudioSource closeSound;
 
+    bool isAvailable = true;
+
+
     PhotonView PV;
 
     private void Start()
@@ -31,11 +34,11 @@ public class Drawer : MonoBehaviour
             Collider ownCollider;
             if (TryGetComponent<Collider>(out ownCollider))
             {
-                if (!isOpen)
+                if (!isOpen && isAvailable)
                 {
                     OpenDrawer();
                 }
-                else
+                else if(isOpen && isAvailable)
                 {
                     CloseDrawer();
                 }
@@ -67,5 +70,18 @@ public class Drawer : MonoBehaviour
     {
         transform.Translate(new Vector3(-3, 0, 0), Space.Self);
         isOpen = false;
+    }
+
+    public void SetDrawer(float x = 0, float y = 0, float z = 0)
+    {
+        openSound.Play();
+        PV.RPC("SetDrawerRPC", RpcTarget.AllBuffered, x, y, z);
+    }
+
+    [PunRPC]
+    void SetDrawerRPC(float x = 0, float y = 0, float z = 0)
+    {
+        transform.Translate(new Vector3(x, y, z), Space.Self);
+        isAvailable = false;
     }
 }

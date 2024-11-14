@@ -39,7 +39,7 @@ public class TarzanSwing2 : MonoBehaviour
         // 플레이어를 오브젝트의 자식으로 설정
         player.parent = objectToAttach;
         playerController.SetCanMove(false);        
-        player.localPosition = new Vector3(0f, -8f, 0f);
+        player.localPosition = new Vector3(0f, -4f, 0f);
         player.localRotation = Quaternion.Euler(15f, 0f, 0f);
     }
 
