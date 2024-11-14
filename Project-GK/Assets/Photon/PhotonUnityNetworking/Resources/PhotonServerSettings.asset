@@ -159,6 +159,8 @@ MonoBehaviour:
   - CutSceneRPC
   - TranslationPositionRPC
   - AnimationStateRPC
+  - RotateLeverHandleRPC
+  - SetDrawerRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

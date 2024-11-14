@@ -27,17 +27,20 @@ public class Zipline : MonoBehaviour
 
     public void Interact(Transform playerTransform, PlayerController playerController, PlayerToolManager playerTool)
     {
+        Debug.Log("Interact 성공" + playerTool.GetCurrentToolIndex() + " " + ZiplineOutline.activeSelf);
         if (ZiplineOutline.activeSelf && playerTool.GetCurrentToolIndex()==2) // 아웃라인이 켜져있을 때       
         {
+            Debug.Log("아웃라인 켜졌을 때 접촉 성공");
             AttachZipline();
             playerTool.UseTool(2);
         }
         else if (ZiplineItem.activeSelf)
         {
+            Debug.Log("ㄴㄴ 돌아가셈");
             AttachPlayer(playerTransform, playerController);
         }
     }
-
+    
     private void AttachZipline()
     {
         TryGetComponent<PlayerToolManager>(out PlayerToolManager playerToolManager);

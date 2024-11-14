@@ -258,6 +258,12 @@ public class PlayerController : MonoBehaviour
             SetGroundedState(false);
         }
     }
+    
+    public void SetJumpForce(float _jumpForce)
+    {
+        jumpForce = _jumpForce;
+    }
+
 
     public void SetGroundedState(bool _grounded)
     {
