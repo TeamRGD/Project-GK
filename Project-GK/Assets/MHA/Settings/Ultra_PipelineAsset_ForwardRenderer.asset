@@ -1,28 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8034596960890494817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a864f588276bab54f97335821add48a7, type: 3}
-  m_Name: LimSSR
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  Settings:
-    tracingMode: 1
-    stepStrideLength: 0.04
-    maxSteps: 128
-    downSample: 0
-    minSmoothness: 0.01
-    reflectSky: 1
-    ditherType: 0
-    SSR_Instance: {fileID: 0}
-    SSRShader: {fileID: 4800000, guid: 03f5601bba0a8034aa526644e8b9aaeb, type: 3}
 --- !u!114 &-7796900564302497525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,20 +23,6 @@ MonoBehaviour:
       normalBlend: 0
   m_CopyDepthPS: {fileID: 4800000, guid: d6dae50ee9e1bfa4db75f19f99355220, type: 3}
   m_DBufferClear: {fileID: 4800000, guid: f056d8bd2a1c7e44e9729144b4c70395, type: 3}
---- !u!114 &-7639935130866896302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4268db87361095c4ca643764150c94d6, type: 3}
-  m_Name: DepthPyramid
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  depthPyramidShader: {fileID: 7200000, guid: b2ead2c2a0fb2bc4d8ff715cbf4b0403, type: 3}
 --- !u!114 &-3915500081661798914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,9 +103,7 @@ MonoBehaviour:
   - {fileID: -7796900564302497525}
   - {fileID: 1712944529581573017}
   - {fileID: -3351978150934190488}
-  - {fileID: -8034596960890494817}
-  - {fileID: -7639935130866896302}
-  m_RendererFeatureMap: fe1589c26b59a9c90bf9b41b3fd8cb939983a85df999c5176866b29aa1617bd19f60b018a2607f9052b2a6017a7ff995
+  m_RendererFeatureMap: fe1589c26b59a9c90bf9b41b3fd8cb939983a85df999c5176866b29aa1617bd1
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
