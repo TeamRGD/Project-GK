@@ -40,6 +40,8 @@ public class UIManager_Ygg : MonoBehaviour
     UIManager_Player uiManager;
     PhotonView PV;
 
+    public GameObject cutSceneForYgg;
+
     // for Singleton Pattern (Don't know meaning but everyone uses this)
     void Awake()
     {
@@ -56,6 +58,7 @@ public class UIManager_Ygg : MonoBehaviour
 
     void Start()
     {
+        cutSceneForYgg.SetActive(false);
         uiManager = FindObjectOfType<UIManager_Player>();
         patternCode = 1234;
         isCorrectedPrevCode = false;
@@ -244,5 +247,10 @@ public class UIManager_Ygg : MonoBehaviour
             attackNodeContainer.transform.GetChild(i).GetComponent<Image>().DOFade(1f, 0.01f).SetDelay(0.25f);
         }
         attackNodeContainer.GetComponent<CanvasGroup>().DOFade(1f, 0.25f).SetEase(Ease.OutSine).SetDelay(0.5f);
+    }
+
+    public void EnableCutScene()
+    {
+        cutSceneForYgg.SetActive(true);
     }
 }

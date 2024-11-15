@@ -338,6 +338,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "Death");
         }
+        UIManager_Ygg.Instance.EnableCutScene();
     }
 
     void Die()
