@@ -161,6 +161,7 @@ MonoBehaviour:
   - AnimationStateRPC
   - RotateLeverHandleRPC
   - SetDrawerRPC
+  - UpdateToolVisibility
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

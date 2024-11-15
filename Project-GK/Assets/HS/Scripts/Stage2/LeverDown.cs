@@ -32,6 +32,7 @@ public class LeverDown : MonoBehaviour
             if(levelStep < 3)
             {
                 PV.RPC("UseLeverRPC", RpcTarget.AllBuffered);
+                PV.RPC("RotateLeverHandleRPC", RpcTarget.AllBuffered);
             }
             
             else if (levelStep == 3)
