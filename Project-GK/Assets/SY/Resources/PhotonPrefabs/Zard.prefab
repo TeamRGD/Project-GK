@@ -1136,6 +1136,8 @@ MonoBehaviour:
   - {fileID: 1385687833354143206}
   - {fileID: 4839703791259544606}
   - {fileID: 1990582280266613540}
+  currentToolIndex: 0
+  canChange: 0
 --- !u!95 &1926165917851612721
 Animator:
   serializedVersion: 5

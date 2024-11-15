@@ -13,8 +13,8 @@ public class PlayerToolManager : MonoBehaviour
     List<GameObject> tools = new List<GameObject>();
 
     // Information variable
-    private int currentToolIndex = 0;
-    private bool canChange = false;
+    public int currentToolIndex = 0;
+    public bool canChange = false;
 
     void Awake()
     {
@@ -49,7 +49,7 @@ public class PlayerToolManager : MonoBehaviour
         if(!PV.IsMine)
             return;
         PV.RPC("SwitchToNextToolRPC", RpcTarget.AllBuffered);
-        UpdateToolVisibility();
+        PV.RPC("UpdateToolVisibility", RpcTarget.AllBuffered);
     }
 
     void SwitchToPreviousTool()
@@ -57,8 +57,7 @@ public class PlayerToolManager : MonoBehaviour
         if(!PV.IsMine)
             return;
         PV.RPC("SwitchToPreviousToolRPC", RpcTarget.AllBuffered);
-        UpdateToolVisibility();
-    }
+        PV.RPC("UpdateToolVisibility", RpcTarget.AllBuffered);    }
 
     [PunRPC]
     void SwitchToNextToolRPC()
@@ -72,6 +71,7 @@ public class PlayerToolManager : MonoBehaviour
         currentToolIndex = (currentToolIndex - 1 + tools.Count) % tools.Count;
     }
 
+    [PunRPC]
     void UpdateToolVisibility()
     {
         for (int i = 0; i < tools.Count; i++)
