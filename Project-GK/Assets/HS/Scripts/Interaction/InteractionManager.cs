@@ -168,7 +168,10 @@ public class InteractionManager : MonoBehaviour
         {
             if (hitInfo.collider.TryGetComponent<Zipline>(out Zipline zipline))
             {
-                zipline.Interact(this.transform, playerController, playerTool);
+                if(zipline.Interact(this.transform, playerController, playerTool.GetCurrentToolIndex()))
+                {
+                    playerTool.UseTool(2);
+                }
             }
         }
     }

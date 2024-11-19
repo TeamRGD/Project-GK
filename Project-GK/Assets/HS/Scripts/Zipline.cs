@@ -25,20 +25,21 @@ public class Zipline : MonoBehaviour
         cutSceneTrigger.SetActive(false);
     }
 
-    public void Interact(Transform playerTransform, PlayerController playerController, PlayerToolManager playerTool)
+    public bool Interact(Transform playerTransform, PlayerController playerController, int toolIndex)
     {
-        Debug.Log("Interact 성공" + playerTool.GetCurrentToolIndex() + " " + ZiplineOutline.activeSelf);
-        if (ZiplineOutline.activeSelf && playerTool.GetCurrentToolIndex()==2) // 아웃라인이 켜져있을 때       
+        Debug.Log("Interact 성공" + toolIndex + " " + ZiplineOutline.activeSelf);
+        if (ZiplineOutline.activeSelf && toolIndex==2) // 아웃라인이 켜져있을 때       
         {
             Debug.Log("아웃라인 켜졌을 때 접촉 성공");
             AttachZipline();
-            playerTool.UseTool(2);
+            return true;
         }
         else if (ZiplineItem.activeSelf)
         {
             Debug.Log("ㄴㄴ 돌아가셈");
             AttachPlayer(playerTransform, playerController);
         }
+        return false;
     }
     
     private void AttachZipline()
