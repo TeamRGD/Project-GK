@@ -460,19 +460,12 @@ public class PlayerController : MonoBehaviour
                 currentOutline = outline; // 현재 활성화된 Outline 참조 저장
                 canInteract = true;
 
-                if (Input.GetKeyDown(KeyCode.T))
-                {
-                    interactionManager.CheckForTags(hitInfo);
-                }
-
-                else if (Input.GetKeyDown(KeyCode.Y))
-                {
-                    interactionManager.CheckForTags2(hitInfo);
-                }
+                interactionManager.CheckForTags(hitInfo);
             }
         }
         else
         {
+            interactionManager.HideAllUI(); // 모든 UI 메시지 제거(T키 누르세요 등)
             // Raycast가 아무 오브젝트에도 닿지 않을 때
             if (currentOutline != null)
             {
