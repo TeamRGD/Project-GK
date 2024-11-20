@@ -1318,6 +1318,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea67400f9f43eee4b9aa369a2a61679f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerController: {fileID: 0}
+  playerTool: {fileID: 0}
+  PV: {fileID: 0}
   cameraTrigger: {fileID: 0}
   isOpen: 0
 --- !u!136 &410133485028832588

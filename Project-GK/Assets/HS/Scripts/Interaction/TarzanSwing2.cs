@@ -25,12 +25,15 @@ public class TarzanSwing2 : MonoBehaviour
 
     public IEnumerator MoveLampWithPlayer()
     {
-        ropeSound.Play();
-        AttachPlayer();  // 플레이어를 자식 관계로 변경
-        GoStage();
-        yield return new WaitForSeconds(3.0f);
-        DetachPlayer();  // 플레이어를 다시 원래 위치로 해제
-        ropeSound.Stop();
+        if (playerController != null)
+        {
+            ropeSound.Play();
+            AttachPlayer();  // 플레이어를 자식 관계로 변경
+            GoStage();
+            yield return new WaitForSeconds(3.0f);
+            DetachPlayer();  // 플레이어를 다시 원래 위치로 해제
+            ropeSound.Stop();
+        }
     }
 
 
@@ -64,6 +67,7 @@ public class TarzanSwing2 : MonoBehaviour
 
     public void GoStage()
     {
+        gameObject.layer = 0;
         photonView.RPC("GoStageRPC", RpcTarget.AllBuffered);
     }
 
@@ -82,10 +86,6 @@ public class TarzanSwing2 : MonoBehaviour
             PV = playerController.GetComponentInParent<PhotonView>();
             if (players.ContainsKey(playerController))
             {
-                if (PV.IsMine) // Exit한 플레이어에게만.
-                {
-                    UIManager_Player.Instance.EnableInteractionNotice();
-                }
                 players.Remove(playerController);
             }
         }
@@ -99,10 +99,6 @@ public class TarzanSwing2 : MonoBehaviour
             PV = playerController.GetComponentInParent<PhotonView>();
             if (players.ContainsKey(playerController))
             {
-                if (PV.IsMine) // Exit한 플레이어에게만.
-                {
-                    UIManager_Player.Instance.DisableInteractionNotice();
-                }
                 players.Remove(playerController);
             }
         }

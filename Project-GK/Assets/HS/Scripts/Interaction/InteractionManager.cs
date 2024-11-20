@@ -3,9 +3,9 @@ using Photon.Pun;
 
 public class InteractionManager : MonoBehaviour
 {
-    PlayerController playerController;
-    PlayerToolManager playerTool;
-    PhotonView PV;
+    [SerializeField] PlayerController playerController;
+    [SerializeField] PlayerToolManager playerTool;
+    [SerializeField] PhotonView PV;
     Puzzle2Book puzzle2Book;
     Puzzle3Cipher puzzle3Cipher;
 
@@ -14,8 +14,8 @@ public class InteractionManager : MonoBehaviour
 
     private void Start()
     {
+        playerController = GetComponent<PlayerController>();
         PV = GetComponent<PhotonView>();
-        playerController = GetComponentInChildren<PlayerController>();
         playerTool = GetComponent<PlayerToolManager>();
         cameraTrigger = FindAnyObjectByType<CameraTrigger>();
         puzzle2Book = FindAnyObjectByType<Puzzle2Book>();
@@ -24,6 +24,8 @@ public class InteractionManager : MonoBehaviour
 
     private void Update()
     {
+        if (PV.IsMine)
+            Debug.Log(playerController);
         if (isOpen != 0 && Input.GetKeyDown(KeyCode.Escape))
         {
             DeactiveUI(isOpen);
@@ -33,10 +35,9 @@ public class InteractionManager : MonoBehaviour
     // 오픈할 UI를 찾기 위해 Tag들을 비교하는 함수.
     public void CheckForTags(RaycastHit hitInfo)
     {
-        Debug.Log("CheckForTags");
-
         if (hitInfo.collider.CompareTag("Note")) // 퍼즐1번 쪽지 힌트
         {
+            ShowPressKeyInteractionUI();
             if (Input.GetKeyDown(KeyCode.T))
             {
                 Puzzle1Note.ActiveUI();
@@ -47,17 +48,25 @@ public class InteractionManager : MonoBehaviour
          
         else if (hitInfo.collider.CompareTag("ZiplineItem")) // 퍼즐1번 이후 짚라인 아이템
         {
-            Debug.Log("ZiplineItem hit 성공");
-            if (hitInfo.collider.TryGetComponent<ToolPickup>(out ToolPickup toolPickup))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                Debug.Log("toolPickup hit성공");
-                toolPickup.AddToolToPlayer(2);
-                UIManager_Player.Instance.DisableInteractionNotice();
+                if (hitInfo.collider.TryGetComponent<ToolPickup>(out ToolPickup toolPickup))
+                {
+                    toolPickup.AddToolToPlayer(2);
+                    UIManager_Player.Instance.DisableInteractionNotice();
+                }
             }
+        }
+
+        else if (hitInfo.collider.CompareTag("Stair")) // S2에서 미는 계단
+        {
+            ShowHoldKeyInteractionUI();
         }
 
         else if (hitInfo.collider.CompareTag("BookPage2"))
         {
+            ShowPressKeyInteractionUI();
             if (Input.GetKeyDown(KeyCode.T))
             {
                 Puzzle2BookPage1.ActiveUI();
@@ -68,6 +77,7 @@ public class InteractionManager : MonoBehaviour
 
         else if (hitInfo.collider.CompareTag("BookPage2_2"))
         {
+            ShowPressKeyInteractionUI();
             if (Input.GetKeyDown(KeyCode.T))
             {
                 Puzzle2BookPage2.ActiveUI();
@@ -78,6 +88,7 @@ public class InteractionManager : MonoBehaviour
         
         else if (hitInfo.collider.CompareTag("BookPage2_3"))
         {
+            ShowPressKeyInteractionUI();
             if (Input.GetKeyDown(KeyCode.T))
             {
                 Puzzle2BookPage3.ActiveUI();
@@ -86,18 +97,9 @@ public class InteractionManager : MonoBehaviour
             }
         }
 
-        else if (hitInfo.collider.CompareTag("Book2"))
-        {
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                Puzzle2Book.ActiveUI();
-                isOpen = 5;
-                playerController.CursorOn();
-            }
-        }
-
         else if (hitInfo.collider.CompareTag("Note2"))
         {
+            ShowPressKeyInteractionUI();
             if (Input.GetKeyDown(KeyCode.T))
             {
                 Puzzle2Note.ActiveUI();
@@ -108,6 +110,7 @@ public class InteractionManager : MonoBehaviour
 
         else if (hitInfo.collider.CompareTag("Note3"))
         {
+            ShowPressKeyInteractionUI();
             if (Input.GetKeyDown(KeyCode.T))
             {
                 Puzzle3Note.ActiveUI();
@@ -118,89 +121,129 @@ public class InteractionManager : MonoBehaviour
 
         else if (hitInfo.collider.CompareTag("Rope"))
         {
-            if(hitInfo.collider.TryGetComponent<TarzanSwing>(out TarzanSwing tarzanSwing))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                tarzanSwing.StartCoroutine("MoveLampWithPlayer");
+                if (hitInfo.collider.TryGetComponent<TarzanSwing>(out TarzanSwing tarzanSwing))
+                {
+                    tarzanSwing.StartCoroutine("MoveLampWithPlayer");
+                }
             }
         }
 
         else if (hitInfo.collider.CompareTag("Rope2"))
         {
-            if (hitInfo.collider.TryGetComponent<TarzanSwing2>(out TarzanSwing2 tarzanSwing2))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                tarzanSwing2.StartCoroutine("MoveLampWithPlayer");
+                if (hitInfo.collider.TryGetComponent<TarzanSwing2>(out TarzanSwing2 tarzanSwing2))
+                {
+                    tarzanSwing2.StartCoroutine("MoveLampWithPlayer");
+                }
             }
         }
         
         else if (hitInfo.collider.CompareTag("StairButton"))
         {
-            if (hitInfo.collider.TryGetComponent<Puzzle4Button>(out Puzzle4Button puzzle4Button))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                puzzle4Button.UseButton();
+                if (hitInfo.collider.TryGetComponent<Puzzle4Button>(out Puzzle4Button puzzle4Button))
+                {
+                    puzzle4Button.UseButton();
+                }
             }
         }
 
         else if (hitInfo.collider.CompareTag("Lever"))
         {
-            if (hitInfo.collider.TryGetComponent<LeverDown>(out LeverDown leverDown))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                leverDown.UseLever();
+                if (hitInfo.collider.TryGetComponent<LeverDown>(out LeverDown leverDown))
+                {
+                    leverDown.UseLever();
+                }
             }
         }
 
         else if (hitInfo.collider.CompareTag("PushableStone"))
         {
-            if (hitInfo.collider.TryGetComponent<PushableStone>(out PushableStone pushableStone))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                pushableStone.Push(this.transform.position);
+                if (hitInfo.collider.TryGetComponent<PushableStone>(out PushableStone pushableStone))
+                {
+                    pushableStone.Push(this.transform.position);
+                }
             }
         }
 
         else if (hitInfo.collider.CompareTag("BlockMove"))
         {
-            if (hitInfo.collider.TryGetComponent<BlockMove>(out BlockMove blockMove))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                blockMove.Move();
+                if (hitInfo.collider.TryGetComponent<BlockMove>(out BlockMove blockMove))
+                {
+                    blockMove.Move();
+                }
             }
         }
 
         else if (hitInfo.collider.CompareTag("Zipline"))
         {
-            if (hitInfo.collider.TryGetComponent<Zipline>(out Zipline zipline))
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.T))
             {
-                if(zipline.Interact(this.transform, playerController, playerTool.GetCurrentToolIndex()))
+                if (hitInfo.collider.TryGetComponent<Zipline>(out Zipline zipline))
                 {
-                    playerTool.UseTool(2);
+                    if (zipline.Interact(this.transform, playerController, playerTool.GetCurrentToolIndex()))
+                    {
+                        playerTool.UseTool(2);
+                    }
                 }
             }
         }
-    }
 
-    // 암호 입력의 경우 Y키 이므로 PlayerController에서 Y키로 받아오는 함수
-    public void CheckForTags2(RaycastHit hitInfo)
-    {
-        if (hitInfo.collider.CompareTag("Book2"))
+        else if (hitInfo.collider.CompareTag("Book2")) // S2 - Puzzle2 암호 입력 책
         {
-            if (hitInfo.collider.TryGetComponent<Puzzle2Book>(out Puzzle2Book puzzle2Book))
+            ShowPressChipherUI(true);
+            ShowPressKeyInteractionUI();
+            if (Input.GetKeyDown(KeyCode.Y))
             {
-                playerController.CursorOn();
-                playerController.SetCanMove(false);
+                if (hitInfo.collider.TryGetComponent<Puzzle2Book>(out Puzzle2Book puzzle2Book))
+                {
+                    Debug.Log(playerController);
+                    playerController.CursorOn();
+                    playerController.SetCanMove(false);
 
-                StartCoroutine(puzzle2Book.ActivateCipher());  // 코루틴 실행
-                isOpen = 500;
+                    StartCoroutine(puzzle2Book.ActivateCipher());  // 코루틴 실행
+                    isOpen = 500;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Puzzle2Book.ActiveUI();
+                isOpen = 5;
+                playerController.CursorOn();
             }
         }
 
-        if (hitInfo.collider.CompareTag("Puzzle3Cipher"))
+        else if (hitInfo.collider.CompareTag("Puzzle3Cipher"))
         {
-            if (hitInfo.collider.TryGetComponent<Puzzle3Cipher>(out Puzzle3Cipher puzzle3Cipher))
+            ShowPressChipherUI(false);
+            if (Input.GetKeyDown(KeyCode.Y))
             {
-                playerController.CursorOn();
-                playerController.SetCanMove(false);
+                if (hitInfo.collider.TryGetComponent<Puzzle3Cipher>(out Puzzle3Cipher puzzle3Cipher))
+                {
+                    playerController.CursorOn();
+                    playerController.SetCanMove(false);
 
-                if (playerController != null)
-                    StartCoroutine(puzzle3Cipher.ActivateCipher(playerController));  // 코루틴 실행
-                isOpen = 501;
+                    if (playerController != null)
+                        StartCoroutine(puzzle3Cipher.ActivateCipher(playerController));  // 코루틴 실행
+                    isOpen = 501;
+                }
             }
         }
     }
@@ -258,5 +301,30 @@ public class InteractionManager : MonoBehaviour
         playerController.SetCanMove(true);
 
         isOpen = 0;
+    }
+
+
+    void ShowPressKeyInteractionUI()
+    {
+        UIManager_Player.Instance.EnableInteractionNotice();
+    }
+
+
+    void ShowHoldKeyInteractionUI()
+    {
+        UIManager_Player.Instance.EnableInteractionNoticeForHold();
+    }
+
+    void ShowPressChipherUI(bool _bool)
+    {
+        UIManager_Player.Instance.EnableInteractionNoticeForCipher(_bool);
+    }
+
+
+    public void HideAllUI()
+    {
+        UIManager_Player.Instance.DisableInteractionNotice();
+        UIManager_Player.Instance.DisableInteractionNoticeForHold();
+        UIManager_Player.Instance.DisableInteractionNoticeForCipher();
     }
 }

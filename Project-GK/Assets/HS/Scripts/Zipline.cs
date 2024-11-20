@@ -8,8 +8,8 @@ public class Zipline : MonoBehaviour
 {
     PhotonView PV;
 
-    private bool player1Interacted = false; // 플레이어 1 상호작용 여부
-    private bool player2Interacted = false; // 플레이어 2 상호작용 여부
+    [SerializeField] private bool player1Interacted = false; // 플레이어 1 상호작용 여부
+    [SerializeField] private bool player2Interacted = false; // 플레이어 2 상호작용 여부
 
     [SerializeField] private GameObject ZiplineItem;
     [SerializeField] private GameObject ZiplineOutline;
@@ -27,24 +27,20 @@ public class Zipline : MonoBehaviour
 
     public bool Interact(Transform playerTransform, PlayerController playerController, int toolIndex)
     {
-        Debug.Log("Interact 성공" + toolIndex + " " + ZiplineOutline.activeSelf);
         if (ZiplineOutline.activeSelf && toolIndex==2) // 아웃라인이 켜져있을 때       
         {
-            Debug.Log("아웃라인 켜졌을 때 접촉 성공");
             AttachZipline();
             return true;
         }
-        else if (ZiplineItem.activeSelf)
+        else if (ZiplineItem.activeSelf) // Zipline 아이템 부착 후, 상호작용이 가능할 때
         {
-            Debug.Log("ㄴㄴ 돌아가셈");
             AttachPlayer(playerTransform, playerController);
         }
         return false;
     }
     
-    private void AttachZipline()
+    private void AttachZipline() // Zipline 부착 시키는 함수
     {
-        TryGetComponent<PlayerToolManager>(out PlayerToolManager playerToolManager);
         PV.RPC("AttachZiplineRPC", RpcTarget.AllBuffered);
     }
 
@@ -55,20 +51,40 @@ public class Zipline : MonoBehaviour
         ZiplineItem.SetActive(true);
     }
 
-    // 플레이어가 오브젝트와 상호작용할 때 해당 플레이어를 오브젝트의 특정 위치로 이동시키는 함수
-    private void AttachPlayer(Transform playerTransform, PlayerController playerController)
+    private void AttachPlayer(Transform playerTransform, PlayerController playerController) // 플레이어가 오브젝트와 상호작용할 때 해당 플레이어를 오브젝트의 특정 위치로 이동시키는 함수
     {
-        if (playerController.gameObject.CompareTag("PlayerWi") && !player1Interacted)
+        if (!player1Interacted)
         {
             player1Interacted = true;
             // 플레이어 1을 지정된 위치로 이동
             AttachPlayerToPosition(playerTransform, player1AttachPoint.position, playerController);
+            PV.RPC("AttachPlayerRPC", RpcTarget.AllBuffered, 1);
         }
-        else if (playerController.gameObject.CompareTag("PlayerZard") && !player2Interacted)
+        else if (!player2Interacted)
         {
             player2Interacted = true;
             // 플레이어 2를 지정된 위치로 이동
             AttachPlayerToPosition(playerTransform, player2AttachPoint.position, playerController);
+            PV.RPC("AttachPlayerRPC", RpcTarget.AllBuffered, 2);
+        }
+
+        // 두 플레이어가 모두 상호작용했는지 확인
+        if (player1Interacted && player2Interacted)
+        {
+            Move();
+        }
+    }
+
+    [PunRPC]
+    void AttachPlayerRPC(int playerIndex)
+    {
+        if (playerIndex == 1)
+        {
+            player1Interacted = true;
+        }
+        else if (playerIndex == 2)
+        {
+            player2Interacted = true;
         }
 
         // 두 플레이어가 모두 상호작용했는지 확인

@@ -18,6 +18,7 @@ public class Puzzle1Note : MonoBehaviour
         UIManagerInteraction.Instance.PopDownPaper(0);
     }
 
+    /*
     void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
@@ -55,4 +56,5 @@ public class Puzzle1Note : MonoBehaviour
             }
         }
     }
+    */
 }

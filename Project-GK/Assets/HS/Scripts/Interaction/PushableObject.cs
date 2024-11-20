@@ -8,6 +8,7 @@ public class PushableObject : MonoBehaviour
     public LayerMask playerLayer;         // 플레이어 레이어 설정
     public float moveSpeed = 0.1f;          // 오브젝트를 움직일 때 속도
 
+    [SerializeField] private float playerSpeed = 1f;
     [SerializeField] private bool isPlayerNearby = false;
     [SerializeField] private bool isPushing = false;       // 오브젝트를 밀고 있는지 여부
     [SerializeField] private Transform playerTransform;    // 상호작용 중인 플레이어의 트랜스폼
@@ -65,7 +66,6 @@ public class PushableObject : MonoBehaviour
                 {
                     isPlayerNearby = true;
                     playerTransform = other.transform;
-                    UIManager_Player.Instance.EnableInteractionNoticeForHold();
                 }
             }
         }
@@ -87,7 +87,6 @@ public class PushableObject : MonoBehaviour
 
                     isPlayerNearby = false;
                     playerTransform = null;
-                    UIManager_Player.Instance.DisableInteractionNoticeForHold();
                 }
                 players.Remove(playerController);
             }
@@ -104,7 +103,7 @@ public class PushableObject : MonoBehaviour
 
             if (playerController != null)
             {
-                playerController.SetSpeed(2); // 속도를 느리게 바꾼다.
+                playerController.SetSpeed(playerSpeed); // 속도를 느리게 바꾼다.
             }
         }
     }

@@ -59,11 +59,6 @@ public class Puzzle2Book : MonoBehaviour
             if (!players.ContainsKey(playerController))
             {
                 players.Add(playerController, PV);
-                if (PV.IsMine) // Enter한 플레이어에게만.
-                {
-                    UIManager_Player.Instance.EnableInteractionNotice();
-                    UIManager_Player.Instance.EnableInteractionNoticeForCipher(true);
-                }
             }
         }
     }
@@ -76,11 +71,6 @@ public class Puzzle2Book : MonoBehaviour
             PV = playerController.GetComponentInParent<PhotonView>();
             if (players.ContainsKey(playerController))
             {
-                if (PV.IsMine) // Exit한 플레이어에게만.
-                {
-                    UIManager_Player.Instance.DisableInteractionNotice();
-                    UIManager_Player.Instance.DisableInteractionNoticeForCipher();
-                }
                 players.Remove(playerController);
             }
         }
