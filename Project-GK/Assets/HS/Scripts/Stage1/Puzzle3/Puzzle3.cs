@@ -8,15 +8,14 @@ public class Puzzle3 : MonoBehaviour
     PhotonView PV;
 
     private List<Drawer> drawerList;  // Drawer 스크립트가 붙어있는 서랍들의 리스트
-    private List<Drawer> drawerAnswerList;
+    private List<Drawer> drawerFakeList;
     [SerializeField] GameObject StageClearWall;
     [SerializeField] Transform cabinetSetParent;   // 서랍들의 부모 오브젝트를 설정하는 Transform 변수
-    [SerializeField] Transform answerParent;
+    [SerializeField] Transform fakeParent;
 
     // 클리어 이후에
     [SerializeField] Subtitle subtitle;
     [SerializeField] Outline ziplineOutline;
-    [SerializeField] GameObject ziplineTrigger;
 
     [SerializeField] List<GameObject> stairDrawerList; // 스테이지 클리어 후 계단처럼 사용할 서랍들 리스트
 
@@ -24,7 +23,7 @@ public class Puzzle3 : MonoBehaviour
     {
         PV = GetComponent<PhotonView>();
         drawerList = new List<Drawer>(cabinetSetParent.GetComponentsInChildren<Drawer>());
-        drawerAnswerList = new List<Drawer>(answerParent.GetComponentsInChildren<Drawer>());
+        drawerFakeList = new List<Drawer>(fakeParent.GetComponentsInChildren<Drawer>());
     }
 
     [PunRPC]
@@ -51,20 +50,20 @@ public class Puzzle3 : MonoBehaviour
             drawerList[i].CloseDrawer();
         }
 
-        for (int i=0; i<drawerAnswerList.Count; i++)
+        for (int i=0; i<drawerFakeList.Count; i++)
         {
-            drawerAnswerList[i].CloseDrawer();
+            drawerFakeList[i].CloseDrawer();
         }
 
         // 닫히는 사운드 추가
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.5f);
         // 열리는 사운드 추가
 
         for (int i=0; i< stairDrawerList.Count; i++)
         {
             if(stairDrawerList[i].TryGetComponent<Drawer>(out Drawer drawer))
             {
-                drawer.SetDrawer(6, 0, 0);
+                drawer.SetDrawer(3, 0, 0);
                 drawer.enabled = false;
                 drawer.gameObject.tag = "Others"; // Drawer tag 제거로 플레이어 공격에 반응 안 하도록
             }
@@ -74,9 +73,9 @@ public class Puzzle3 : MonoBehaviour
             drawerList[i].enabled = false;
         }
 
-        for (int i = 0; i < drawerAnswerList.Count; i++)
+        for (int i = 0; i < drawerFakeList.Count; i++)
         {
-            drawerAnswerList[i].enabled = false;
+            drawerFakeList[i].enabled = false;
         }
 
         yield return null;

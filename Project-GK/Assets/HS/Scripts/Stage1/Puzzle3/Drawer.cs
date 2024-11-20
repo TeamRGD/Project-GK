@@ -48,8 +48,11 @@ public class Drawer : MonoBehaviour
 
     public void OpenDrawer()
     {
-        openSound.Play();
-        PV.RPC("OpenDrawerRPC", RpcTarget.AllBuffered);
+        if (!isOpen)
+        {
+            openSound.Play();
+            PV.RPC("OpenDrawerRPC", RpcTarget.AllBuffered);
+        }
     }
 
     [PunRPC]
@@ -61,8 +64,11 @@ public class Drawer : MonoBehaviour
 
     public void CloseDrawer()
     {
-        closeSound.Play();
-        PV.RPC("CloseDrawerRPC", RpcTarget.AllBuffered);
+        if (isOpen)
+        {
+            closeSound.Play();
+            PV.RPC("CloseDrawerRPC", RpcTarget.AllBuffered);
+        }
     }
 
     [PunRPC]
