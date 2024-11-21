@@ -26,7 +26,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (PV.IsMine)
             Debug.Log(playerController);
-        if (isOpen != 0 && Input.GetKeyDown(KeyCode.Escape))
+        if (isOpen != 0 && Input.GetKeyDown(KeyCode.Escape) && !cameraTrigger.cameraisMoving)
         {
             DeactiveUI(isOpen);
         }
