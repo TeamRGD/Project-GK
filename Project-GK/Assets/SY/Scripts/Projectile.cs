@@ -12,25 +12,47 @@ public class Projectile : MonoBehaviour
     private WaitForSeconds seconds = new WaitForSeconds(10f);
     PlayerStateManager playerState;
     PhotonView myPV;
+    public GameObject hit;
+    public GameObject projectile;
+    private Rigidbody rb;
 
     void Awake()
     {
         TryGetComponent<PhotonView>(out myPV);
+        rb = GetComponent<Rigidbody>();
     }
 
     void Start()
     {
         DestroyProjectileAfterTime();
     }
+    IEnumerator ActivateAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (myPV.IsMine)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
+    }
+    [PunRPC]
+    void SetActive()
+    {
+        rb.velocity = Vector3.zero;   
+        hit.transform.SetParent(gameObject.transform);
+        hit.SetActive(true);
+        projectile.SetActive(false);
+        StartCoroutine(ActivateAfterDelay(1f));
+    }
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log(myPV.gameObject);
         if (other.CompareTag("Enemy"))
         {
+            myPV.RPC("SetActive",RpcTarget.All);
             PhotonView PV = PhotonView.Find(ownerPhotonViewId);
             if (PV != null && PV.IsMine)
             {
-                PhotonNetwork.Destroy(gameObject);
                 PV.TryGetComponent<PlayerStateManager>(out playerState);
                 if (SceneManager.GetActiveScene().name == "Yggdrasil")
                 {
@@ -54,14 +76,14 @@ public class Projectile : MonoBehaviour
         }
         else if (other.CompareTag("Stone"))
         {
+            myPV.RPC("SetActive",RpcTarget.All);
             BreakableStone stone = other.GetComponent<BreakableStone>();
             stone.TakeDamage(1);
-            PhotonNetwork.Destroy(gameObject);
         }
 
         else if (other.CompareTag("Drawer"))
         {
-            PhotonNetwork.Destroy(gameObject);
+            myPV.RPC("SetActive",RpcTarget.All);
         }
     }
 

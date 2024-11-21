@@ -163,6 +163,8 @@ MonoBehaviour:
   - SetDrawerRPC
   - UpdateToolVisibility
   - AttachPlayerRPC
+  - SetActiveHit
+  - SetActive
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -33,7 +33,7 @@ public class Puzzle1Frame : MonoBehaviour
                 }
 
                 // Projectile 오브젝트 삭제
-                Destroy(other.gameObject);
+                //Destroy(other.gameObject);
 
                 puzzleManager.CheckPuzzleCompletion();
             }
