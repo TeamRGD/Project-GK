@@ -37,6 +37,7 @@ TagManager:
   - BlockMove
   - Zipline
   - Drawer
+  - ect
   layers:
   - Default
   - TransparentFX
