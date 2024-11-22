@@ -5,7 +5,7 @@ public class CameraTrigger : MonoBehaviour
 {
     Camera playerCamera;
     PlayerController playerController;
-    public bool cameraisMoving = false;
+    public bool isCameraMoving = false;
 
     [SerializeField] public float transitionSpeed = 3f;
     [SerializeField] public float waitTime = 0.3f;
@@ -34,10 +34,15 @@ public class CameraTrigger : MonoBehaviour
         StartCoroutine(FocusOnObjectWithParentCamera(playerCamera));
     }
 
+    public bool getIsCameraMoving()
+    {
+        return isCameraMoving;
+    }
+
     // 카메라로 특정 오브젝트를 부드럽게 비추는 코루틴
     private IEnumerator FocusOnObjectWithParentCamera(Camera camera)
     {
-        cameraisMoving = true;
+        isCameraMoving = true;
         Debug.Log("FocusOnObject 실행");
 
         // 목표 회전을 Quaternion으로 변환 (월드 좌표 기준)
@@ -57,7 +62,7 @@ public class CameraTrigger : MonoBehaviour
 
         yield return new WaitForSeconds(waitTime);
         Debug.Log("카메라 움직임 끝");
-        cameraisMoving = false;
+        isCameraMoving = false;
     }
 
     public void InitializeCamera(Camera camera)

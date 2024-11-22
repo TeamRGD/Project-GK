@@ -99,7 +99,7 @@ public class PushableObject : MonoBehaviour
 
         if (playerTransform != null)
         {
-            PlayerController playerController = playerTransform.GetComponent<PlayerController>();
+            PlayerController playerController = playerTransform.GetComponentInParent<PlayerController>();
 
             if (playerController != null)
             {
@@ -114,7 +114,7 @@ public class PushableObject : MonoBehaviour
 
         if (playerTransform != null)
         {
-            PlayerController playerController = playerTransform.GetComponent<PlayerController>();
+            PlayerController playerController = playerTransform.GetComponentInParent<PlayerController>();
 
             if (playerController != null)
             {

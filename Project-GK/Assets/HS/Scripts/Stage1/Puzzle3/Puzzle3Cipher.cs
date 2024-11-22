@@ -9,6 +9,7 @@ public class Puzzle3Cipher : MonoBehaviour
 
     PlayerController playerController;
     PhotonView PV;
+    InteractionManager interactionManager;
 
     [SerializeField] CameraTrigger cameraTrigger;
     [SerializeField] Puzzle3 puzzle3Manager;
@@ -51,6 +52,12 @@ public class Puzzle3Cipher : MonoBehaviour
             PhotonView PV;
             playerController = other.GetComponentInParent<PlayerController>();
             PV = playerController.GetComponentInParent<PhotonView>();
+            interactionManager = other.GetComponentInParent<InteractionManager>();
+            if (interactionManager != null)
+            {
+                interactionManager.cameraTrigger = cameraTrigger;
+            }
+
             if (!players.ContainsKey(playerController))
             {
                 players.Add(playerController, PV);

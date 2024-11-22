@@ -9,6 +9,7 @@ public class Puzzle2Book : MonoBehaviour
 
     PlayerController playerController;
     PhotonView PV;
+    InteractionManager interactionManager;
 
     [SerializeField] GameObject openBook;
     [SerializeField] CameraTrigger cameraTrigger;
@@ -52,10 +53,17 @@ public class Puzzle2Book : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
+        if (other.CompareTag("PlayerWi"))
         {
             playerController = other.GetComponentInParent<PlayerController>();
             PV = playerController.GetComponentInParent<PhotonView>();
+            interactionManager = other.GetComponentInParent<InteractionManager>();
+
+            if (interactionManager != null)
+            {
+                interactionManager.cameraTrigger = cameraTrigger;
+            }
+
             if (!players.ContainsKey(playerController))
             {
                 players.Add(playerController, PV);

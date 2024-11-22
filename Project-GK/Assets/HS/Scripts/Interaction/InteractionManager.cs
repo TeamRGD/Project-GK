@@ -9,24 +9,24 @@ public class InteractionManager : MonoBehaviour
     Puzzle2Book puzzle2Book;
     Puzzle3Cipher puzzle3Cipher;
 
-    [SerializeField] CameraTrigger cameraTrigger;
+    public CameraTrigger cameraTrigger;
     [SerializeField] int isOpen = 0;
+
+    public bool isClosable = true;
 
     private void Start()
     {
         playerController = GetComponent<PlayerController>();
         PV = GetComponent<PhotonView>();
-        playerTool = GetComponent<PlayerToolManager>();
         cameraTrigger = FindAnyObjectByType<CameraTrigger>();
+        playerTool = GetComponent<PlayerToolManager>();
         puzzle2Book = FindAnyObjectByType<Puzzle2Book>();
         puzzle3Cipher = FindAnyObjectByType<Puzzle3Cipher>();
     }
 
     private void Update()
     {
-        if (PV.IsMine)
-            Debug.Log(playerController);
-        if (isOpen != 0 && Input.GetKeyDown(KeyCode.Escape) && !cameraTrigger.cameraisMoving)
+        if (isOpen != 0 && Input.GetKeyDown(KeyCode.Escape))
         {
             DeactiveUI(isOpen);
         }
@@ -210,8 +210,10 @@ public class InteractionManager : MonoBehaviour
         {
             ShowPressChipherUI(true);
             ShowPressKeyInteractionUI();
+            
             if (Input.GetKeyDown(KeyCode.Y))
             {
+                isClosable = false;
                 if (hitInfo.collider.TryGetComponent<Puzzle2Book>(out Puzzle2Book puzzle2Book))
                 {
                     Debug.Log(playerController);
@@ -233,8 +235,10 @@ public class InteractionManager : MonoBehaviour
         else if (hitInfo.collider.CompareTag("Puzzle3Cipher"))
         {
             ShowPressChipherUI(false);
+
             if (Input.GetKeyDown(KeyCode.Y))
             {
+                isClosable = false;
                 if (hitInfo.collider.TryGetComponent<Puzzle3Cipher>(out Puzzle3Cipher puzzle3Cipher))
                 {
                     playerController.CursorOn();
@@ -250,6 +254,14 @@ public class InteractionManager : MonoBehaviour
 
     void DeactiveUI(int index)
     {
+        if(!cameraTrigger.getIsCameraMoving())
+        {
+            isClosable = true;
+        }
+
+        if (!isClosable)
+            return;
+
         if (index == 1)
         {
             Puzzle1Note.DeactiveUI();
@@ -280,8 +292,8 @@ public class InteractionManager : MonoBehaviour
         }
         else if (index == 500)
         {
-            puzzle2Book.DeactivateCipher();
             Camera camera = playerController.GetComponentInChildren<Camera>();
+            puzzle2Book.DeactivateCipher();
             if (camera != null)
             {
                 cameraTrigger.InitializeCamera(camera);
@@ -289,18 +301,18 @@ public class InteractionManager : MonoBehaviour
         }
         else if (index == 501)
         {
-            puzzle3Cipher.DeactivateCipher();
             Camera camera = playerController.GetComponentInChildren<Camera>();
+            puzzle3Cipher.DeactivateCipher();
             if (camera != null)
             {
                 cameraTrigger.InitializeCamera(camera);
             }
         }
-
         playerController.CursorOff();
         playerController.SetCanMove(true);
 
         isOpen = 0;
+
     }
 
 
