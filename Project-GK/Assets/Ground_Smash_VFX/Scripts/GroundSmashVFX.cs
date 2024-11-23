@@ -7,7 +7,6 @@ public class GroundSmashVFX : MonoBehaviour
 
    public GameObject smashFX;
    public GameObject avatar;
-   public AudioSource groundSmashAudio;
 
    private bool castingMagicCheck = false;
    private Animator magicAnim;
@@ -43,7 +42,6 @@ public class GroundSmashVFX : MonoBehaviour
     {
 
         magicAnim.SetBool("smash", true);
-        groundSmashAudio.Play();
 
         // Add a delay if if a casting animation needs to complete first
         yield return new WaitForSeconds(0.0f);  
