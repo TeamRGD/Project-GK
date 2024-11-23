@@ -69,14 +69,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
     public List<GameObject> BookCases;
     public List<GameObject> BookCaseCollisions;
     public List<GameObject> Areas;
+    public List<GameObject> RedAreas;
     public List<GameObject> FootColliders;
 
-    public Material GreenMaterial; // 임시완
-    public Material RedMaterial; // 임시완
-    public Material Temporary; // 임시완
+    public Material GreenMaterial;
+    public Material Temporary;
     public GameObject CipherDevice;
     private Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
-    private Dictionary<Renderer, Material> originalAreaMaterials = new Dictionary<Renderer, Material>();
+
     Renderer bookCaseRenderer;
 
     [HideInInspector] public List<GameObject> PlayerList;
@@ -92,6 +92,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
     GameObject currentFill;
     GameObject currentShockwave;
     GameObject currentDamageCollider;
+
+    public AudioSource[] AudioSources;
 
     BTNode pattern1Tree;
     BTNode pattern2Tree;
@@ -724,6 +726,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
                 yield return new WaitForSeconds(1.5f);
                 StartCoroutine(PlayEffectForDuration(0, transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.3f)));
+                AudioSources[0].Play();
                 yield return new WaitForSeconds(1.5f);
             }
             else if (i == 0 || i == 2)
@@ -737,6 +740,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
                 yield return new WaitForSeconds(1.1f);
                 StartCoroutine(PlayEffectForDuration(0, transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
+                AudioSources[0].Play();
                 yield return new WaitForSeconds(1.9f);
             }
             else
@@ -750,6 +754,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
                 }
                 yield return new WaitForSeconds(1.1f);
                 StartCoroutine(PlayEffectForDuration(0, transform.position + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(2.0f, 1.0f, 1.0f)));
+                AudioSources[0].Play();
                 yield return new WaitForSeconds(1.9f);
             }
         }
@@ -1109,17 +1114,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 if (i != untouchedArea)
                 {
-                    Transform childTransform = Areas[i].transform;
-                    Renderer childRenderer = childTransform.GetComponent<Renderer>();
-                    if (childRenderer != null)
-                    {
-                        if (!originalAreaMaterials.ContainsKey(childRenderer))
-                        {
-                            originalAreaMaterials.Add(childRenderer, childRenderer.material);
-                        }
-
-                        childRenderer.material = RedMaterial;
-                    }
+                    RedAreas[i].SetActive(true);
                 }
             }
         }
@@ -1153,14 +1148,14 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
         else if (idx == 3)
         {
-            foreach (var entry in originalAreaMaterials)
+            for (int i = 0; i < Areas.Count; i++)
             {
-                entry.Key.material = entry.Value;
+                if (i != untouchedArea)
+                {
+                    RedAreas[i].SetActive(false);
+                }
             }
-            originalAreaMaterials.Clear();
-
             attackCount++;
-
             isExecutingAreaAttack = false;
         }
     }
