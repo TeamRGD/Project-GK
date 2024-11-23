@@ -619,7 +619,19 @@ public class Boss1 : MonoBehaviourPunCallbacks
         GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
         spawnedEffect.transform.localScale = scale;
 
-        yield return new WaitForSeconds(duration);
+        Renderer renderer = spawnedEffect.GetComponent<Renderer>();
+        Material material = renderer.material;
+        Color initialColor = material.color;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(initialColor.a, 0f, elapsedTime / duration); 
+            material.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
+            yield return null;
+        }
 
         PhotonNetwork.Destroy(spawnedEffect);
     }
@@ -690,6 +702,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(2.5f);
 
+        Vector3 tmpPosition = transform.position;
+        tmpPosition.y = -0.85f;
+        StartCoroutine(PlayEffectForDuration(2, tmpPosition + transform.forward * 8.0f, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 2.0f, transform.position + transform.forward * 8.0f, 2.0f));
         yield return new WaitForSeconds(3.0f);
