@@ -840,8 +840,10 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "ArmSlamAndGetEnergy");
         }
-        
-        yield return new WaitForSeconds(8.0f);
+
+        yield return new WaitForSeconds(4.0f);
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
+        yield return new WaitForSeconds(4.0f);
     }
 
     [PunRPC]
@@ -1061,6 +1063,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.8f);
 
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
+        photonView.RPC("CameraShakeRPC", RpcTarget.All);
 
         yield return new WaitForSeconds(3.0f);
     }
