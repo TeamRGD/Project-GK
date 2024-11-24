@@ -15,6 +15,11 @@ public class TarzanSwing : MonoBehaviour
     [SerializeField] Transform objectToAttach;    // 플레이어가 붙을 오브젝트 트랜스폼
     [SerializeField] AudioSource ropeSound;
 
+    [SerializeField] Vector3 startPosition;
+    [SerializeField] Vector3 startRotation;
+    [SerializeField] Vector3 targetPosition;
+    [SerializeField] Vector3 targetRotation;
+
     private Transform originalParent;   // 플레이어의 원래 부모 트랜스폼 (부모가 없을 경우 null일 수 있음)
     RotateObjectByAngle rotateObjectByAngle;
 
@@ -42,11 +47,17 @@ public class TarzanSwing : MonoBehaviour
     {
         // 플레이어를 오브젝트의 자식으로 설정
         playerController.SetCanMove(false);
-        player.parent = objectToAttach;
-        player.localPosition = new Vector3(0f, -6f, 0f);
         rigidbody = player.GetComponentInParent<Rigidbody>();
         rigidbody.useGravity = false;
-        player.localRotation = Quaternion.Euler(15f, 0f, 0f);
+        photonView.RPC("AttachPlayerRPC", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    void AttachPlayerRPC()
+    {
+        player.parent = objectToAttach;
+        player.localPosition = startPosition; //new Vector3(0f, -4.4f, 0f);
+        player.localRotation = Quaternion.Euler(startRotation);//15f, 0f, 0f);
     }
 
     private void DetachPlayer()
@@ -54,8 +65,8 @@ public class TarzanSwing : MonoBehaviour
         player.parent = null; // 부모가 없었으면 null로 설정 (최상위 객체로 돌아감)
         rigidbody.useGravity = true;
         playerController.SetCanMove(true);
-        player.position = new Vector3(77f, 25f, -17f); 
-        player.rotation = Quaternion.Euler(0f, 90f, 0f);
+        player.position = targetPosition; //new Vector3(77f, 25f, -17f); 
+        player.rotation = Quaternion.Euler(targetRotation); //Quaternion.Euler(0f, 90f, 0f);
     }
 
     public void ComeToPlayer()
