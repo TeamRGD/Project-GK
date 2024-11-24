@@ -5,13 +5,18 @@ using Photon.Pun;
 public class StairMovement : MonoBehaviour
 {
     PhotonView PV;
-    bool isAppear;
-    [SerializeField] private float moveDuration = 1f; // 이동 시간
+    public bool isAppear;
+    [SerializeField] float moveDuration = 1f; // 이동 시간
     [SerializeField] Transform destination;
     [SerializeField] Transform originTransform;
     [SerializeField] AudioSource stoneSound;
 
     private Coroutine currentMoveCoroutine;
+
+    public float getMoveDuration()
+    {
+        return moveDuration;
+    }
 
     private void Start()
     {
@@ -55,7 +60,6 @@ public class StairMovement : MonoBehaviour
             }
 
             transform.position = destination.position; // 이동 보정
-
         }
         else
         {
