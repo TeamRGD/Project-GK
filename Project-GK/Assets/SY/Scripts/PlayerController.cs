@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
         CursorOff();
 
         // Interaction
-        interactionManager = FindObjectOfType<InteractionManager>();
+        interactionManager = GetComponent<InteractionManager>();
 
         // Boss에 Player 배정
         if(SceneManager.GetActiveScene().name == "Yggdrasil")
@@ -443,7 +443,7 @@ public class PlayerController : MonoBehaviour
 
     void CheckForInteractable(Ray ray)
     {
-        Physics.queriesHitTriggers = false;
+        Physics.queriesHitTriggers = false; // 보스 맵이면 변수 하나 주고 주석 처리 + true로 바꿔서 쓰면 될 듯.
         if (Physics.Raycast(ray, out hitInfo, interactionRange, interactableLayer))
         {
             // 이전에 활성화된 Outline이 있다면 비활성화

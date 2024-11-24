@@ -12,16 +12,16 @@ public class InteractionManager : MonoBehaviour
     public CameraTrigger cameraTrigger;
     [SerializeField] int isOpen = 0;
 
-    public bool isClosable = true;
+    bool isClosable = true;
 
     private void Start()
     {
-        playerController = GetComponent<PlayerController>();
         PV = GetComponent<PhotonView>();
         cameraTrigger = FindAnyObjectByType<CameraTrigger>();
         playerTool = GetComponent<PlayerToolManager>();
         puzzle2Book = FindAnyObjectByType<Puzzle2Book>();
         puzzle3Cipher = FindAnyObjectByType<Puzzle3Cipher>();
+        playerController = GetComponentInParent<PlayerController>();
     }
 
     private void Update()
