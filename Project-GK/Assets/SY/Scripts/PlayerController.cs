@@ -158,6 +158,11 @@ public class PlayerController : MonoBehaviour
             aim.position = new Vector3(aim.position.x, -13f, aim.position.z);
         Look();
 
+        if (GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive() && GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive())
+        {
+            GameOverManager.EnableGameOver();
+        }
+
         if (canControl)
         {
             Move();
@@ -665,6 +670,8 @@ public class PlayerController : MonoBehaviour
     [PunRPC]
     void CutSceneRPC()
     {
+        GameObject cutSceneCanvas = GameObject.Find("CutSceneCanvas");
+        cutSceneCanvas.SetActive(true);
         renderTexture.Release();
         cutScenePlayer.Play();
         AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
