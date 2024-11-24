@@ -64,6 +64,8 @@ public class PlayerController : MonoBehaviour
     RenderTexture renderTexture;
     private bool triggered;
 
+    private bool gameOvered;
+
     void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -76,6 +78,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        gameOvered = false;
         // 플레이어 초기 방향 설정
         this.transform.rotation = Quaternion.Euler(0, 270, 0);
 
@@ -158,11 +161,6 @@ public class PlayerController : MonoBehaviour
             aim.position = new Vector3(aim.position.x, -13f, aim.position.z);
         Look();
 
-        if (GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive() && GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive())
-        {
-            GameOverManager.EnableGameOver();
-        }
-
         if (canControl)
         {
             Move();
@@ -170,6 +168,15 @@ public class PlayerController : MonoBehaviour
         }
             
         ForDebug();
+    }
+
+    void LateUpdate()
+    {
+        if (!GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive() && !GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive() && !gameOvered)
+        {
+            gameOvered = true;
+            GameOverManager.EnableGameOver();
+        }
     }
 
     void ForDebug()
