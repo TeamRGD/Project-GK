@@ -172,10 +172,15 @@ public class PlayerController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (!GameObject.Find("Wi(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive() && !GameObject.Find("Zard(Clone)").GetComponent<PlayerController>().playerState.GetIsAlive() && !gameOvered)
+        GameObject wiClone = GameObject.Find("Wi(Clone)");
+        GameObject zardClone = GameObject.Find("Zard(Clone)");
+        if (wiClone != null && zardClone != null)
         {
-            gameOvered = true;
-            GameOverManager.EnableGameOver();
+            if (!wiClone.GetComponent<PlayerController>().playerState.GetIsAlive() && !zardClone.GetComponent<PlayerController>().playerState.GetIsAlive() && !gameOvered) 
+            {
+                gameOvered = true;
+                GameOverManager.EnableGameOver();
+            }
         }
     }
 
