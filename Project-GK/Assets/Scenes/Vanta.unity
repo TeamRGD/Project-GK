@@ -2129,6 +2129,7 @@ MonoBehaviour:
   magicCircleCount: 0
   attackOrderCount: 0
   canControlSpeed: 0
+  Light: {fileID: 13710331}
   AttackIndicators:
   - {fileID: 8244578177886748486, guid: d378c38c9462d7f48a46dc6142990057, type: 3}
   - {fileID: 6197301155000544402, guid: 26ca77827efb6be4696423fb9e52dbae, type: 3}

@@ -50,6 +50,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     bool isStarted = false;
 
+    public GameObject Light;
+
     public List<GameObject> AttackIndicators;
     public List<GameObject> AttackFills;
     public List<GameObject> DamageColliders;
@@ -1042,7 +1044,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         Vector3 center = new Vector3(0, 0, 0);
         float radius = 15.0f;
 
-        for (int n = 0; n < 8; n++)
+        for (int n = 0; n < 4; n++)
         {
             Vector3 targetPosition = GetRandomPosition(center, radius);
             IEnumerator randomAttack = GetRandomAttack();
@@ -1064,38 +1066,13 @@ public class Boss2 : MonoBehaviourPunCallbacks
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar1");
         yield return new WaitForSeconds(3.0f);
 
+        Light.SetActive(false);
+
         for (int i = 0; i < Torches.Count; i++)
         {
             photonView.RPC("SetActiveTorchesRPC", RpcTarget.All, i, false);
         }
     }
-
-    //void DrawCircle(Vector3 center, float radius)
-    //{
-    //    if (lineRenderer == null)
-    //    {
-    //        // LineRenderer가 없다면, 동적으로 추가
-    //        GameObject lineObj = new GameObject("Circle");
-    //        lineRenderer = lineObj.AddComponent<LineRenderer>();
-    //    }
-
-    //    lineRenderer.positionCount = segments + 1;  // 원의 각 점들을 위한 위치 설정
-    //    lineRenderer.useWorldSpace = true;          // 월드 좌표계 사용
-    //    lineRenderer.startWidth = 0.1f;             // 선의 너비 설정
-    //    lineRenderer.endWidth = 0.1f;               // 선의 너비 설정
-
-    //    float angle = 0f;
-    //    for (int i = 0; i < (segments + 1); i++)
-    //    {
-    //        float x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
-    //        float z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
-
-    //        Vector3 pos = new Vector3(center.x + x, center.y, center.z + z);
-    //        lineRenderer.SetPosition(i, pos);  // 각 점을 LineRenderer에 설정
-
-    //        angle += (360f / segments);
-    //    }
-    //}
 
     Vector3 GetRandomPosition(Vector3 center, float radius)
     {
@@ -1199,6 +1176,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     IEnumerator Roar()
     {
         Debug.Log("Roar");
+        Light.SetActive(true);
         yield return new WaitForSeconds(3.0f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar0");
         yield return new WaitForSeconds(3.0f);
@@ -1349,10 +1327,12 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             if (collision.gameObject.CompareTag("Projectile_Wi"))
             {
+                print(33333);
                 playerOrder[attackOrderCount] = 1;
             }
             else if (collision.gameObject.CompareTag("Projectile_Zard"))
             {
+                print(44444);
                 playerOrder[attackOrderCount] = 2;
             }
         }
