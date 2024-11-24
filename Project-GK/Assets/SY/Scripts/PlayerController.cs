@@ -683,7 +683,10 @@ public class PlayerController : MonoBehaviour
     void CutSceneRPC()
     {
         GameObject cutSceneCanvas = GameObject.Find("CutSceneCanvas");
-        cutSceneCanvas.SetActive(true);
+        if (cutSceneCanvas != null)
+        {
+            cutSceneCanvas.SetActive(true);
+        }
         renderTexture.Release();
         cutScenePlayer.Play();
         AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
