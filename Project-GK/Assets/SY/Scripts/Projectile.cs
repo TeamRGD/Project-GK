@@ -86,6 +86,10 @@ public class Projectile : MonoBehaviour
             {
                 myPV.RPC("SetActive",RpcTarget.All);
             }
+            else
+            {
+                myPV.RPC("SetActive",RpcTarget.All);
+            }
         }
     }
 
