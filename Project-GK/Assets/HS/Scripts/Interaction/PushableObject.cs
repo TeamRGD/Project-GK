@@ -30,15 +30,20 @@ public class PushableObject : MonoBehaviour
             // T키가 눌려 있는 동안만 isPushing을 true로 유지
             if (Input.GetKey(KeyCode.T))
             {
+                Animator animator = playerTransform.GetComponentInParent<Animator>();
+                animator.SetBool("isPushing", true);
                 if (!isPushing) // 처음 눌렸을 때만 StartPushing 호출
                 {
+                    animator.SetBool("trigger", true);
                     StartPushing();
                 }
             }
             else
             {
+                Animator animator = playerTransform.GetComponentInParent<Animator>();
                 if (isPushing) // T키를 떼면 StopPushing 호출
                 {
+                    animator.SetBool("isPushing", false);
                     StopPushing();
                 }
             }

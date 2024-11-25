@@ -1174,6 +1174,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 1
     Name: trigger
+  - Type: 4
+    SynchronizeType: 1
+    Name: isPushing
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0
