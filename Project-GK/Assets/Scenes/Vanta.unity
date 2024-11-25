@@ -738,7 +738,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
-  - {fileID: 1531729722}
+  - {fileID: 1224752971}
+  - {fileID: 230525548}
+  - {fileID: 1643831674}
 --- !u!1001 &41204243
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11016,8 +11018,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
-  - {fileID: 1224752971}
-  - {fileID: 1643831674}
+  - {fileID: 985880789}
+  - {fileID: 1892435158}
 --- !u!1 &713137546
 GameObject:
   m_ObjectHideFlags: 0
@@ -11644,9 +11646,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
-  - {fileID: 1904646381}
   - {fileID: 1892435158}
-  - {fileID: 230525548}
+  - {fileID: 1643831674}
 --- !u!1 &736889601 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3744133877081091469, guid: a2a060732547fe64581bb0cb3c2bdf1d, type: 3}
@@ -22805,8 +22806,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
+  - {fileID: 210018246}
+  - {fileID: 1531729722}
   - {fileID: 1904646381}
-  - {fileID: 1892435158}
 --- !u!4 &1336422022 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2517341323244566781, guid: 5207e662ce023fa40b58ea9492710c36, type: 3}
@@ -27710,6 +27712,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
+  - {fileID: 210018246}
   - {fileID: 230525548}
 --- !u!1 &1610060137
 GameObject:
@@ -31466,8 +31469,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
-  - {fileID: 210018246}
+  - {fileID: 1224752971}
   - {fileID: 985880789}
+  - {fileID: 1904646381}
 --- !u!1001 &1875966617
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33862,7 +33866,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
-  - {fileID: 210018246}
+  - {fileID: 985880789}
+  - {fileID: 1643831674}
 --- !u!1 &1982237150
 GameObject:
   m_ObjectHideFlags: 0
@@ -34971,8 +34976,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedTorches:
-  - {fileID: 985880789}
+  - {fileID: 1224752971}
   - {fileID: 1531729722}
+  - {fileID: 1904646381}
 --- !u!1 &2032052572
 GameObject:
   m_ObjectHideFlags: 0
