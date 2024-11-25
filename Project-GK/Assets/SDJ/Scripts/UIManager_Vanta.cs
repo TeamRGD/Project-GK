@@ -65,7 +65,7 @@ public class UIManager_Vanta : MonoBehaviour
     public void ResetAttackNode(List<int> order)
     {
         attackNodeContainer.GetComponent<CanvasGroup>().DOFade(0, 0.25f).SetEase(Ease.OutSine);
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 8; i++)
         {
             attackNodeContainer.transform.GetChild(i).GetComponent<Image>().sprite = attackNodes[order[i] - 1];
             attackNodeContainer.transform.GetChild(i).GetComponent<Image>().DOFade(1f, 0.01f).SetDelay(0.25f);
