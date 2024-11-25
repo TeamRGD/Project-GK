@@ -13,8 +13,6 @@ using DG.Tweening;
 public class Boss2 : MonoBehaviourPunCallbacks
 {
     #region variables
-    //public LineRenderer lineRenderer;  // LineRenderer를 에디터에서 설정할 수 있도록 공개 변수로 설정
-    //public int segments = 100;  // 원을 그리기 위한 점의 수 (세그먼트)
     float maxHealth = 100;
     float currentHealth;
     float moveSpeed = 10.0f;
@@ -1300,7 +1298,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
             Debug.Log("DamageAllMap");
 
             photonView.RPC("CameraShakeRPC", RpcTarget.All);
-            StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 0, 0)));
+            StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 1, 0)));
 
             attackOrderCount = 0;
             canDisplay = true;
