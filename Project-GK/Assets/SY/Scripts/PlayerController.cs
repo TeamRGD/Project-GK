@@ -66,6 +66,8 @@ public class PlayerController : MonoBehaviour
 
     private bool gameOvered;
 
+    private GameObject cutSceneCanvas;
+
     void Awake()
     {
         TryGetComponent<Rigidbody>(out rb);
@@ -78,6 +80,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        cutSceneCanvas = GameObject.Find("CutSceneCanvas");
         Physics.queriesHitTriggers = true;
         gameOvered = false;
         // 플레이어 초기 방향 설정
@@ -138,6 +141,7 @@ public class PlayerController : MonoBehaviour
     {
         while (!isStarted)
         {
+            cutSceneCanvas.SetActive(false);
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
             if (playerManagers.Length == 2)
             {
@@ -683,11 +687,7 @@ public class PlayerController : MonoBehaviour
     [PunRPC]
     void CutSceneRPC()
     {
-        GameObject cutSceneCanvas = GameObject.Find("CutSceneCanvas");
-        if (cutSceneCanvas != null)
-        {
-            cutSceneCanvas.SetActive(true);
-        }
+        cutSceneCanvas.SetActive(true);
         renderTexture.Release();
         cutScenePlayer.Play();
         AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
