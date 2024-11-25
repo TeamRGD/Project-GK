@@ -141,7 +141,10 @@ public class PlayerController : MonoBehaviour
     {
         while (!isStarted)
         {
-            cutSceneCanvas.SetActive(false);
+            if (cutSceneCanvas  != null)
+            {
+                cutSceneCanvas.SetActive(false);
+            }
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
             if (playerManagers.Length == 2)
             {
@@ -687,7 +690,10 @@ public class PlayerController : MonoBehaviour
     [PunRPC]
     void CutSceneRPC()
     {
-        cutSceneCanvas.SetActive(true);
+        if (cutSceneCanvas != null)
+        {
+            cutSceneCanvas.SetActive(true);
+        }
         renderTexture.Release();
         cutScenePlayer.Play();
         AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
