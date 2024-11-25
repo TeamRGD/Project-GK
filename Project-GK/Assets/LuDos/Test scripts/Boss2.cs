@@ -39,6 +39,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     Coroutine shockwaveCoroutine;
     Coroutine jumpToPositionCoroutine;
     Coroutine currentAttackCoroutine;
+    Coroutine dashCoroutine;
 
     bool canDisplay = true;
     [HideInInspector] public bool canControlSpeed = false;
@@ -63,7 +64,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     public List<GameObject> Effects;
 
     List<Vector3> storedPositions = new List<Vector3>();
-    List<IEnumerator> storedAttacks = new List<IEnumerator>();
+    List<int> storedAttacks = new List<int>();
 
     [HideInInspector] public List<int> correctOrder = new List<int>();
     List<int> playerOrder = new List<int>();
@@ -470,6 +471,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
             StopCoroutine(jumpToPositionCoroutine);
             jumpToPositionCoroutine = null;
         }
+        else if (dashCoroutine != null)
+        {
+            StopCoroutine(dashCoroutine);
+            dashCoroutine = null;
+        }
 
         if (currentIndicator != null)
         {
@@ -663,6 +669,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator ShortDashAndSlash()
     {
+        Debug.Log("ShortDashAndSlash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -710,6 +717,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator DoubleDash()
     {
+        Debug.Log("DoubleDash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -777,6 +785,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator JawSlamWithShockwave()
     {
+        Debug.Log("JawSlamWithShockwave");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -805,6 +814,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator SpinAndTargetSmash()
     {
+        Debug.Log("SpinAndTargetSmash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -833,6 +843,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator RoarAndSmash()
     {
+        Debug.Log("RoarAndSmash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -865,6 +876,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator FocusAndLinearShockwave()
     {
+        Debug.Log("FocusAndLinearShockwave");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -1033,10 +1045,44 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
     }
 
+    Vector3 GetRandomPosition(Vector3 center, float radius)
+    {
+        Vector3 randomPoint = Random.insideUnitCircle * radius;
+        //DrawCircle(center, radius); // 범위 확인용
+        return new Vector3(center.x + randomPoint.x, center.y, center.z + randomPoint.z);
+    }
+
+
+    IEnumerator ExcuteAttack(int attackType)
+    {
+        if (attackType == 1)
+        {
+            yield return StartCoroutine(ShortDashAndSlash());
+        }
+        else if (attackType == 2)
+        {
+            yield return StartCoroutine(DoubleDash());
+        }
+        else if (attackType == 3)
+        {
+            yield return StartCoroutine(JawSlamWithShockwave());
+        }
+        else if (attackType == 4)
+        {
+            yield return StartCoroutine(SpinAndTargetSmash());
+        }
+        else if (attackType == 5)
+        {
+            yield return StartCoroutine(RoarAndSmash());
+        }
+        else if (attackType == 6)
+        {
+            yield return StartCoroutine(FocusAndLinearShockwave());
+        }
+    }
+
     IEnumerator MoveAndAttack()
     {
-        Debug.Log("MoveAndAttack");
-
         yield return new WaitForSeconds(3.0f);
 
         Vector3 center = new Vector3(0, 0, 0);
@@ -1045,17 +1091,16 @@ public class Boss2 : MonoBehaviourPunCallbacks
         for (int n = 0; n < 4; n++)
         {
             Vector3 targetPosition = GetRandomPosition(center, radius);
-            IEnumerator randomAttack = GetRandomAttack();
+            int attackType = UnityEngine.Random.Range(1, 7);
 
             storedPositions.Add(targetPosition);
-            storedAttacks.Add(randomAttack);
+            storedAttacks.Add(attackType);
 
             yield return JumpToPosition(targetPosition);
-            yield return StartCoroutine(randomAttack);
+            yield return StartCoroutine(ExcuteAttack(attackType));
             yield return new WaitForSeconds(1.0f);
         }
     }
-
 
     IEnumerator RoarAndExtinguishAllTorches()
     {
@@ -1069,36 +1114,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
         for (int i = 0; i < Torches.Count; i++)
         {
             photonView.RPC("SetActiveTorchesRPC", RpcTarget.All, i, false);
-        }
-    }
-
-    Vector3 GetRandomPosition(Vector3 center, float radius)
-    {
-        Vector3 randomPoint = Random.insideUnitCircle * radius;
-        //DrawCircle(center, radius); // 범위 확인용
-        return new Vector3(center.x + randomPoint.x, center.y, center.z + randomPoint.z);
-    }
-
-
-    IEnumerator GetRandomAttack()
-    {
-        int attackType = UnityEngine.Random.Range(1, 7);
-        switch (attackType)
-        {
-            case 1:
-                return ShortDashAndSlash();
-            case 2:
-                return DoubleDash();
-            case 3:
-                return JawSlamWithShockwave();
-            case 4:
-                return SpinAndTargetSmash();
-            case 5:
-                return RoarAndSmash();
-            case 6:
-                return FocusAndLinearShockwave();
-            default:
-                return ShortDashAndSlash();
         }
     }
 
@@ -1148,10 +1163,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         if (bossAttackCount < storedAttacks.Count)
         {
-            IEnumerator storedAttack = storedAttacks[bossAttackCount];
-            yield return StartCoroutine(storedAttack);
-
-            Debug.Log("bossAttackCount: " + bossAttackCount);
+            yield return StartCoroutine(ExcuteAttack(storedAttacks[bossAttackCount]));
 
             bossAttackCount++;
             yield return new WaitForSeconds(1.0f);
@@ -1230,7 +1242,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             Debug.Log("DashAttack");
 
-            StartCoroutine(Dash());
+            dashCoroutine = StartCoroutine(Dash());
         }
         return true;
     }
@@ -1270,13 +1282,14 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void DisplayOrderOnUI(int[] orderArray)
     {
         List<int> order = new List<int>(orderArray);
+        Debug.Log("Correct Order: " + string.Join(", ", order));
         UIManager_Vanta.Instance.EnableAttackNode();
         UIManager_Vanta.Instance.ResetAttackNode(order);
     }
 
     bool CheckPlayerAttackOrder()
     {
-        if (playerOrder[attackOrderCount] != 0)
+        if (playerOrder[attackOrderCount] != 0 && attackOrderCount < 8)
         {
             if (playerOrder[attackOrderCount] == correctOrder[attackOrderCount])
             {
@@ -1293,7 +1306,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     bool DamageAllMap()
     {
-        if (playerOrder[attackOrderCount] != 0)
+        if (playerOrder[attackOrderCount] != 0 && attackOrderCount < 8)
         {
             Debug.Log("DamageAllMap");
 
