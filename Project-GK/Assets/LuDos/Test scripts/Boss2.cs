@@ -298,8 +298,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     bool SetGroggy()
     {
-        Debug.Log("SetGroggy");
-
         isGroggy = true;
 
         photonView.RPC("SetGroggyRPC", RpcTarget.All);
@@ -365,7 +363,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     void Die()
     {
-        Debug.Log("Die");
         photonView.RPC("DieRPC", RpcTarget.All);
     }
 
@@ -563,8 +560,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (!isExecutingAttack)
         {
-            Debug.Log("RandomBasicAttack");
-
             int attackType = UnityEngine.Random.Range(1, 7);
             // int attackType = 1;
 
@@ -669,7 +664,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator ShortDashAndSlash()
     {
-        Debug.Log("ShortDashAndSlash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -717,7 +711,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator DoubleDash()
     {
-        Debug.Log("DoubleDash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -785,7 +778,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator JawSlamWithShockwave()
     {
-        Debug.Log("JawSlamWithShockwave");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -814,7 +806,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator SpinAndTargetSmash()
     {
-        Debug.Log("SpinAndTargetSmash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -843,7 +834,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator RoarAndSmash()
     {
-        Debug.Log("RoarAndSmash");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -876,7 +866,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator FocusAndLinearShockwave()
     {
-        Debug.Log("FocusAndLinearShockwave");
         isExecutingAttack = true;
         //LightFoots(0);
 
@@ -974,7 +963,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator SpinAndExtinguishAllTorches()
     {
-        Debug.Log("SpinAndExtinguishTorches");
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "QuickSpin");
 
         yield return new WaitForSeconds(4.0f);
@@ -994,8 +982,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     void LightMagicCircle()
     {
-        Debug.Log("LightMagicCircle");
-
         for (int i = 0; i < MagicCircles.Count; i++)
         {
             photonView.RPC("SetActiveLightMagicCircleRPC", RpcTarget.All, i, true);
@@ -1035,8 +1021,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     // 패턴 2
     void LightFourTorches()
     {
-        Debug.Log("LightFourTorches");
-
         cooltime -= 3.0f;
 
         for (int i = 0; i < 4; i++)
@@ -1104,8 +1088,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator RoarAndExtinguishAllTorches()
     {
-        Debug.Log("RoarAndExtinguishAllTorches");
-
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar1");
         yield return new WaitForSeconds(3.0f);
 
@@ -1147,8 +1129,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator JumpToStoredPosition()
     {
-        Debug.Log("JumpToStoredPosition");
-
         if (bossAttackCount < storedPositions.Count)
         {
             Vector3 targetPosition = storedPositions[bossAttackCount];
@@ -1159,8 +1139,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator PerformStoredAttack()
     {
-        Debug.Log("PerformStoredAttack");
-
         if (bossAttackCount < storedAttacks.Count)
         {
             yield return StartCoroutine(ExcuteAttack(storedAttacks[bossAttackCount]));
@@ -1175,8 +1153,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (bossAttackCount >= storedPositions.Count)
         {
-            Debug.Log("ResetBossAttackCount");
-
             bossAttackCount = 0;
         }
         return true;
@@ -1185,7 +1161,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     // 패턴 3
     IEnumerator Roar()
     {
-        Debug.Log("Roar");
         Light.SetActive(true);
         yield return new WaitForSeconds(3.0f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar0");
@@ -1198,8 +1173,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
     IEnumerator Dash()
     {
-        Debug.Log("Dash");
-
         isExecutingAttack = true;
 
         yield return new WaitForSeconds(1.0f);
@@ -1240,8 +1213,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (!isExecutingAttack)
         {
-            Debug.Log("DashAttack");
-
             dashCoroutine = StartCoroutine(Dash());
         }
         return true;
@@ -1251,8 +1222,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (canDisplay)
         {
-            Debug.Log("DisplayAttackOrder");
-            
             playerOrder = new List<int> { 0, 0, 0, 0, 0, 0, 0, 0 };
             correctOrder = new List<int> { 1, 1, 1, 1, 2, 2, 2, 2 };
             // correctOrder = new List<int> { 1, 1, 1, 1, 1, 1, 1, 1 }; // 임시완. 실험용
@@ -1308,8 +1277,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (playerOrder[attackOrderCount] != 0 && attackOrderCount < 8)
         {
-            Debug.Log("DamageAllMap");
-
             photonView.RPC("CameraShakeRPC", RpcTarget.All);
             StartCoroutine(MakeDamageCollider(1, 40f, new Vector3(0, 1, 0)));
 
@@ -1323,9 +1290,6 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (attackOrderCount >= 8)
         {
-            Debug.Log("IncrementSuccessCount");
-            Debug.Log("SuccessCount: " + successCount);
-
             successCount++;
             canDisplay = true;
         }
