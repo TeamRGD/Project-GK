@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5833547605680017017}
   - component: {fileID: -8067410544287466992}
   - component: {fileID: 9097454073298374156}
+  - component: {fileID: 6970078824604667621}
   m_Layer: 0
   m_Name: WindBullet
   m_TagString: Untagged
@@ -175,6 +176,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!135 &6970078824604667621
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2268428576765071778}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 1.2}
 --- !u!1001 &5736760233935225322
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -328,7 +350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4429223407022416810, guid: 67fe4ff493f9cd54fb27509991fb7b65, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.51299995
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4429223407022416810, guid: 67fe4ff493f9cd54fb27509991fb7b65, type: 3}
       propertyPath: m_LocalRotation.w
@@ -525,9 +547,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8063342388960123554}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 315027223739610927, guid: afd9423e0344bc34ebfac6de045f83b4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1000883444669952539}
     - targetCorrespondingSourceObject: {fileID: 2340711863287571856, guid: afd9423e0344bc34ebfac6de045f83b4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1722838102521828920}
@@ -564,24 +583,3 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 315027223739610927, guid: afd9423e0344bc34ebfac6de045f83b4, type: 3}
   m_PrefabInstance: {fileID: 8433464326698984645}
   m_PrefabAsset: {fileID: 0}
---- !u!135 &1000883444669952539
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8166887083005301738}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.05
-  m_Center: {x: 0, y: 0, z: -0.05}

@@ -78,6 +78,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        Physics.queriesHitTriggers = true;
         gameOvered = false;
         // 플레이어 초기 방향 설정
         this.transform.rotation = Quaternion.Euler(0, 270, 0);

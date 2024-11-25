@@ -46,7 +46,7 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("ect"))
+        if (!other.CompareTag("ect") && !other.CompareTag("Stair"))
         {
             if (other.CompareTag("Enemy"))
             {
@@ -84,7 +84,18 @@ public class Projectile : MonoBehaviour
 
             else if (other.CompareTag("Drawer"))
             {
+                Drawer drawer = other.GetComponent<Drawer>();
+                drawer.isAvailable = false;
+                if (!drawer.isOpen)
+                {
+                    drawer.OpenDrawer();
+                }
+                else if(drawer.isOpen)
+                {
+                    drawer.CloseDrawer();
+                }
                 myPV.RPC("SetActive",RpcTarget.All);
+                drawer.isAvailable = true;
             }
             else
             {
@@ -130,7 +141,6 @@ public class Projectile : MonoBehaviour
     [PunRPC]
     void SetTag(string tag)
     {
-        Transform projectile = transform.Find("WindBulletProjectile");
-        projectile.gameObject.tag = tag;
+        transform.gameObject.tag = tag;
     }
 }

@@ -113,11 +113,11 @@ public class PlayerAttack : MonoBehaviour
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
             Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            ray.origin = playerBody.TransformPoint(new Vector3(0, 2f, 1f));
+            //ray.origin = projectileSpawnPoint.position;
 
             Vector3 targetPoint = Vector3.zero;
-
-            Debug.DrawRay(ray.origin, ray.direction * maxRayDistance, Color.red, 2f);
+            
+            Debug.DrawRay(ray.origin, ray.direction*100f, Color.red, 50f);
             if (Physics.Raycast(ray, out RaycastHit hit, maxRayDistance))
             {
                 targetPoint = hit.point;
@@ -128,6 +128,7 @@ public class PlayerAttack : MonoBehaviour
             }
 
             Vector3 direction = (targetPoint - projectileSpawnPoint.position).normalized;
+            Debug.DrawRay(projectileSpawnPoint.position, direction*100f, Color.green, 50f);
 
             if (!isUltimate)
             {
