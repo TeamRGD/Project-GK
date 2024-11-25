@@ -621,21 +621,28 @@ public class Boss1 : MonoBehaviourPunCallbacks
         GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
         spawnedEffect.transform.localScale = scale;
 
-        Renderer renderer = spawnedEffect.GetComponent<MeshRenderer>();
-        Material material = renderer.material;
-        Color initialColor = material.color;
-
-        float elapsedTime = 0f;
-
-        while (elapsedTime < duration)
+        if(idx == 2)
         {
-            elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(initialColor.a, 0f, elapsedTime / duration); 
-            material.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
-            yield return null;
-        }
+            Renderer renderer = spawnedEffect.GetComponent<Renderer>();
+            Material material = renderer.material;
+            Color initialColor = material.color;
 
-        PhotonNetwork.Destroy(spawnedEffect);
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float alpha = Mathf.Lerp(initialColor.a, 0f, elapsedTime / duration); 
+                material.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
+                yield return null;
+            }
+            PhotonNetwork.Destroy(spawnedEffect);
+        }
+        else
+        {
+            yield return new WaitForSeconds(duration);
+            PhotonNetwork.Destroy(spawnedEffect);
+        }
     }
 
     IEnumerator JumpWithDuration(float duration, Vector3 startPosition, Vector3 targetPosition)
