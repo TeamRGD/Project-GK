@@ -116,7 +116,7 @@ public class PlayerAttack : MonoBehaviour
             //ray.origin = projectileSpawnPoint.position;
 
             Vector3 targetPoint = Vector3.zero;
-            
+            ray.origin = ray.origin + ray.direction.normalized * 6f;
             //Debug.DrawRay(ray.origin, ray.direction*100f, Color.red, 2f);
             if (Physics.Raycast(ray, out RaycastHit hit, maxRayDistance))
             {
