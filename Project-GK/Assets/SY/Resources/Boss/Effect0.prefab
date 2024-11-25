@@ -53975,7 +53975,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smashFX: {fileID: 6557896621502463389}
   avatar: {fileID: 6323966380172968569}
-  groundSmashAudio: {fileID: 5873498858028920268}
 --- !u!114 &8416522019677190441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54013,7 +54012,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
+  m_SynchronizeScale: 1
   m_UseLocal: 1
 --- !u!1 &6557896621175921783
 GameObject:
