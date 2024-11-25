@@ -18,6 +18,7 @@ public class LeverDown : MonoBehaviour
     {
         PV = GetComponent<PhotonView>();
         leverHandle = GetComponentInChildren<RotateObjectByAngle>();
+        cutSceneTrigger.SetActive(false);
     }
 
     public void UseLever()
@@ -38,6 +39,7 @@ public class LeverDown : MonoBehaviour
             else if (levelStep == 3)
             {
                 // 컷씬 실행 문구
+                cutSceneTrigger.SetActive(true);
             }
 
             this.gameObject.layer = 0;
