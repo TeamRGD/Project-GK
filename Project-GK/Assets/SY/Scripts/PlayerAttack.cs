@@ -13,6 +13,7 @@ public class PlayerAttack : MonoBehaviour
     PlayerStateManager playerState;
     Camera playerCamera;
     Animator animator;
+    PlayerController playerController;
 
     // Get Objects
     public GameObject projectilePrefab;
@@ -34,6 +35,7 @@ public class PlayerAttack : MonoBehaviour
         TryGetComponent<PhotonView>(out PV);
         TryGetComponent<PlayerStateManager>(out playerState);
         TryGetComponent<Animator>(out animator);
+        playerController = GetComponent<PlayerController>();
         playerCamera = GetComponentInChildren<Camera>();
     }
 
@@ -110,6 +112,7 @@ public class PlayerAttack : MonoBehaviour
 
     void ShotProjectile() // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
     {
+        playerController.PlayingSound(3);
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
             Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));

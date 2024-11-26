@@ -727,4 +727,8 @@ public class PlayerController : MonoBehaviour
     {
         PV.RPC("PlayAudio", RpcTarget.All, 0);
     }
+    public void PlayingSound(int i)
+    {
+        PV.RPC("PlayAudio", RpcTarget.All, i);
+    }
 }
