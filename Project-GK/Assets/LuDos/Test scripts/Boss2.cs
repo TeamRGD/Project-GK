@@ -101,7 +101,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -1297,16 +1297,16 @@ public class Boss2 : MonoBehaviourPunCallbacks
         return true;
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
         if (currentHealth <= 2 && currentHealth > 0)
         {
-            if (collision.gameObject.CompareTag("Projectile_Wi"))
+            if (other.CompareTag("Projectile_Wi"))
             {
                 print(33333);
                 playerOrder[attackOrderCount] = 1;
             }
-            else if (collision.gameObject.CompareTag("Projectile_Zard"))
+            else if (other.CompareTag("Projectile_Zard"))
             {
                 print(44444);
                 playerOrder[attackOrderCount] = 2;
