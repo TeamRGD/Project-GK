@@ -144,20 +144,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    [PunRPC]
-    void FFF()
-    {
-        if (cutSceneCanvas != null && gameObject.tag == "PlayerWi")
-        {
-            cutSceneCanvas.SetActive(false);
-        }
-    }
-
     IEnumerator StartTime()
     {
         while (!isStarted)
         {
-            PV.RPC("FFF", RpcTarget.All);
+            cutSceneCanvas.SetActive(false);
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
             if (playerManagers.Length == 2)
             {
@@ -709,7 +700,6 @@ public class PlayerController : MonoBehaviour
     {
         if (cutSceneCanvas != null)
         {
-            UnityEngine.Debug.Log(cutSceneCanvas);
             cutSceneCanvas.SetActive(true);
             renderTexture.Release();
             cutScenePlayer.Play();
