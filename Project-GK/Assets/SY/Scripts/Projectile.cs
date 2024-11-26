@@ -15,6 +15,7 @@ public class Projectile : MonoBehaviour
     public GameObject hit;
     public GameObject projectile;
     private Rigidbody rb;
+    bool canEnter = true;
 
     void Awake()
     {
@@ -46,60 +47,64 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("ect") && !other.CompareTag("Stair"))
+        if (canEnter)
         {
-            if (other.CompareTag("Enemy"))
+            canEnter = false;
+            if (!other.CompareTag("ect") && !other.CompareTag("Stair"))
             {
-                myPV.RPC("SetActive",RpcTarget.All);
-                PhotonView PV = PhotonView.Find(ownerPhotonViewId);
-                if (PV != null && PV.IsMine)
+                if (other.CompareTag("Enemy"))
                 {
-                    PV.TryGetComponent<PlayerStateManager>(out playerState);
-                    if (SceneManager.GetActiveScene().name == "Yggdrasil")
+                    myPV.RPC("SetActive",RpcTarget.All);
+                    PhotonView PV = PhotonView.Find(ownerPhotonViewId);
+                    if (PV != null && PV.IsMine)
                     {
-                        Boss1 boss1 = other.GetComponentInParent<Boss1>();
-                        if (!boss1.GetIsInvincible())
+                        PV.TryGetComponent<PlayerStateManager>(out playerState);
+                        if (SceneManager.GetActiveScene().name == "Yggdrasil")
                         {
-                            boss1.TakeDamage(attackPower);
-                            playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                            Boss1 boss1 = other.GetComponentInParent<Boss1>();
+                            if (!boss1.GetIsInvincible())
+                            {
+                                boss1.TakeDamage(attackPower);
+                                playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                            }
                         }
-                    }
-                    else if (SceneManager.GetActiveScene().name == "Vanta")
-                    {
-                        Boss2 boss2 = other.GetComponentInParent<Boss2>(); 
-                        if (!boss2.GetIsInvincible())
+                        else if (SceneManager.GetActiveScene().name == "Vanta")
                         {
-                            boss2.TakeDamage(attackPower);
-                            playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                            Boss2 boss2 = other.GetComponentInParent<Boss2>(); 
+                            if (!boss2.GetIsInvincible())
+                            {
+                                boss2.TakeDamage(attackPower);
+                                playerState.IncreaseUltimatePower(3); // 투사체 주인의 궁극 주문력을 3 올려 줌.
+                            }
                         }
                     }
                 }
-            }
-            else if (other.CompareTag("Stone"))
-            {
-                myPV.RPC("SetActive",RpcTarget.All);
-                BreakableStone stone = other.GetComponent<BreakableStone>();
-                stone.TakeDamage(1);
-            }
+                else if (other.CompareTag("Stone"))
+                {
+                    myPV.RPC("SetActive",RpcTarget.All);
+                    BreakableStone stone = other.GetComponent<BreakableStone>();
+                    stone.TakeDamage(1);
+                }
 
-            else if (other.CompareTag("Drawer"))
-            {
-                Drawer drawer = other.GetComponent<Drawer>();
-                drawer.isAvailable = false;
-                if (!drawer.isOpen)
+                else if (other.CompareTag("Drawer"))
                 {
-                    drawer.OpenDrawer();
+                    Drawer drawer = other.GetComponent<Drawer>();
+                    drawer.isAvailable = false;
+                    if (!drawer.isOpen)
+                    {
+                        drawer.OpenDrawer();
+                    }
+                    else if(drawer.isOpen)
+                    {
+                        drawer.CloseDrawer();
+                    }
+                    myPV.RPC("SetActive",RpcTarget.All);
+                    drawer.isAvailable = true;
                 }
-                else if(drawer.isOpen)
+                else
                 {
-                    drawer.CloseDrawer();
+                    myPV.RPC("SetActive",RpcTarget.All);
                 }
-                myPV.RPC("SetActive",RpcTarget.All);
-                drawer.isAvailable = true;
-            }
-            else
-            {
-                myPV.RPC("SetActive",RpcTarget.All);
             }
         }
     }
