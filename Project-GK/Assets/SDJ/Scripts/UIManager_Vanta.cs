@@ -40,7 +40,8 @@ public class UIManager_Vanta : MonoBehaviour
 
     public void ManageHealth(float currentHealth, float maxHealth)
     {
-        bossHealthBar.DOFillAmount(currentHealth / maxHealth, 0.05f).SetEase(Ease.OutSine);
+        if (currentHealth == 0f) bossHealthBar.fillAmount = 0f;
+        else bossHealthBar.DOFillAmount(currentHealth / maxHealth, 0.05f).SetEase(Ease.OutSine);
     }
 
     public void EnableHint()
