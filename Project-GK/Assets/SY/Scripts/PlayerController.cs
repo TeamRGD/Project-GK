@@ -81,6 +81,10 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         cutSceneCanvas = GameObject.Find("CutSceneCanvas");
+        if (cutSceneCanvas == null)
+        {
+            print("Oh My FUCKING GOD WHY THIS IS NULL U SUCKsssssssss");
+        }
         Physics.queriesHitTriggers = true;
         gameOvered = false;
         // 플레이어 초기 방향 설정
@@ -194,7 +198,7 @@ public class PlayerController : MonoBehaviour
 
     void ForDebug()
     {
-        if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N) && cutScenePlayer != null)
+        if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N))
         {
             rb.useGravity = false;
             playerToolManager.SetCanChange(false);
@@ -205,19 +209,19 @@ public class PlayerController : MonoBehaviour
             isStarted = false;
             PV.RPC("CutSceneRPC", RpcTarget.All);
         }
-        else if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N) && cutScenePlayer == null)
-        {
-            rb.useGravity = false;
-            playerToolManager.SetCanChange(false);
-            playerAttack.SetCanAttack(false);
-            canControl = false;
-            canLook = false;
-            canMove = false;
-            isStarted = false;
-            PV.RPC("UI", RpcTarget.All);
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            PhotonNetwork.LoadLevel(currentSceneIndex + 1);
-        }
+        //else if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N) && cutScenePlayer == null)
+        //{
+        //    rb.useGravity = false;
+        //    playerToolManager.SetCanChange(false);
+        //    playerAttack.SetCanAttack(false);
+        //    canControl = false;
+        //    canLook = false;
+        //    canMove = false;
+        //    isStarted = false;
+        //    PV.RPC("CutSceneRPC", RpcTarget.All);
+        //    int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        //    PhotonNetwork.LoadLevel(currentSceneIndex + 1);
+        //}
     }
 
     public void NextScene()
