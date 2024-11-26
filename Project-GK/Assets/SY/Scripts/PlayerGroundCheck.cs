@@ -16,6 +16,7 @@ public class PlayerGroundCheck : MonoBehaviour
         Ground,
         Others,
         Stair,
+        Drawer,
         Note,
         Note2,
         BookPage2,
