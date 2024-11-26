@@ -560,8 +560,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (!isExecutingAttack)
         {
-            //int attackType = UnityEngine.Random.Range(1, 7);
-            int attackType = 4;
+            int attackType = UnityEngine.Random.Range(1, 7);
+            //int attackType = 4;
 
             switch (attackType)
             {
