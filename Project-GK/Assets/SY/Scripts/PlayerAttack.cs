@@ -71,6 +71,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && CanAttack() && playerState.GetUltimatePower() < 100) // 기본 공격
         {
+            playerController.PlayingSound(3);
             animator.SetInteger("attackCount", attackCount);
             animator.SetBool("isAttacking", true);
             if (attackCount < 2)
@@ -88,6 +89,7 @@ public class PlayerAttack : MonoBehaviour
         }
         else if (Input.GetMouseButtonDown(0) && CanAttack() && playerState.GetUltimatePower() == 100) // 궁극기
         {
+            playerController.PlayingSound(3);
             animator.SetBool("isUltimate", true);
             isUltimate = true;
             playerState.ResetUltimatePower();
@@ -112,7 +114,6 @@ public class PlayerAttack : MonoBehaviour
 
     void ShotProjectile() // 투사체 생성 및 공격력 설정, 해당 투사체의 오너 설정
     {
-        playerController.PlayingSound(3);
         if (projectilePrefab != null && projectileSpawnPoint != null && playerCamera != null)
         {
             Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));

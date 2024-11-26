@@ -21,7 +21,7 @@ public class Drawer : MonoBehaviour
         PV = GetComponent<PhotonView>();
     }
 
-    /*
+    
     void OnTriggerEnter(Collider other)
     {
         if (!this.enabled) // 스크립트가 활성화 상태인지 확인
@@ -46,7 +46,7 @@ public class Drawer : MonoBehaviour
             }
         }
     }
-    */
+    
 
     public void OpenDrawer()
     {

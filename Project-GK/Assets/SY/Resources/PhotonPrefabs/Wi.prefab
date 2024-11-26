@@ -1765,7 +1765,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a2f6d66c07bee3a48ae2a6d6daebfeb1, type: 3}
   - {fileID: 8300000, guid: 17bc751c7edb95a46a18b97826e30e39, type: 3}
   - {fileID: 8300000, guid: cc8b8da4bbb1234488ac112986ed7d68, type: 3}
-  - {fileID: 8300000, guid: bfbf091635e474441b6d46f38b447247, type: 3}
+  - {fileID: 8300000, guid: 2017fb4493d02ed42b6550a4594094d8, type: 3}
   grounded: 0
   currentSaveTime: 0
   interactableLayer:

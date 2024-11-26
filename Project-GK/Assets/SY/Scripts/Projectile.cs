@@ -102,18 +102,18 @@ public class Projectile : MonoBehaviour
 
                 else if (other.CompareTag("Drawer"))
                 {
-                    Drawer drawer = other.GetComponent<Drawer>();
-                    drawer.isAvailable = false;
-                    if (!drawer.isOpen)
-                    {
-                        drawer.OpenDrawer();
-                    }
-                    else if(drawer.isOpen)
-                    {
-                        drawer.CloseDrawer();
-                    }
+                    //Drawer drawer = other.GetComponent<Drawer>();
+                    //drawer.isAvailable = false;
+                    //if (!drawer.isOpen)
+                    //{
+                        //drawer.OpenDrawer();
+                    //}
+                    //else if(drawer.isOpen)
+                    //{
+                        //drawer.CloseDrawer();
+                    //}
                     myPV.RPC("SetActive",RpcTarget.All);
-                    drawer.isAvailable = true;
+                    //drawer.isAvailable = true;
                 }
                 else
                 {

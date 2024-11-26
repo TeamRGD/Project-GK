@@ -727,10 +727,10 @@ public class PlayerController : MonoBehaviour
 
     public void PlayFootStepSound()
     {
-        PV.RPC("PlayAudio", RpcTarget.All, 0);
+        audioSource.PlayOneShot(AudioClip[0]);
     }
     public void PlayingSound(int i)
     {
-        PV.RPC("PlayAudio", RpcTarget.All, i);
+        audioSource.PlayOneShot(AudioClip[i]);
     }
 }
