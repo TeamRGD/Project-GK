@@ -1255,6 +1255,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "ChargeAndShockWave");
         }
+        audioSource.PlayOneShot(AudioClip[5]);
 
         yield return new WaitForSeconds(1.0f);
 
