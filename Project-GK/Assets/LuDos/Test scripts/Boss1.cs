@@ -681,7 +681,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(0.8f);
 
-        audioSource.PlayOneShot(AudioClip[4]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 4);
 
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
 
@@ -1100,7 +1100,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(0.8f);
 
-        audioSource.PlayOneShot(AudioClip[4]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 4);
 
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
@@ -1255,7 +1255,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "ChargeAndShockWave");
         }
-        audioSource.PlayOneShot(AudioClip[5]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 5);
 
         yield return new WaitForSeconds(1.0f);
 
@@ -1314,7 +1314,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(3.0f);
 
             //photonView.RPC("PlayAudio", RpcTarget.All, 1);
-            audioSource.PlayOneShot(AudioClip[1]);
+            photonView.RPC("PlayAudio", RpcTarget.All, 1);
             for (int i = 0; i < PlayerList.Count; i++)
             {
                 StartCoroutine(PlayEffectForDuration(1, (transform.position + transform.up * 10.0f) + 0.5f *(PlayerList[i].transform.position - (transform.position + transform.up * 10.0f)), Quaternion.LookRotation(PlayerList[i].transform.position - transform.position), 6.0f, new Vector3(1.0f, 20.0f, 20.0f)));
@@ -1384,7 +1384,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 0);
         yield return new WaitForSeconds(0.6f);
 
-        audioSource.PlayOneShot(AudioClip[3]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 3);
         yield return new WaitForSeconds(0.2f);
         while (!hasCollidedWithBookCase)
         {
@@ -1398,7 +1398,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "CrashAtBookCase");
                 photonView.RPC("CameraShakeRPC", RpcTarget.All);
-                audioSource.PlayOneShot(AudioClip[2]);
+                photonView.RPC("PlayAudio", RpcTarget.All, 2);
                 photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 1);
             }
             yield return new WaitForSeconds(1.0f);
@@ -1412,7 +1412,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 photonView.RPC("SetTriggerRPC", RpcTarget.All, "CrashAtBookCase");
                 photonView.RPC("CameraShakeRPC", RpcTarget.All);
-                audioSource.PlayOneShot(AudioClip[2]);
+                photonView.RPC("PlayAudio", RpcTarget.All, 2);
                 photonView.RPC("LightAndAttackBookCaseCoroutine", RpcTarget.All, 1);
             }
             yield return new WaitForSeconds(1.0f);
