@@ -1296,7 +1296,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         }
         return true;
     }
-
+    /*
     void OnTriggerEnter(Collider other)
     {
         if (currentHealth <= 2 && currentHealth > 0)
@@ -1312,6 +1312,17 @@ public class Boss2 : MonoBehaviourPunCallbacks
                 playerOrder[attackOrderCount] = 2;
             }
         }
+    }
+    */
+
+    public float GetCurrentHP()
+    {
+        return currentHealth;
+    }
+
+    public void ChangePlayerOrder(int i)
+    {
+        playerOrder[attackOrderCount] = i;
     }
 
     // Photon Code
