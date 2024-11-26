@@ -81,6 +81,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
     GameObject currentShockwave;
     GameObject currentDamageCollider;
 
+    AudioSource audioSource;
+    public AudioClip[] AudioClip;
+
     BTNode pattern1Tree;
     BTNode pattern2Tree;
     BTNode pattern3Tree;
@@ -89,6 +92,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void Start()
     {
         currentHealth = maxHealth;
+        audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         pattern1Tree = CreatePattern1Tree();
@@ -101,7 +105,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -556,6 +560,35 @@ public class Boss2 : MonoBehaviourPunCallbacks
         photonView.RPC("SelectAggroTargetRPC", RpcTarget.All, idx);
     }
 
+    IEnumerator PlayEffectForDuration(int idx, Vector3 position, Quaternion rotation, float duration, Vector3 scale)
+    {
+        GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Vanta", "Effect" + idx.ToString()), position, rotation);
+        spawnedEffect.transform.localScale = scale;
+
+        if (idx == 2)
+        {
+            Renderer renderer = spawnedEffect.GetComponent<Renderer>();
+            Material material = renderer.material;
+            Color initialColor = material.color;
+
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                float alpha = Mathf.Lerp(initialColor.a, 0f, elapsedTime / duration);
+                material.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
+                yield return null;
+            }
+            PhotonNetwork.Destroy(spawnedEffect);
+        }
+        else
+        {
+            yield return new WaitForSeconds(duration);
+            PhotonNetwork.Destroy(spawnedEffect);
+        }
+    }
+
     bool RandomBasicAttack()
     {
         if (!isExecutingAttack)
@@ -795,6 +828,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "JawSlamWithShockwave");
         yield return new WaitForSeconds(1.5f);
 
+        audioSource.PlayOneShot(AudioClip[2]);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0f, transform.position + transform.forward * 3.0f, 2.0f)); // 임시완. 깨무는 이펙트
         yield return new WaitForSeconds(2.0f);
 
@@ -845,6 +879,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
         yield return new WaitForSeconds(0.5f);
+        audioSource.PlayOneShot(AudioClip[0]);
 
         SlowAllPlayers(0.3f, 1.0f);
 
@@ -855,6 +890,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1.0f); // 임시완
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
+        Vector3 tmpPosition = transform.position;
+        tmpPosition.y = -0.85f;
+        StartCoroutine(PlayEffectForDuration(2, tmpPosition + transform.forward * 1.0f, Quaternion.LookRotation(transform.forward), 6.0f, new Vector3(20.0f, 1.0f, 20.0f)));
 
         yield return new WaitForSeconds(2.0f);
 
@@ -884,6 +922,9 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0.1f, targetPosition + transform.forward * 2.0f, 2.0f));
+        Vector3 tmpPosition = transform.position;
+        tmpPosition.y = -0.85f;
+        StartCoroutine(PlayEffectForDuration(2, tmpPosition + transform.forward * 2.0f, Quaternion.LookRotation(transform.forward), 6.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         yield return new WaitForSeconds(2.0f);
 
         //LightFoots(0);
@@ -1091,6 +1132,12 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar1");
         yield return new WaitForSeconds(3.0f);
+        audioSource.PlayOneShot(AudioClip[0]);
+
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            StartCoroutine(PlayEffectForDuration(1, (transform.position + transform.up * 10.0f) + 0.5f * (PlayerList[i].transform.position - (transform.position + transform.up * 10.0f)), Quaternion.LookRotation(PlayerList[i].transform.position - transform.position), 6.0f, new Vector3(1.0f, 20.0f, 20.0f)));
+        }
 
         Light.SetActive(false);
 
@@ -1113,6 +1160,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Jump");
         yield return new WaitForSeconds(2.0f);
+        audioSource.PlayOneShot(AudioClip[1]);
 
         while (elapsedTime < jumpDuration)
         {
@@ -1166,6 +1214,12 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(3.0f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar0");
         yield return new WaitForSeconds(3.0f);
+        audioSource.PlayOneShot(AudioClip[0]);
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            StartCoroutine(PlayEffectForDuration(1, (transform.position + transform.up * 10.0f) + 0.5f * (PlayerList[i].transform.position - (transform.position + transform.up * 10.0f)), Quaternion.LookRotation(PlayerList[i].transform.position - transform.position), 6.0f, new Vector3(1.0f, 20.0f, 20.0f)));
+        }
+        yield return new WaitForSeconds(1.0f);
     }
     void SpeedUp()
     {
