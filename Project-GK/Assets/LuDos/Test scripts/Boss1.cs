@@ -618,7 +618,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator PlayEffectForDuration(int idx, Vector3 position, Quaternion rotation, float duration, Vector3 scale)
     {
-        GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
+        //GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
+        GameObject spawnedEffect = Instantiate(Effects[3], position, rotation);
         spawnedEffect.transform.localScale = scale;
 
         if(idx == 2)
@@ -641,7 +642,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         else
         {
             yield return new WaitForSeconds(duration);
-            PhotonNetwork.Destroy(spawnedEffect);
+            //PhotonNetwork.Destroy(spawnedEffect);
+            Destroy(spawnedEffect);
         }
     }
 
@@ -872,7 +874,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(4.0f);
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
         photonView.RPC("PlayAudio", RpcTarget.All, 0);
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(2.0f);
+        Vector3 tmpPosition = transform.position;
+        tmpPosition.y += 10.0f;
+        StartCoroutine(PlayEffectForDuration(3, tmpPosition, Quaternion.LookRotation(transform.forward), 3.0f, new Vector3(1.0f, 1.0f, 1.0f)));
+        yield return new WaitForSeconds(2.0f);
     }
 
     [PunRPC]
@@ -1239,7 +1245,13 @@ public class Boss1 : MonoBehaviourPunCallbacks
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "ChargeAndShockWave");
         }
 
-        yield return new WaitForSeconds(9.0f);
+        yield return new WaitForSeconds(1.0f);
+
+        Vector3 tmpPosition = transform.position;
+        tmpPosition.y += 10.0f;
+        StartCoroutine(PlayEffectForDuration(3, tmpPosition, Quaternion.LookRotation(transform.forward), 8.0f, new Vector3(1.0f, 1.0f, 1.0f)));
+
+        yield return new WaitForSeconds(8.0f);
 
         StartCoroutine(CreateShockwave(4.5f, 0.1f, transform.position, 10.0f));
 
