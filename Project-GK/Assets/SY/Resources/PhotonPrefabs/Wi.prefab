@@ -1223,7 +1223,7 @@ MonoBehaviour:
   aim: {fileID: 6158319822806871963}
   AudioClip:
   - {fileID: 8300000, guid: a2f6d66c07bee3a48ae2a6d6daebfeb1, type: 3}
-  - {fileID: 8300000, guid: e0ca17a5e29920c42883b8c13ea3def2, type: 3}
+  - {fileID: 8300000, guid: 17bc751c7edb95a46a18b97826e30e39, type: 3}
   - {fileID: 8300000, guid: cc8b8da4bbb1234488ac112986ed7d68, type: 3}
   grounded: 0
   currentSaveTime: 0

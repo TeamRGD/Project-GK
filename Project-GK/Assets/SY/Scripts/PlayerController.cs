@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour
     PlayerAttack playerAttack;
     PlayerToolManager playerToolManager;
     PlayerStateManager playerState;
+    AudioSource audioSource;
+    public AudioClip[] AudioClip;
 
     // Bool variable    
     public bool grounded;
@@ -76,6 +78,7 @@ public class PlayerController : MonoBehaviour
         TryGetComponent<PlayerToolManager>(out playerToolManager);
         TryGetComponent<Animator>(out animator);
         TryGetComponent<PlayerStateManager>(out playerState);
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -145,7 +148,7 @@ public class PlayerController : MonoBehaviour
     {
         while (!isStarted)
         {
-            if (cutSceneCanvas  != null)
+            if (cutSceneCanvas != null && gameObject.tag == "PlayerWi")
             {
                 cutSceneCanvas.SetActive(false);
             }
@@ -285,6 +288,7 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isJumping", true);
             rb.AddForce(transform.up * jumpForce);
             SetGroundedState(false);
+            PV.RPC("PlayAudio", RpcTarget.All, 1);
         }
     }
     
@@ -299,6 +303,7 @@ public class PlayerController : MonoBehaviour
         if (_grounded && grounded != _grounded)
         {
             animator.SetBool("isJumping", false);
+            PV.RPC("PlayAudio", RpcTarget.All, 2);
         }
         grounded = _grounded;
     }
@@ -696,6 +701,7 @@ public class PlayerController : MonoBehaviour
     {
         if (cutSceneCanvas != null)
         {
+            UnityEngine.Debug.Log(cutSceneCanvas);
             cutSceneCanvas.SetActive(true);
         }
         renderTexture.Release();
@@ -709,5 +715,16 @@ public class PlayerController : MonoBehaviour
                 audioSource.Stop();
             }
         }
+    }
+
+    [PunRPC]
+    void PlayAudio(int idx)
+    {
+        audioSource.PlayOneShot(AudioClip[idx]);
+    }
+
+    public void PlayFootStepSound()
+    {
+        PV.RPC("PlayAudio", RpcTarget.All, 0);
     }
 }

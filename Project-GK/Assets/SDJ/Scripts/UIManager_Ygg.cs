@@ -58,7 +58,7 @@ public class UIManager_Ygg : MonoBehaviour
 
     void Start()
     {
-        cutSceneForYgg.SetActive(false);
+        //cutSceneForYgg.SetActive(false);
         uiManager = FindObjectOfType<UIManager_Player>();
         patternCode = 1234;
         isCorrectedPrevCode = false;
