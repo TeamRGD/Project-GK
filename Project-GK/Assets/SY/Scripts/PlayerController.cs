@@ -144,14 +144,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    [PunRPC]
+    void FFF()
+    {
+        if (cutSceneCanvas != null && gameObject.tag == "PlayerWi")
+        {
+            cutSceneCanvas.SetActive(false);
+        }
+    }
+
     IEnumerator StartTime()
     {
         while (!isStarted)
         {
-            if (cutSceneCanvas != null && gameObject.tag == "PlayerWi")
-            {
-                cutSceneCanvas.SetActive(false);
-            }
+            PV.RPC("FFF", RpcTarget.All);
             PlayerManager[] playerManagers = FindObjectsOfType<PlayerManager>();
             if (playerManagers.Length == 2)
             {
