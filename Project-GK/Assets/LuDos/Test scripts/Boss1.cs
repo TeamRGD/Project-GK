@@ -117,7 +117,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -681,6 +681,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         }
         yield return new WaitForSeconds(0.8f);
 
+        audioSource.PlayOneShot(AudioClip[4]);
+
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
 
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
@@ -1097,6 +1099,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
             photonView.RPC("SetTriggerRPC", RpcTarget.All, "JumpAndLand");
         }
         yield return new WaitForSeconds(0.8f);
+
+        audioSource.PlayOneShot(AudioClip[4]);
 
         yield return StartCoroutine(JumpWithDuration(0.8f, startPosition, targetPosition));
         photonView.RPC("CameraShakeRPC", RpcTarget.All);
