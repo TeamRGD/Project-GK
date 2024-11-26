@@ -117,7 +117,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -619,7 +619,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
     IEnumerator PlayEffectForDuration(int idx, Vector3 position, Quaternion rotation, float duration, Vector3 scale)
     {
         GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
-        //GameObject spawnedEffect = Instantiate(Effects[3], position, rotation);
         spawnedEffect.transform.localScale = scale;
 
         if(idx == 2)
@@ -643,7 +642,6 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             yield return new WaitForSeconds(duration);
             PhotonNetwork.Destroy(spawnedEffect);
-            //Destroy(spawnedEffect);
         }
     }
 
@@ -876,7 +874,7 @@ public class Boss1 : MonoBehaviourPunCallbacks
         photonView.RPC("PlayAudio", RpcTarget.All, 0);
         Vector3 tmpPosition1 = transform.position;
         tmpPosition1.y = -0.85f;
-        StartCoroutine(PlayEffectForDuration(2, tmpPosition1 + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 6.0f, new Vector3(2.0f, 1.0f, 1.0f)));
+        StartCoroutine(PlayEffectForDuration(2, tmpPosition1 + transform.forward * 6.0f, Quaternion.LookRotation(transform.forward), 6.0f, new Vector3(20.0f, 1.0f, 20.0f)));
         yield return new WaitForSeconds(2.0f);
         Vector3 tmpPosition = transform.position;
         tmpPosition.y += 10.0f;
