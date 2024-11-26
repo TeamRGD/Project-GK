@@ -618,8 +618,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
 
     IEnumerator PlayEffectForDuration(int idx, Vector3 position, Quaternion rotation, float duration, Vector3 scale)
     {
-        //GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
-        GameObject spawnedEffect = Instantiate(Effects[3], position, rotation);
+        GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
+        //GameObject spawnedEffect = Instantiate(Effects[3], position, rotation);
         spawnedEffect.transform.localScale = scale;
 
         if(idx == 2)
@@ -642,8 +642,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         else
         {
             yield return new WaitForSeconds(duration);
-            //PhotonNetwork.Destroy(spawnedEffect);
-            Destroy(spawnedEffect);
+            PhotonNetwork.Destroy(spawnedEffect);
+            //Destroy(spawnedEffect);
         }
     }
 
