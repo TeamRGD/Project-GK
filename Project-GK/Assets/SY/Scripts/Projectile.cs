@@ -49,11 +49,11 @@ public class Projectile : MonoBehaviour
     {
         if (canEnter)
         {
-            canEnter = false;
             if (!other.CompareTag("ect") && !other.CompareTag("Stair"))
             {
                 if (other.CompareTag("Enemy"))
                 {
+                    canEnter = false;
                     myPV.RPC("SetActive",RpcTarget.All);
                     PhotonView PV = PhotonView.Find(ownerPhotonViewId);
                     if (PV != null && PV.IsMine)
