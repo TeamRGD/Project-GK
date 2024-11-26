@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PushableObject : MonoBehaviour
 {
@@ -14,12 +15,19 @@ public class PushableObject : MonoBehaviour
     [SerializeField] private Transform playerTransform;    // 상호작용 중인 플레이어의 트랜스폼
 
     PhotonView photonView;
+    Animator animator;
 
     private Dictionary<PlayerController, PhotonView> players = new Dictionary<PlayerController, PhotonView>(); // 해당 오브젝트와 상호작용하는 Player를 담아 줌.
 
     private void Start()
     {
         photonView = GetComponent<PhotonView>();
+    }
+
+    IEnumerator TriggerAnimTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.SetBool("trigger", false);
     }
 
     private void Update()
@@ -30,11 +38,12 @@ public class PushableObject : MonoBehaviour
             // T키가 눌려 있는 동안만 isPushing을 true로 유지
             if (Input.GetKey(KeyCode.T))
             {
-                Animator animator = playerTransform.GetComponentInParent<Animator>();
+                animator = playerTransform.GetComponentInParent<Animator>();
                 animator.SetBool("isPushing", true);
                 if (!isPushing) // 처음 눌렸을 때만 StartPushing 호출
                 {
                     animator.SetBool("trigger", true);
+                    StartCoroutine(TriggerAnimTime(0.4f));
                     StartPushing();
                 }
             }
