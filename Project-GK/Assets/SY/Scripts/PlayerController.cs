@@ -288,7 +288,8 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isJumping", true);
             rb.AddForce(transform.up * jumpForce);
             SetGroundedState(false);
-            PV.RPC("PlayAudio", RpcTarget.All, 1);
+            audioSource.PlayOneShot(AudioClip[1]);
+            //PV.RPC("PlayAudio", RpcTarget.All, 1);
         }
     }
     
@@ -303,7 +304,8 @@ public class PlayerController : MonoBehaviour
         if (_grounded && grounded != _grounded)
         {
             animator.SetBool("isJumping", false);
-            PV.RPC("PlayAudio", RpcTarget.All, 2);
+            audioSource.PlayOneShot(AudioClip[2]);
+            //PV.RPC("PlayAudio", RpcTarget.All, 2);
         }
         grounded = _grounded;
     }
