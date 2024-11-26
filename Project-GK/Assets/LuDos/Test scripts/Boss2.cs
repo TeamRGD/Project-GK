@@ -105,7 +105,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         while (!isStarted)
         {
-            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 2) // should be fixed (Count => 2)
+            if (PhotonNetwork.IsMasterClient && PlayerList.Count == 1) // should be fixed (Count => 2)
             {
                 isStarted = true;
                 photonView.RPC("PlayerListSortRPC", RpcTarget.All);
@@ -594,7 +594,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         if (!isExecutingAttack)
         {
             int attackType = UnityEngine.Random.Range(1, 7);
-            //int attackType = 4;
+            //int attackType = 1;
 
             switch (attackType)
             {
@@ -728,7 +728,10 @@ public class Boss2 : MonoBehaviourPunCallbacks
         ActiveDashCollider(1);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 10.0f, transform.position + transform.forward * 8.0f, 1.2f));
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.2f);
+        photonView.RPC("PlayAudio", RpcTarget.All, 3);
+        yield return new WaitForSeconds(0.3f);
+        photonView.RPC("PlayAudio", RpcTarget.All, 3);
 
         //LightFoots(1);
         yield return new WaitForSeconds(cooltime);
@@ -828,7 +831,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "JawSlamWithShockwave");
         yield return new WaitForSeconds(1.5f);
 
-        audioSource.PlayOneShot(AudioClip[2]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 2);
         shockwaveCoroutine = StartCoroutine(CreateShockwave(3.5f, 0f, transform.position + transform.forward * 3.0f, 2.0f)); // ÀÓ½Ã¿Ï. ±ú¹«´Â ÀÌÆåÆ®
         yield return new WaitForSeconds(2.0f);
 
@@ -879,7 +882,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar");
         yield return new WaitForSeconds(0.5f);
-        audioSource.PlayOneShot(AudioClip[0]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 0);
 
         SlowAllPlayers(0.3f, 1.0f);
 
@@ -1132,7 +1135,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar1");
         yield return new WaitForSeconds(3.0f);
-        audioSource.PlayOneShot(AudioClip[0]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 0);
 
         for (int i = 0; i < PlayerList.Count; i++)
         {
@@ -1160,7 +1163,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
 
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Jump");
         yield return new WaitForSeconds(2.0f);
-        audioSource.PlayOneShot(AudioClip[1]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 1);
 
         while (elapsedTime < jumpDuration)
         {
@@ -1214,7 +1217,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(3.0f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "Roar0");
         yield return new WaitForSeconds(3.0f);
-        audioSource.PlayOneShot(AudioClip[0]);
+        photonView.RPC("PlayAudio", RpcTarget.All, 0);
         for (int i = 0; i < PlayerList.Count; i++)
         {
             StartCoroutine(PlayEffectForDuration(1, (transform.position + transform.up * 10.0f) + 0.5f * (PlayerList[i].transform.position - (transform.position + transform.up * 10.0f)), Quaternion.LookRotation(PlayerList[i].transform.position - transform.position), 6.0f, new Vector3(1.0f, 20.0f, 20.0f)));
@@ -1427,5 +1430,11 @@ public class Boss2 : MonoBehaviourPunCallbacks
     void SetTriggerRPC(string name)
     {
         animator.SetTrigger(name);
+    }
+
+    [PunRPC]
+    void PlayAudio(int idx)
+    {
+        audioSource.PlayOneShot(AudioClip[idx]);
     }
 }
