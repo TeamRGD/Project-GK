@@ -12,5 +12,13 @@ public class SetCollider : MonoBehaviour
         {
             wall.SetActive(true);
         }
+
     }
-}
+    private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard"))
+            {
+                wall.SetActive(false);
+            }
+        }
+    }
