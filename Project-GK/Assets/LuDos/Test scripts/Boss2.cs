@@ -560,8 +560,8 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (!isExecutingAttack)
         {
-            int attackType = UnityEngine.Random.Range(1, 7);
-            // int attackType = 1;
+            //int attackType = UnityEngine.Random.Range(1, 7);
+            int attackType = 4;
 
             switch (attackType)
             {
@@ -812,19 +812,19 @@ public class Boss2 : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1.0f);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 15.0f, transform.position, 3.0f));
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.2f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(5.0f);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 20.0f, transform.position, 3.0f));
-        yield return new WaitForSeconds(1.6f);
+        yield return new WaitForSeconds(0.3f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash");
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(5.0f);
 
         indicatorCoroutine = StartCoroutine(ShowIndicator(1, 25.0f, transform.position, 3.0f));
-        yield return new WaitForSeconds(1.8f);
+        yield return new WaitForSeconds(0.3f);
         photonView.RPC("SetTriggerRPC", RpcTarget.All, "SpinAndTargetSmash_C");
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(5.0f);
 
         //LightFoots(1);
         yield return new WaitForSeconds(cooltime);
@@ -925,7 +925,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            position.y = 1.0f;
+            position.y = 1.5f;
 
             currentShockwave = PhotonNetwork.Instantiate(Path.Combine("Boss", "ShockWave_shock"), position, Quaternion.identity);
 
@@ -971,6 +971,7 @@ public class Boss2 : MonoBehaviourPunCallbacks
         {
             photonView.RPC("SetActiveTorchesRPC", RpcTarget.All, i, false);
         }
+        magicCircleCount = 0; // 동기화 필요
     }
 
     [PunRPC]
