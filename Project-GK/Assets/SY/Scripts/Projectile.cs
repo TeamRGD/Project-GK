@@ -71,6 +71,20 @@ public class Projectile : MonoBehaviour
                         else if (SceneManager.GetActiveScene().name == "Vanta")
                         {
                             Boss2 boss2 = other.GetComponentInParent<Boss2>(); 
+                            float currentHealth = boss2.GetCurrentHP();
+                            if (currentHealth <= 2 && currentHealth > 0)
+                            {
+                                if (PhotonNetwork.IsMasterClient)
+                                {
+                                    print(33333);
+                                    boss2.ChangePlayerOrder(1);
+                                }
+                                else
+                                {
+                                    print(44444);
+                                    boss2.ChangePlayerOrder(2);
+                                }
+                            }
                             if (!boss2.GetIsInvincible())
                             {
                                 boss2.TakeDamage(attackPower);
