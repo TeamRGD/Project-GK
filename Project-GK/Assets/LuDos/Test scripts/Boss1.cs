@@ -1263,7 +1263,9 @@ public class Boss1 : MonoBehaviourPunCallbacks
         tmpPosition.y += 10.0f;
         StartCoroutine(PlayEffectForDuration(3, tmpPosition, Quaternion.LookRotation(transform.forward), 8.0f, new Vector3(1.0f, 1.0f, 1.0f)));
 
-        yield return new WaitForSeconds(8.0f);
+        yield return new WaitForSeconds(7.2f);
+        photonView.RPC("PlayAudio", RpcTarget.All, 6);
+        yield return new WaitForSeconds(0.8f);
 
         StartCoroutine(CreateShockwave(4.5f, 0.1f, transform.position, 10.0f));
 
