@@ -705,16 +705,16 @@ public class PlayerController : MonoBehaviour
         {
             UnityEngine.Debug.Log(cutSceneCanvas);
             cutSceneCanvas.SetActive(true);
-        }
-        renderTexture.Release();
-        cutScenePlayer.Play();
-        AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
+            renderTexture.Release();
+            cutScenePlayer.Play();
+            AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
 
-        foreach (AudioSource audioSource in allAudioSources)
-        {
-            if (audioSource.isPlaying)
+            foreach (AudioSource audioSource in allAudioSources)
             {
-                audioSource.Stop();
+                if (audioSource.isPlaying)
+                {
+                    audioSource.Stop();
+                }
             }
         }
     }

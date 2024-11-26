@@ -621,6 +621,8 @@ public class Boss1 : MonoBehaviourPunCallbacks
         GameObject spawnedEffect = PhotonNetwork.Instantiate(Path.Combine("Boss", "Effect"+idx.ToString()), position, rotation);
         spawnedEffect.transform.localScale = scale;
 
+        PhotonView effectView = spawnedEffect.GetComponent<PhotonView>();
+
         if(idx == 2)
         {
             Renderer renderer = spawnedEffect.GetComponent<Renderer>();
@@ -633,7 +635,11 @@ public class Boss1 : MonoBehaviourPunCallbacks
             {
                 elapsedTime += Time.deltaTime;
                 float alpha = Mathf.Lerp(initialColor.a, 0f, elapsedTime / duration); 
-                material.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
+                Color newColor = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
+
+                string hexColor = ColorUtility.ToHtmlStringRGBA(newColor);
+                PhotonView.Get(this).RPC("UpdateMaterialColor", RpcTarget.All, "#" + hexColor, effectView.ViewID);
+                //material.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
                 yield return null;
             }
             PhotonNetwork.Destroy(spawnedEffect);
@@ -642,6 +648,23 @@ public class Boss1 : MonoBehaviourPunCallbacks
         {
             yield return new WaitForSeconds(duration);
             PhotonNetwork.Destroy(spawnedEffect);
+        }
+    }
+    [PunRPC]
+    void UpdateMaterialColor(string hexColor, int viewID)
+    {
+        PhotonView targetView = PhotonView.Find(viewID);
+        if (targetView != null)
+        {
+            Renderer renderer = targetView.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material material = renderer.material;
+                if (ColorUtility.TryParseHtmlString(hexColor, out Color color))
+                {
+                    material.color = color;
+                }
+            }
         }
     }
 

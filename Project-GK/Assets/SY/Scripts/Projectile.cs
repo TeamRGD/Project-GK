@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Properties;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class Projectile : MonoBehaviour
 {
@@ -12,37 +13,17 @@ public class Projectile : MonoBehaviour
     private WaitForSeconds seconds = new WaitForSeconds(10f);
     PlayerStateManager playerState;
     PhotonView myPV;
-    public GameObject hit;
-    public GameObject projectile;
-    private Rigidbody rb;
+    GameObject wb;
     bool canEnter = true;
 
     void Awake()
     {
         TryGetComponent<PhotonView>(out myPV);
-        rb = GetComponent<Rigidbody>();
     }
 
     void Start()
     {
         DestroyProjectileAfterTime();
-    }
-    IEnumerator ActivateAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (myPV.IsMine)
-        {
-            PhotonNetwork.Destroy(gameObject);
-        }
-    }
-    [PunRPC]
-    void SetActive()
-    {
-        rb.velocity = Vector3.zero;   
-        hit.transform.SetParent(gameObject.transform);
-        hit.SetActive(true);
-        projectile.SetActive(false);
-        StartCoroutine(ActivateAfterDelay(1f));
     }
 
     private void OnTriggerEnter(Collider other)
@@ -54,10 +35,16 @@ public class Projectile : MonoBehaviour
                 if (other.CompareTag("Enemy"))
                 {
                     canEnter = false;
-                    myPV.RPC("SetActive",RpcTarget.All);
                     PhotonView PV = PhotonView.Find(ownerPhotonViewId);
                     if (PV != null && PV.IsMine)
                     {
+                        Vector3 position = gameObject.transform.position;
+                        Quaternion quaternion = gameObject.transform.rotation;
+                        if (myPV.IsMine)
+                        {
+                            wb = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "WB"), position, quaternion);
+                        }
+                        PhotonNetwork.Destroy(gameObject);
                         PV.TryGetComponent<PlayerStateManager>(out playerState);
                         if (SceneManager.GetActiveScene().name == "Yggdrasil")
                         {
@@ -95,29 +82,36 @@ public class Projectile : MonoBehaviour
                 }
                 else if (other.CompareTag("Stone"))
                 {
-                    myPV.RPC("SetActive",RpcTarget.All);
                     BreakableStone stone = other.GetComponent<BreakableStone>();
                     stone.TakeDamage(1);
+                    Vector3 position = gameObject.transform.position;
+                    Quaternion quaternion = gameObject.transform.rotation;
+                    if (myPV.IsMine)
+                    {
+                        wb = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "WB"), position, quaternion);
+                    }
+                    PhotonNetwork.Destroy(gameObject);
                 }
 
                 else if (other.CompareTag("Drawer"))
                 {
-                    //Drawer drawer = other.GetComponent<Drawer>();
-                    //drawer.isAvailable = false;
-                    //if (!drawer.isOpen)
-                    //{
-                        //drawer.OpenDrawer();
-                    //}
-                    //else if(drawer.isOpen)
-                    //{
-                        //drawer.CloseDrawer();
-                    //}
-                    myPV.RPC("SetActive",RpcTarget.All);
-                    //drawer.isAvailable = true;
+                    Vector3 position = gameObject.transform.position;
+                    Quaternion quaternion = gameObject.transform.rotation;
+                    if (myPV.IsMine)
+                    {
+                        wb = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "WB"), position, quaternion);
+                    }
+                    PhotonNetwork.Destroy(gameObject);
                 }
                 else
                 {
-                    myPV.RPC("SetActive",RpcTarget.All);
+                    Vector3 position = gameObject.transform.position;
+                    Quaternion quaternion = gameObject.transform.rotation;
+                    if (myPV.IsMine)
+                    {
+                        wb = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "WB"), position, quaternion);
+                    }
+                    //PhotonNetwork.Destroy(gameObject);
                 }
             }
         }
