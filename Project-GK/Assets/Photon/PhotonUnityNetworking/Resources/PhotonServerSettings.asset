@@ -168,6 +168,8 @@ MonoBehaviour:
   - PlayAudio
   - AnimationTriggerRPC
   - EndGameRPC
+  - FFF
+  - UpdateMaterialColor
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

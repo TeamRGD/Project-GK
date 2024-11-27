@@ -51,7 +51,8 @@ public class CipherDevice : MonoBehaviour
         if ((other.CompareTag("PlayerWi") || other.CompareTag("PlayerZard")) && !other.CompareTag(AggroTarget.tag))
         {
             GameObject cutSceneCanvas = GameObject.Find("CutSceneCanvas");
-            cutSceneCanvas.SetActive(false);
+            if (cutSceneCanvas != null)
+                cutSceneCanvas.SetActive(false);
             PlayerController playerController;
             PhotonView PV;
             playerController = other.GetComponentInParent<PlayerController>();
