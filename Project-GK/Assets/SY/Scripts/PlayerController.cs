@@ -69,6 +69,9 @@ public class PlayerController : MonoBehaviour
     private bool gameOvered;
 
     private GameObject cutSceneCanvas;
+    GameObject boss1;
+    GameObject boss2;
+
 
     void Awake()
     {
@@ -108,7 +111,7 @@ public class PlayerController : MonoBehaviour
         // Boss에 Player 배정
         if(SceneManager.GetActiveScene().name == "Yggdrasil")
         {
-            GameObject boss1 = GameObject.Find("Yggdrasil"); // [임시완]
+            boss1 = GameObject.Find("Yggdrasil"); // [임시완]
             boss1.GetComponent<Boss1>().PlayerList.Add(this.gameObject);
             if (PV.IsMine && PhotonNetwork.IsMasterClient)
             {
@@ -117,7 +120,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (SceneManager.GetActiveScene().name == "Vanta")
         {
-            GameObject boss2 = GameObject.Find("Vanta"); // [임시완]
+            boss2 = GameObject.Find("Vanta"); // [임시완]
             boss2.GetComponent<Boss2>().PlayerList.Add(this.gameObject);
             if (PV.IsMine && PhotonNetwork.IsMasterClient)
             {
@@ -726,6 +729,14 @@ public class PlayerController : MonoBehaviour
                 {
                     audioSource.Stop();
                 }
+            }
+            if(SceneManager.GetActiveScene().name == "Yggdrasil")
+            {
+                boss1.SetActive(false);
+            }
+            else if (SceneManager.GetActiveScene().name == "Vanta")
+            {
+                boss2.SetActive(false);
             }
         }
     }
