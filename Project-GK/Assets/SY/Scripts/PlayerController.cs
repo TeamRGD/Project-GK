@@ -217,7 +217,12 @@ public class PlayerController : MonoBehaviour
             canLook = false;
             canMove = false;
             isStarted = false;
-            PV.RPC("CutSceneRPC", RpcTarget.All);
+            if (cutSceneCanvas != null)
+                PV.RPC("CutSceneRPC", RpcTarget.All);
+            else
+            {
+                NextScene();
+            }
         }
         //else if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.N) && cutScenePlayer == null)
         //{
